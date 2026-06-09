@@ -1,0 +1,101 @@
+\documentclass[
+	degree          = bachelor,
+	StudentName     = 张三,
+	StudentID       = 2020123456,
+	AdvisorName     = 李四,
+	Grade           = 2020,
+	Major           = 计算机科学与技术,
+	Department      = 计算机学院,
+	SubmitYear		= 2024,
+	SubmitMonth		= 6,
+	Title           = 基于XXX的YYY研究,
+	TitleEng        = {{Research on YYY Based on XXX}},  % 选填，显示在第二封面
+]{cauc_thesis}
+
+% 也可以使用 \caucsetup 在导言区进行配置（与 \documentclass 选项等效）：
+% \caucsetup{
+%   Type=design,          % 本科毕业设计（默认 thesis）
+%   declaration=true,     % 包含原创性声明
+%   draft=false,          % 草稿模式
+% }
+
+\begin{document}
+
+\frontmatter
+
+\makecover
+
+\begin{abstract-zh}
+	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+
+	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+
+	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+\end{abstract-zh}
+
+\begin{abstract-en}
+	English abstract content goes here. It should correspond to the Chinese abstract above.
+
+	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+\end{abstract-en}
+
+\makefrontmatter
+
+\mainmatter
+\pagestyle{fancy}
+
+\chapter{绪论}
+
+\section{研究背景}
+
+研究背景内容。
+
+\section{研究目的与意义}
+
+研究目的与意义内容。
+
+\chapter{结论}
+
+结论内容。
+
+\appendix
+\chapter{附录标题示例}
+
+这是附录的内容。附录章节编号使用大写字母（附录A、附录B……）。
+
+\begin{table}[!ht]
+	\centering
+	\caption{附录表示例}\label{tab:appendix}
+	\begin{tabular}{cc}
+		\toprule 项目 & 结果 \\ \midrule
+		数据1 & 0.95 \\
+		数据2 & 0.87 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\chapter{核心代码}
+
+\begin{lstlisting}[language=Python, caption={二分查找实现}]
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+\end{lstlisting}
+
+\backmatter
+
+\bibliography{reference}
+
+\begin{acknowledgment}
+	致谢内容。
+\end{acknowledgment}
+
+\end{document}

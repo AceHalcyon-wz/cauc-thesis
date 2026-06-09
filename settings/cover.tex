@@ -1,139 +1,406 @@
-\begin{titlepage}
+\newlength{\cauc@cover@logo@vspace}
+\newlength{\cauc@cover@title@vspace}
+\newlength{\cauc@cover@info@vspace}
+\newlength{\cauc@cover@date@vspace}
+\newlength{\cauc@cover@infowidth}
+\newlength{\cauc@cover@infowidth@second}
+\newlength{\cauc@cover@labelwidth}
+
+\newcommand{\cauc@blindfill}[1]{\ifcauc@blind\else #1\fi}
+
+\ifcauc@bachelor
+  \setlength{\cauc@cover@logo@vspace}{-12mm}
+  \setlength{\cauc@cover@title@vspace}{-3.8mm}
+  \setlength{\cauc@cover@info@vspace}{8ex}
+  \setlength{\cauc@cover@date@vspace}{1em}
+\else
+  \setlength{\cauc@cover@logo@vspace}{-10pt}
+  \setlength{\cauc@cover@title@vspace}{-4.2mm}
+  \setlength{\cauc@cover@info@vspace}{3.8em}
+  \setlength{\cauc@cover@date@vspace}{46pt}
+\fi
+
+\ifcauc@bachelor
+  \setlength{\cauc@cover@infowidth}{240pt}
+  \setlength{\cauc@cover@infowidth@second}{240pt}
+  \setlength{\cauc@cover@labelwidth}{11em}
+\else
+  \setlength{\cauc@cover@infowidth}{300pt}
+  \setlength{\cauc@cover@infowidth@second}{240pt}
+  \setlength{\cauc@cover@labelwidth}{11em}
+\fi
+
+\newcommand{\cauc@bachelor@firstcover}{%
     \setlength{\headsep}{1.3cm}
     {
-    
               \begin{center}
-              \includegraphics[]{./pic/pic1.jpg}
+              \includegraphics[]{\cauc@coverlogo}
               \end{center}
     }
-              \vspace{-12mm}
+              \vspace{\cauc@cover@logo@vspace}
             \begin{center}
-                \setlength{\baselineskip}{0pt}\bfseries\fakeli \zihao{0}本科毕业设计（论文）
+                \setlength{\baselineskip}{0pt}\bfseries\fakeli \zihao{0}%
+                \ifcauc@proposal
+                  本科毕业设计（论文）开题报告%
+                \else
+                  \ifcauc@design
+                    本科毕业设计%
+                  \else
+                    本科毕业设计（论文）%
+                  \fi
+                \fi
             \end{center}
-    
-            \vspace{-3.8mm}
+            \vspace{\cauc@cover@title@vspace}
               \begin{center}
-              \includegraphics[height=5.45cm,width=5.9cm]{./pic/pic2.png}
+              \includegraphics[height=5.45cm,width=5.9cm]{\cauc@coverimage}
               \end{center}
             \vspace{-1pt}
             \begin{center}\fakehei\zihao{-1}\Title \end{center}
-            \vspace{8ex}
+            \vspace{\cauc@cover@info@vspace}
     \begin{center}
         \bfseries\songti
         \zihao{3}
-%        \bfseries
-        \setlength{\baselineskip}{32pt} %3号字单倍行距
-        {\bfseries 学生姓名：}\underlineFixlen[11em]{\StudentName}\\
-        {\bfseries 专\hspace{2em}业：}\underlineFixlen[11em]{\Major}\\
-        {\bfseries 学\hspace{2em}号：}\underlineFixlen[11em]{\StudentID}\\
-        {\bfseries 指导教师：}\underlineFixlen[11em]{\AdvisorName}\\
-        {\bfseries 学\hspace{2em}院：}\underlineFixlen[11em]{\Department}\\
-        
-        \vspace{1em}
-        
+        \setlength{\baselineskip}{32pt}
+        {\bfseries 学生姓名：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\StudentName}}\\
+        {\bfseries 专\hspace{2em}业：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\Major}}\\
+        {\bfseries 学\hspace{2em}号：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\StudentID}}\\
+        {\bfseries 指导教师：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\AdvisorName}}\\
+        {\bfseries 学\hspace{2em}院：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\Department}}\\
+        \vspace{\cauc@cover@date@vspace}
         \qquad \zihao{4}{\zhdigits{\SubmitYear} 年 \zhdigits{\SubmitMonth} 月}
     \end{center}
+}
+
+\newcommand{\cauc@bachelor@secondcover}{%
     \newpage
     \setlength{\headsep}{3.1cm}
-            \begin{center}
-                \fakeli
-                \zihao{-0}
-                \setlength{\baselineskip}{47pt} %小初号字36pt 单倍行距
-                中国民航大学\\
-                本科毕业设计（论文）
-                %\showthe\baselineskip
-            \end{center} %隶书小初字
-            \vspace{1.6cm}
-            \begin{center}
-                \heiti
-                \zihao{-1}
-                \setlength{\baselineskip}{33pt} %小初号字36pt 单倍行距
-                \Title
-    
-    \rm            \TitleEng
-                %\showthe\baselineskip
-            \end{center}
-    
-            \vspace{5.4cm}
     \begin{center}
-    \songti
-    \zihao{-3}
-%    \bfseries
-    \setlength{\baselineskip}{31pt} %3号字单倍行距
-        \begin{tabularx}{240pt}{c X}
-            学生姓名： & {\StudentName\hfill}
-        \end{tabularx}
-        \begin{tabularx}{240pt}{c X}
-            专\qquad 业：& {\Major \hfill}
-        \end{tabularx}
-        \begin{tabularx}{240pt}{c X}
-            学\qquad 号：& {\StudentID \hfill}
-        \end{tabularx}
-        \begin{tabularx}{240pt}{c X}
-            指导教师：& { \AdvisorName \hfill}
-        \end{tabularx}
-        \begin{tabularx}{240pt}{c X}
-            学\qquad 院：&{ \Department \hfill}
-        \end{tabularx}
-    
-    \vspace{2em}
-    
-    \quad~ \SubmitYear ~年~ \SubmitMonth ~月~~~~~~~~\quad
+        \fakeli
+        \fontsize{36pt}{47pt}\selectfont
+        中国民航大学\\
+        \ifcauc@proposal
+          本科毕业设计（论文）开题报告%
+        \else
+          \ifcauc@design
+            本科毕业设计%
+          \else
+            本科毕业设计（论文）%
+          \fi
+        \fi
     \end{center}
+    \vspace{1.6cm}
+    \begin{center}
+        \heiti
+        \fontsize{24pt}{33pt}\selectfont
+        \Title
+
+        \rmfamily \TitleEng
+    \end{center}
+    \vspace{5.4cm}
+    \begin{center}
+        \songti
+        \zihao{-3}
+        \setlength{\baselineskip}{31pt}
+        \begin{tabularx}{\cauc@cover@infowidth}{c X}
+            学生姓名： & {\cauc@blindfill{\StudentName}\hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth}{c X}
+            专\qquad 业：& {\cauc@blindfill{\Major} \hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth}{c X}
+            学\qquad 号：& {\cauc@blindfill{\StudentID} \hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth}{c X}
+            指导教师：& { \cauc@blindfill{\AdvisorName} \hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth}{c X}
+            学\qquad 院：&{ \cauc@blindfill{\Department} \hfill}
+        \end{tabularx}
+
+        \vspace{2em}
+
+        \quad~ \SubmitYear ~年~ \SubmitMonth ~月~~~~~~~~\quad
+    \end{center}
+}
+
+% 声明页需要更宽的左右边距(3.8cm)以适应签名栏排版，与正文边距不同
+\newcommand{\cauc@bachelor@declaration}{%
     \newpage
-    % ----------创见性声明-----------
-    % \setlength{\headsep}{0.9cm}
-    
-    %         \begin{center}
-    %             \heiti
-    %             \zihao{-2}
-    %             \bfseries
-    %             \setlength{\baselineskip}{18pt} %行间距18
-    %             创见性声明
-    %             %\showthe\baselineskip
-    %         \end{center} %隶书小初字
-    %         \vspace{0.2cm}
-    %         \fangsong
-    %         \zihao{-3}
-    %         \setlength{\baselineskip}{28pt} %仿宋小三 行间距28
-    
-    %         本人声明：所呈交的毕业论文是本人在指导教师的指导下进行的工作和取得的成果，论文中所引用的他人已经发表或撰写过的研究成果，均加以特别标注并在此表示致谢。与我一同工作的同志对本论文所做的任何贡献也已在论文中作了明确的说明并表示谢意。
-    
-    %         \vspace{3.8em}
-    
-    %         毕业论文作者签名：\quad\quad\quad 签字日期：\qquad\qquad 年\quad 月\quad 日
-    
-    %         \vspace{1.8em}
-    
-    
-    %         \begin{center}
-    %             \heiti
-    %             \zihao{-2}
-    %             \bfseries
-    %             \setlength{\baselineskip}{18pt} %行间距18
-    %             \qquad 本科毕业设计（论文）版权使用授权书
-    %             %\showthe\baselineskip
-    %         \end{center} %隶书小初字
-    
-    %         \vspace{0.5em}
-    %         {
-    %         \fangsong
-    %         \zihao{-3}
-    %         \setlength{\baselineskip}{28pt} %仿宋小三 行间距28
-    %         本毕业设计（论文）作者完全了解中国民航大学有关保留、使用毕业设计（论文）的规定。特授权中国民航大学可以将毕业设计（论文）的全部或部分内容编入有关数据库进行检索，并采用影印、缩印或扫描等复制手段保存、汇编以供查阅和借阅。同意学校向国家有关部门或机构送交毕业设计（论文）的复印件和磁盘。
-    
-    %         （保密的毕业论文在解密后适用本授权说明）
-    
-    %         \vspace{1.8em}
-    
-    %         毕业论文作者签名：\quad\quad\quad\qquad 指导教师签名：
-    
-    % \vspace{1.8em}
-    
-    % 签字日期：\qquad 年\quad 月\quad 日  \qquad  签字日期：\qquad 年\quad 月\quad 日
-             % }
+    \newgeometry{left=3.8cm,right=3.8cm,top=4.85cm,bottom=4.85cm}
+    \setlength{\headsep}{0.9cm}
+    \begin{center}
+        \heiti
+        \zihao{3}
+        中国民航大学本科毕业设计（论文）独创性声明
+    \end{center}
+    \vspace{1.8em}
+    \songti \zihao{5}
+    \setlength{\baselineskip}{26pt}
+    本人声明所呈交的毕业设计（论文）是本人在指导教师指导下进行的研究工作及取得的成果，除了文中特别加以标注和致谢的地方外，论文中不包含其他人已经发表或撰写过的研究成果，也不包含为获得中国民航大学或其他教育机构的学位或证书而使用过的材料。与我一同工作的同志对本研究所做的任何贡献均已在论文中作了明确的说明并表示了谢意。
+    \vspace{1.8em}
+    \qquad\quad\qquad\qquad\qquad\qquad 毕业生签名：\underline{\qquad\qquad\qquad} 日\quad 期：\underline{\qquad\qquad\qquad}
+    \vspace{3.8em}
+    \begin{center}
+        \heiti
+        \zihao{3}
+        \setlength{\baselineskip}{26pt}
+        中国民航大学本科毕业设计（论文）使用授权声明
+    \end{center}
+    \vspace{1.8em}
+    {
+    \songti
+    \zihao{5}
+    \setlength{\baselineskip}{28pt}
+    中国民航大学有权保留本人所送交毕业设计（论文）的复印件和电子文档，可以采用影印、缩印或其他复制手段保存论文。本人电子文档的内容和纸质论文的内容相一致。除在保密期内的保密论文外，允许论文被查阅和借阅，可以公布（包括刊登）论文的全部或部分内容。论文的公布（包括刊登）授权中国民航大学教务处办理。
+    \vspace{1.8em}
+    \noindent 毕业生签名：\underline{\qquad\qquad\qquad}指导教师签名：\underline{\qquad\qquad\qquad}日\quad 期：\underline{\qquad\qquad\qquad}
+    }
+    \clearpage
+    \restoregeometry
+}
+
+\newcommand{\cauc@graduate@firstcover}{%
+    \pagestyle{empty}
+    \setlength{\headsep}{1.224cm}
+    {
+              \begin{center}
+              \includegraphics[scale=1.1]{\cauc@coverlogo}
+              \end{center}
+    }
+              \vspace{\cauc@cover@logo@vspace}
+            \begin{center}
+                \setlength{\baselineskip}{0pt}
+                \ifcauc@proposal
+                    \ifcauc@doctor
+                        \bfseries\fakeli \zihao{0}博士学位论文开题报告
+                    \else
+                        \bfseries\fakeli \zihao{0}硕士学位论文开题报告
+                    \fi
+                \else
+                    \ifcauc@doctor
+                        \bfseries\fakeli \zihao{0}博\ \;士\ \;学\ \;位\ \;论\ \;文
+                    \else
+                        \bfseries\fakeli \zihao{0}硕\ \;士\ \;学\ \;位\ \;论\ \;文
+                    \fi
+                \fi
+            \end{center}
+            \vspace{1.8mm}
+            \begin{center}
+                \ifcauc@doctor
+                    \bfseries\mbox{}
+                \else
+                    \ifcauc@masterprofessional
+                        \bfseries \fakeli \zihao{-2} （专业学位 ）
+                    \else
+                        \bfseries \fakeli \zihao{-2} （学术学位 ）
+                    \fi
+                \fi
+            \end{center}
+            \vspace{-3.8mm}
+              \begin{center}
+              \includegraphics[height=5.2cm,width=5.6cm]{\cauc@coverimage}
+              \end{center}
+            \vspace{\cauc@cover@title@vspace}
+            \begin{center}
+                \bfseries \fakehei\zihao{1}\Title
+            \end{center}
+            \vspace{\cauc@cover@info@vspace}
+    \begin{center}
+        \songti
+        \zihao{-2}
+        \setlength{\baselineskip}{26pt}
+        \begin{tabularx}{\cauc@cover@infowidth}{c >{\centering}X}
+            作者姓名： & \uline{\hfill \cauc@blindfill{\StudentName}\hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth}{c >{\centering}X}
+            导师姓名：& \uline{\hfill \cauc@blindfill{\AdvisorName} \hfill}
+        \end{tabularx}
+        \ifcauc@masterprofessional
+            \begin{tabularx}{\cauc@cover@infowidth}{c >{\centering}X}
+                校外导师：& \uline{\hfill \cauc@blindfill{\AdvisorNameOut} \hfill}
+            \end{tabularx}
+        \fi
+        \begin{tabularx}{\cauc@cover@infowidth}{c >{\centering}X}
+            \ifcauc@masterprofessional 专业类别\else 学科专业\fi：& \uline{\hfill \cauc@blindfill{\Major} \hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth}{c >{\centering}X}
+            \ifcauc@masterprofessional 研究方向（领域）\else 研究方向\fi：& \uline{\hfill \cauc@blindfill{\ResearchInterest} \hfill}
+        \end{tabularx}
+
+        \vspace{\cauc@cover@date@vspace}
+
+        \songti \zihao{3}
+        {\SubmitYear 年 \SubmitMonth 月 \SubmitDay 日}
+    \end{center}
+}
+
+% 研究生封面包含答辩委员会信息表和分类号/UDC号，本科封面仅含基本信息
+\newcommand{\cauc@graduate@secondcover}{%
+    \newpage
+    \zihao{-4}
+    \setlength{\baselineskip}{24pt}
+    \noindent 分类号：\quad \underline{\cauc@blindfill{\CLCNumber}} \qquad 密\quad 级：\underline{公开}
+    \noindent UDC\ \ \ \,：\quad \underline{\cauc@blindfill{\UDCNumber}} \quad 学\quad 号：\underline{\cauc@blindfill{\StudentID}}
+    \vspace{14pt}
+    \begin{center}
+        \zihao{2}\heiti \Title
+    \end{center}
+    \vspace{40pt}
+    \begin{center}
+        \zihao{4} \bfseries\TitleEng
+    \end{center}
+    \vspace{-25pt}
+    \begin{center}
+        \songti
+        \zihao{4}
+        \setlength{\baselineskip}{35pt}
+        \begin{tabularx}{\cauc@cover@infowidth@second}{c >{\centering}X}
+            作者姓名： & \uline{\hfill \cauc@blindfill{\StudentName}\hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth@second}{c >{\centering}X}
+            导师姓名：& \uline{\hfill \cauc@blindfill{\AdvisorName} \hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth@second}{c >{\centering}X}
+            学科专业：& \uline{\hfill \cauc@blindfill{\Major} \hfill}
+        \end{tabularx}
+        \begin{tabularx}{\cauc@cover@infowidth@second}{c >{\centering}X}
+            研究方向：& \uline{\hfill \cauc@blindfill{\ResearchInterest} \hfill}
+        \end{tabularx}
+    \end{center}
+    \vspace{16pt}
+    \begin{table*}[htbp]
+        \renewcommand{\arraystretch}{1.7}
+        \centering
+        \zihao{-4}
+        \begin{tabular}{|p{3.76cm}<{\centering}|p{2.68cm}<{\centering}
+            |p{2cm}<{\centering}|p{5.5cm}<{\centering}|}
+            \hline
+            答辩日期 &
+            \multicolumn{3}{c|}{\DefenseYear 年\DefenseMonth 月\DefenseDay 日}\\
+            \hline
+            答辩委员会 & 姓名 & 职称 & 工作单位\\
+            \hline
+            主席 & & &\\
+            \hline
+            \multirow{4}{*}{委员}& & & \\
+            \cline{2-4}
+            & & & \\
+            \cline{2-4}
+            & & & \\
+            \cline{2-4}
+            & & & \\
+            \hline
+        \end{tabular}
+    \end{table*}
+    \vspace{8pt}
+    \begin{center}
+        \zihao{4}
+        中国民航大学\Department\\
+        \vspace{10pt}
+        \DefenseYear 年\DefenseMonth 月\DefenseDay 日
+    \end{center}
+}
+
+\newcommand{\cauc@graduate@encover}{%
+    \newpage
+    \begin{center}
+        \vspace*{1.8em}
+        \zihao{-1}{\bfseries\TitleEng}\\
+        \ifcauc@masteracademic
+        \vspace{80pt}
+        \else
+        \vspace{50pt}
+        \fi
+        \zihao{-3}
+        A Dissertation Submitted to \\
+        Civil Aviation University of China\\
+        \ifcauc@doctor
+            For the Academic Degree of Doctor of Science\\
+        \else
+            For the Academic Degree of Master of Science\\
+        \fi
+        \vspace{30pt}
+        \zihao{3}BY\\
+        \cauc@blindfill{\StudentNameEng}\\
+        \vspace{30pt}
+        Supervised by\\
+        \cauc@blindfill{\AdvisorNameEng}\\
+        \ifcauc@masteracademic
+            and\\
+            \cauc@blindfill{\AdvisorNameEngSecond}\\
+        \fi
+        \ifcauc@masterprofessional
+            and\\
+            \cauc@blindfill{\AdvisorNameEngOut}\\
+        \fi
+        \ifcauc@doctor
+            and\\
+            \cauc@blindfill{\AdvisorNameEngOut}\\
+        \fi
+        \ifcauc@masteracademic
+            \vspace{45pt}
+        \else
+            \vspace{30pt}
+        \fi
+        \cauc@blindfill{\DepartmentEng}\\
+        Civil Aviation University of China\\
+        \vspace{10pt}
+        \cauc@blindfill{\DefenseDateEng}
+    \end{center}
+}
+
+% 研究生声明页同样需要宽边距以适应签名栏，内容与本科略有不同（授权范围更大）
+\newcommand{\cauc@graduate@declaration}{%
+    \newpage
+    \newgeometry{left=3.8cm,right=3.8cm,top=4.85cm,bottom=4.85cm}
+    \setlength{\headsep}{0.9cm}
+    \begin{center}
+        \heiti
+        \zihao{3}
+        中国民航大学学位论文独创性声明
+    \end{center}
+    \vspace{1.8em}
+    \songti \zihao{5}
+    \setlength{\baselineskip}{26pt}
+    本人声明所呈交的学位论文是我个人在导师指导下进行的研究工作及取得的研究成果。尽我所知，除了文中特别加以标注和致谢的地方外，论文中不包含其他人已经发表或撰写过的研究成果，也不包含为获得中国民航大学或其它教育机构的学位或证书而使用过的材料。与我一同工作的同志对本研究所做的任何贡献均已在论文中作了明确的说明并表示了谢意。
+    \vspace{1.8em}
+    \qquad\quad\qquad\qquad\qquad\qquad 研究生签名：\underline{\qquad\qquad\qquad} 日\quad 期：\underline{\qquad\qquad\qquad}
+    \vspace{3.8em}
+    \begin{center}
+        \heiti
+        \zihao{3}
+        \setlength{\baselineskip}{26pt}
+        中国民航大学学位论文使用授权声明
+    \end{center}
+    \vspace{1.8em}
+    {
+    \songti
+    \zihao{5}
+    \setlength{\baselineskip}{28pt}
+    中国民航大学、中国科学技术信息研究所、国家图书馆有权保留本人所送交学位论文的复印件和电子文档，可以采用影印、缩印或其他复制手段保存论文。本人电子文档的内容和纸质论文的内容相一致。除在保密期内的保密论文外，允许论文被查阅和借阅，可以公布（包括刊登）论文的全部或部分内容。论文的公布（包括刊登）授权中国民航大学研究生院办理。
+    \vspace{1.8em}
+    \noindent 研究生签名：\underline{\qquad\qquad\qquad}导师签名：\underline{\qquad\qquad\qquad}日\quad 期：\underline{\qquad\qquad\qquad}
+    }
+    \clearpage
+    \restoregeometry
+}
+
+\begin{titlepage}
+\ifcauc@bachelor
+    \cauc@bachelor@firstcover
+    \cauc@bachelor@secondcover
+    \ifcauc@declaration
+        \cauc@bachelor@declaration
+    \fi
+\else
+    \cauc@graduate@firstcover
+    \cauc@graduate@secondcover
+    \cauc@graduate@encover
+    \cauc@graduate@declaration
+\fi
 \end{titlepage}
+\ifcauc@graduate
+    \newpage
+\fi
+\restoregeometry
 \thispagestyle{empty}
-
-
-

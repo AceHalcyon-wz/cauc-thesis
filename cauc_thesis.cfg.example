@@ -1,0 +1,52 @@
+% CAUC 学位论文配置文件
+% 模板编译时自动加载此文件
+% 将此文件复制为 cauc_thesis.cfg，取消所需字段的注释即可使用
+% cauc_thesis.cfg 已加入 .gitignore，个人信息不会被提交到版本库
+
+%% ============================
+%% 必填字段
+%% ============================
+% \caucsetup{
+%   StudentName=,          % [必填] 学生姓名
+%   StudentNameEng=,       % [必填: 研究生] 学生英文姓名
+%   StudentID=,            % [必填] 学号
+%   AdvisorName=,          % [必填] 指导教师姓名
+%   AdvisorNameEng=,       % [必填: 研究生] 指导教师英文姓名
+%   AdvisorNameEngSecond=, % [选填: 学术硕士] 第二指导教师英文姓名
+%   AdvisorNameOut=,       % [必填: 专业硕士] 校外指导教师姓名
+%   AdvisorNameEngOut=,    % [必填: 专业硕士、博士] 校外指导教师英文姓名
+%   Grade=,                % [必填: 本科] 年级
+%   Major=,                % [必填] 专业
+%   Department=,           % [必填] 学院
+%   DepartmentEng=,        % [必填: 研究生] 学院英文名
+%   Title=,                % [必填] 论文中文题目
+%   TitleEng=,             % [必填: 研究生] 论文英文题目
+%   SubmitYear=,           % [必填] 提交年份（留空则自动检测）
+%   SubmitMonth=,          % [必填] 提交月份（留空则自动检测）
+%   SubmitDay=,            % [选填] 提交日期
+%   DefenseYear=,          % [必填: 研究生] 答辩年份
+%   DefenseMonth=,         % [必填: 研究生] 答辩月份
+%   DefenseDay=,           % [必填: 研究生] 答辩日期
+%   DefenseDateEng=,       % [必填: 研究生] 答辩日期英文
+%   ResearchInterest=,     % [必填: 研究生] 研究方向
+%   CLCNumber=,            % [必填: 研究生] 中图分类号
+%   UDCNumber=,            % [必填: 研究生] UDC分类号
+%   Keywords=,             % [必填] 中文关键词
+%   KeywordsEng=,          % [必填: 研究生] 英文关键词
+% }
+
+%% ============================
+%% 高级设置
+%% ============================
+
+% ---- 格式调整 ----
+% \caucsetup{
+%   linespacing=1.5,
+%   period=final,
+% }
+
+% ---- 封面配置 ----
+% \caucsetup{
+%   coverinfowidth=240pt,
+%   coverlabelwidth=11em,
+% }

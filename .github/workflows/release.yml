@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-xetex texlive-lang-chinese texlive-science texlive-bibtex-extra latexmk
+
+      - name: Verify compilation
+        run: |
+          for f in examples/*.tex; do
+            echo "Compiling $f..."
+            latexmk -xelatex -interaction=nonstopmode "$f" || true
+          done
+
+      - name: Create release archive
+        run: |
+          git archive --format=zip --prefix=cauc-thesis/ HEAD -o cauc-thesis.zip
+          git archive --format=tar.gz --prefix=cauc-thesis/ HEAD -o cauc-thesis.tar.gz
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            cauc-thesis.zip
+            cauc-thesis.tar.gz
+          generate_release_notes: true

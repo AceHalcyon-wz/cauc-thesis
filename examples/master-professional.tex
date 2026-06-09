@@ -1,0 +1,139 @@
+\documentclass[
+	degree              = master-professional,
+	StudentName         = 张三,
+	StudentNameEng      = {San Zhang},
+	StudentID           = 2021123456,
+	AdvisorName         = 李四,
+	AdvisorNameEng      = {Si Li},
+	AdvisorNameOut      = 王五,
+	AdvisorNameEngOut   = {Wu Wang},
+	Grade               = 2021,
+	Major               = 电子信息硕士,
+	Department          = 计算机学院,
+	DepartmentEng       = {College of Computer Science},
+	ResearchInterest    = 计算机技术,
+	SubmitYear		    = 2024,
+	SubmitMonth		    = 6,
+	SubmitDay           = 1,
+	DefenseYear         = 2024,
+	DefenseMonth        = 6,
+	DefenseDay          = 15,
+	DefenseDateEng      = {{June 15, 2024}},
+	CLCNumber           = TP391,
+	UDCNumber           = 004.9,
+	Title               = 基于XXX的YYY研究,
+	TitleEng            = {{Research on YYY Based on XXX}}
+]{cauc_thesis}
+
+\begin{document}
+
+\frontmatter
+
+\makecover
+
+\begin{abstract-zh}
+	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+
+	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+
+	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+\end{abstract-zh}
+
+\begin{abstract-en}
+	English abstract content goes here. It should correspond to the Chinese abstract above.
+
+	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+\end{abstract-en}
+
+\makefrontmatter
+\printnomenclature
+\clearpage
+
+\mainmatter
+\pagestyle{fancy}
+
+\chapter{绪论}
+
+\nomenclature{$\alpha$}{学习率}
+\nomenclature{$\beta$}{动量参数}
+\nomenclature{CNN}{卷积神经网络}
+\nomenclature{LSTM}{长短期记忆网络}
+
+\section{研究背景}
+
+研究背景内容。
+
+\section{研究目的与意义}
+
+研究目的与意义内容。
+
+\chapter{相关工作}
+
+相关工作内容。
+
+\chapter{研究方法}
+
+研究方法内容。
+
+\section{双语图表示例}
+
+\begin{thesisfigure}{系统总体架构}{Overall architecture of the system}{fig:architecture}
+    \includegraphics[width=\linewidth]{figures/fig1}
+\end{thesisfigure}
+
+\cref{fig:architecture}展示了系统的总体架构，包括数据层、服务层和应用层。
+
+\begin{thesistable}{各模块功能说明}{Functional description of each module}{tab:modules}{ccc}{
+    \toprule
+    模块名称 & 功能描述 & 技术栈 \\
+    \midrule
+    数据采集 & 多源数据接入与清洗 & Kafka + Spark \\
+    特征工程 & 特征提取与选择 & Scikit-learn \\
+    模型推理 & 在线预测服务 & TensorFlow Serving \\
+    \bottomrule
+}
+\end{thesistable}
+
+如\cref{tab:modules}所示，系统各模块分工明确、协同工作。
+
+\chapter{实验与分析}
+
+实验与分析内容。
+
+\chapter{结论}
+
+结论内容。
+
+\appendix
+\chapter{补充材料}
+
+\section{算法实现}
+
+\begin{algorithm}[!ht]
+\caption{梯度下降优化算法}
+\KwIn{目标函数 $f(\theta)$，学习率 $\eta$，迭代次数 $T$}
+\KwOut{优化后的参数 $\theta^*$}
+初始化 $\theta_0$\;
+\For{$t = 1, 2, \ldots, T$}{
+    计算梯度 $g_t \leftarrow \nabla f(\theta_{t-1})$\;
+    更新参数 $\theta_t \leftarrow \theta_{t-1} - \eta g_t$\;
+    \If{收敛条件满足}{
+        \textbf{break}\;
+    }
+}
+\Return $\theta_T$\;
+\end{algorithm}
+
+\backmatter
+
+\bibliography{reference}
+
+\begin{acknowledgment}
+	致谢内容。
+\end{acknowledgment}
+
+\begin{authorintro}
+	作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
+\end{authorintro}
+
+\end{document}

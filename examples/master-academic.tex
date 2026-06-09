@@ -1,0 +1,184 @@
+\documentclass[
+	degree              = master-academic,
+	StudentName         = 张三,
+	StudentNameEng      = {San Zhang},
+	StudentID           = 2021123456,
+	AdvisorName         = 李四,
+	AdvisorNameEng      = {Si Li},
+	AdvisorNameEngSecond= {Wu Wang},
+	Grade               = 2021,
+	Major               = 计算机科学与技术,
+	Department          = 计算机学院,
+	DepartmentEng       = {College of Computer Science},
+	ResearchInterest    = 人工智能,
+	SubmitYear		    = 2024,
+	SubmitMonth		    = 6,
+	SubmitDay           = 1,
+	DefenseYear         = 2024,
+	DefenseMonth        = 6,
+	DefenseDay          = 15,
+	DefenseDateEng      = {{June 15, 2024}},
+	CLCNumber           = TP391,
+	UDCNumber           = 004.9,
+	Title               = 基于XXX的YYY研究,
+	TitleEng            = {{Research on YYY Based on XXX}}
+]{cauc_thesis}
+
+% 也可以使用 \caucsetup 在导言区进行配置（与 \documentclass 选项等效）：
+% \caucsetup{
+%   declaration=true,     % 包含原创性声明
+%   openright=true,       % 章节从奇数页开始
+%   draft=false,          % 草稿模式
+%   blind=false,          % 盲审模式
+% }
+
+\begin{document}
+
+\frontmatter
+
+\makecover
+
+\begin{abstract-zh}
+	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+
+	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+
+	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+\end{abstract-zh}
+
+\begin{abstract-en}
+	English abstract content goes here. It should correspond to the Chinese abstract above.
+
+	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+\end{abstract-en}
+
+\makefrontmatter
+\printnomenclature
+\clearpage
+
+\mainmatter
+\pagestyle{fancy}
+
+\chapter{绪论}
+
+\nomenclature{$\alpha$}{学习率}
+\nomenclature{$\beta$}{动量参数}
+\nomenclature{CNN}{卷积神经网络}
+\nomenclature{LSTM}{长短期记忆网络}
+
+\section{研究背景}
+
+研究背景内容。
+
+\section{研究目的与意义}
+
+研究目的与意义内容。
+
+\chapter{相关工作}
+
+相关工作内容。
+
+\chapter{研究方法}
+
+研究方法内容。
+
+\section{双语图表示例}
+
+\begin{thesisfigure}{实验系统框架图}{Framework of the experimental system}{fig:framework}
+    \includegraphics[width=\linewidth]{figures/fig1}
+\end{thesisfigure}
+
+如\cref{fig:framework}所示，本系统由数据采集、特征提取和模型训练三个模块组成。
+
+\begin{thesistable}{不同方法的性能对比}{Performance comparison of different methods}{tab:comparison}{cccc}{
+    \toprule
+    方法 & 精度 & 召回率 & F1值 \\
+    \midrule
+    方法A & 0.92 & 0.89 & 0.90 \\
+    方法B & 0.94 & 0.91 & 0.92 \\
+    方法C & 0.91 & 0.88 & 0.89 \\
+    \bottomrule
+}[数据来源：实验室测试结果]
+\end{thesistable}
+
+\cref{tab:comparison}展示了三种方法的性能对比结果。
+
+\chapter{实验与分析}
+
+实验与分析内容。
+
+\section{定理环境示例}
+
+\begin{theorem}
+设 $A$ 为 $n$ 阶实对称矩阵，则 $A$ 的特征值均为实数。
+\end{theorem}
+
+\begin{proof}
+设 $\lambda$ 为 $A$ 的特征值，$x$ 为对应的特征向量，则 $Ax = \lambda x$。
+取共轭转置得 $x^* A^* = \bar{\lambda} x^*$，由于 $A$ 为实对称矩阵，$A^* = A$，
+故 $x^* A = \bar{\lambda} x^*$。左乘 $x$ 得 $x^* A x = \bar{\lambda} x^* x$，
+又 $x^* A x = \lambda x^* x$，故 $(\lambda - \bar{\lambda}) x^* x = 0$，
+因 $x \neq 0$，故 $\lambda = \bar{\lambda}$，即 $\lambda$ 为实数。
+\end{proof}
+
+\section{算法环境示例}
+
+\begin{algorithm}[!ht]
+\caption{二分查找算法}
+\KwIn{有序数组 $A[1..n]$，目标值 $target$}
+\KwOut{目标值的索引，若不存在则返回 $-1$}
+$left \leftarrow 1$, $right \leftarrow n$\;
+\While{$left \leq right$}{
+    $mid \leftarrow \lfloor (left + right) / 2 \rfloor$\;
+    \eIf{$A[mid] = target$}{
+        \Return $mid$\;
+    }{
+        \eIf{$A[mid] < target$}{
+            $left \leftarrow mid + 1$\;
+        }{
+            $right \leftarrow mid - 1$\;
+        }
+    }
+}
+\Return $-1$\;
+\end{algorithm}
+
+\section{横排图表示例}
+
+\begin{sidewaysfigure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/fig21a}
+    \bicaption{系统架构全景图}{Panoramic view of the system architecture}
+    \label{fig:panoramic}
+\end{sidewaysfigure}
+
+\begin{sidewaystable}[!ht]
+\caption{多模型多指标综合对比}\label{tab:wide}
+\begin{tabularx}{\textwidth}{Xcccccc}
+\toprule
+模型 & 精度 & 召回率 & F1值 & AUC & 训练时间(s) & 参数量(M) \\
+\midrule
+Model A & 0.92 & 0.89 & 0.90 & 0.95 & 120 & 25.6 \\
+Model B & 0.94 & 0.91 & 0.92 & 0.97 & 180 & 38.2 \\
+Model C & 0.91 & 0.88 & 0.89 & 0.93 & 90 & 15.8 \\
+\bottomrule
+\end{tabularx}
+\end{sidewaystable}
+
+\chapter{结论}
+
+结论内容。
+
+\backmatter
+
+\bibliography{reference}
+
+\begin{acknowledgment}
+	致谢内容。
+\end{acknowledgment}
+
+\begin{authorintro}
+	作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
+\end{authorintro}
+
+\end{document}

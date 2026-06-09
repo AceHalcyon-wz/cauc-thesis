@@ -1,51 +1,159 @@
-\usepackage{graphicx}
+%% ==================== 页面与排版 ====================
+% XeLaTeX提供原生Unicode支持和fontspec字体加载能力，是中文论文排版的基础引擎要求
+\RequirePackage{iftex}
+\ifxetex\else
+  \ifluatex
+    \ClassWarning{cauc_thesis}{LuaLaTeX detected. This template is optimized for XeLaTeX. Some features may not work correctly with LuaLaTeX.}%
+  \else
+    \ClassError{cauc_thesis}{%
+      This template requires XeLaTeX (recommended) or LuaLaTeX.%
+      \MessageBreak
+      Current engine is not compatible. Please switch your compiler.%
+      \MessageBreak
+      For TeX Live: latexmk -xelatex yourfile.tex%
+    }{%
+      Switch to XeLaTeX or LuaLaTeX engine to compile this template.%
+    }%
+    \stop
+  \fi
+\fi
+\RequirePackage{float}
+\RequirePackage{microtype}
+\ifxetex
+  \microtypecontext{spacing}
+\fi
+\ifluatex
+  \microtypecontext{spacing}
+\fi
+\RequirePackage{setspace}
+\RequirePackage{afterpage}
+\RequirePackage[top=\cauc@topmargin,bottom=\cauc@bottommargin,left=\cauc@leftmargin,right=\cauc@rightmargin]{geometry}
+
+%% ==================== 图形与表格 ====================
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
 \graphicspath{{figures/}}
-\usepackage{xeCJK}
-\usepackage{tabularx}
-\usepackage{multido}
-\usepackage{fontspec}
-\usepackage{tocloft}
-\usepackage{makecell}
-\usepackage{lmodern}
-\usepackage{xhfill}
-\usepackage{array}
-\usepackage{ragged2e}
-\usepackage{ulem}
-\usepackage[colorlinks,
+\RequirePackage{tabularx}
+\RequirePackage{makecell}
+\RequirePackage{array}
+\RequirePackage{caption}
+\RequirePackage{booktabs}
+\RequirePackage{longtable}
+\RequirePackage{multirow}
+\RequirePackage{subcaption}
+\RequirePackage{rotating}
+
+%% ==================== 字体与文字 ====================
+\RequirePackage{fontspec}
+\RequirePackage{ragged2e}
+\RequirePackage{ulem}
+\RequirePackage{zhnumber}
+
+%% ==================== 数学与算法 ====================
+\RequirePackage{bm, amsmath, amssymb}
+\def\cauc@@temp{times}%
+\ifx\cauc@mathfont\cauc@@temp
+  \RequirePackage{newtxmath}
+\fi
+\RequirePackage{siunitx}
+\sisetup{group-separator={\,}, group-minimum-digits=4}
+\ifcauc@graduate
+\RequirePackage[ruled,linesnumbered]{algorithm2e}
+\SetAlgorithmName{算法}{算法}{算法列表}
+\fi
+
+%% ==================== 代码与列表 ====================
+\RequirePackage{enumitem}
+\RequirePackage{listings}
+\definecolor{cauc@keywordcolor}{RGB}{0,0,180}
+\definecolor{cauc@commentcolor}{RGB}{0,128,0}
+\definecolor{cauc@stringcolor}{RGB}{180,0,0}
+\definecolor{cauc@green}{RGB}{28,172,0}
+\definecolor{cauc@lilas}{RGB}{170,55,241}
+\lstset{
+	basicstyle=\zihao{-4}\ttfamily,
+	keywordstyle=\color{cauc@keywordcolor}\bfseries,
+	commentstyle=\color{cauc@commentcolor},
+	stringstyle=\color{cauc@stringcolor},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=8pt,
+	backgroundcolor=\color{white},
+	frame=single,
+	rulecolor=\color{black!30},
+	breaklines=true,
+	breakatwhitespace=false,
+	tabsize=2,
+	showstringspaces=false,
+	captionpos=b,
+	extendedchars=true,
+	texcl=true,
+	escapeinside={(*@}{@*)}
+}
+
+%% ==================== 文档结构 ====================
+\RequirePackage{xparse}
+\RequirePackage{calc}
+\RequirePackage{titlesec}
+\RequirePackage{fancyhdr}
+\RequirePackage{appendix}
+\RequirePackage{titletoc}
+
+%% ==================== TikZ绘图 ====================
+\RequirePackage{tikz}
+
+%% ==================== 引用与交叉 ====================
+%% 引用宏包加载顺序：natbib -> hyperref -> cleveref（不可更改）
+% natbib须最先加载，hyperref须在natbib之后、cleveref之前加载，cleveref须最后加载
+% 新增宏包请在此段之前添加，或使用\AtBeginDocument避免干扰加载顺序
+\ifcauc@bachelor
+\RequirePackage[super,square,compress,comma]{natbib}
+\else
+\RequirePackage[sort&compress]{natbib}
+\fi
+\RequirePackage[colorlinks,
 	anchorcolor=black,
 	linkcolor=black,
 	citecolor=black,
-	urlcolor=black
+	urlcolor=black,
+	unicode,
+	pdfencoding=auto
 ]{hyperref}
-\usepackage{pdfpages}
-\usepackage{siunitx}
-\usepackage{caption}
-\captionsetup[table]{labelsep=space}
-\usepackage{chngcntr}
-\usepackage{enumitem}
-\usepackage{float}
-\usepackage{etoolbox}
-\usepackage{xparse}
-\usepackage{bookmark}
-\usepackage{calc}
+\hypersetup{
+	pdftitle={\cauc@Title},
+	pdfauthor={\cauc@StudentName},
+	pdfsubject={\ifcauc@bachelor Bachelor\else\ifcauc@doctor Doctor\else Master\fi\fi\ Thesis, \cauc@Department},
+	pdfkeywords={\cauc@Keywords},
+	pdfcreator={cauc\_thesis template with XeLaTeX}
+}
+\RequirePackage{bookmark}
+% 消除hyperref PDF书签中的间距命令警告（~、\enspace、\quad等在PDF字符串中不支持）
+\pdfstringdefDisableCommands{%
+  \def~{ }%
+  \def\enspace{ }%
+  \def\quad{ }%
+}
+\IfFileExists{xurl.sty}{\RequirePackage{xurl}}{}
+%% cleveref须在hyperref之后加载
+\RequirePackage{cleveref}
 
-\usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}%页面设置
-\usepackage{booktabs}%三线表
-\usepackage{latexsym, bm, amsmath, amssymb}%数学公式宏包
-\usepackage{wasysym}%数学直立积分号
-\usepackage{times}%Time New Roman字体
-\usepackage{titlesec}%设置章节标题格式
-\usepackage{cleveref}%使引用更方便
-\usepackage{fancyhdr}%页眉页脚页码
-\usepackage{epstopdf}%eps图片插入用PDFTeXify编译
-\usepackage{appendix}%附录
-\usepackage{listings}%插入附录的文档
-\usepackage{color}%red, green, blue, yellow, cyan, magenta, black, white
-\usepackage{zhnumber}
-\usepackage[super,square,compress,comma]{natbib}
-\usepackage{setspace}%行间距
-\usepackage{afterpage}%处理浮动对象
-\usepackage{multirow}%复杂表格排版
-\usepackage{subfig}%多图
-\usepackage{tikz}%绘图
-\usepackage{titletoc}
+%% ==================== 条件编译 ====================
+% PDF/A模式需加载pdfx宏包以生成符合存档标准的PDF文件
+\ifcauc@pdfa
+  \RequirePackage[a-2b,mathxmp]{pdfx}
+\fi
+
+% 研究生论文需要双语标题(bicaption)、符号说明(nomencl)和术语表(glossaries)，本科不需要
+\ifcauc@graduate
+  \RequirePackage{bicaption}
+  \captionsetup[figure][bi-second]{name=Fig.}
+  \captionsetup[table][bi-second]{name=Tab.}
+  \captionsetup{labelsep=space}
+  \captionsetup[table]{labelsep=space}
+  \RequirePackage{nomencl}
+  \RequirePackage{pifont}
+  \RequirePackage[toc,acronym,nonumberlist]{glossaries}
+\fi
+
+

@@ -1,42 +1,132 @@
-%--------------字体------------------
-\newcommand{\FakeBoldSize}{4}
+\newcommand{\cauc@fakebold@size}{4}
+\let\FakeBoldSize\cauc@fakebold@size
+\newcommand{\cauc@fangsong@boldsize}{2.167}
 
-%%%% 定义字体族简称
-% 一般的字体
-\setCJKfamilyfont{songti}{SimSun.ttf}[Path=fonts/]
-\setCJKfamilyfont{heiti}{SimHei.ttf}[Path=fonts/]
-\setCJKfamilyfont{kaiti}{KaiTi.ttf}[Path=fonts/]
-\setCJKfamilyfont{lishu}{LiSu.ttf}[Path=fonts/]
-% 粗体
-\setCJKfamilyfont{fakesong}{SimSun.ttf}[Path=fonts/, AutoFakeBold={\FakeBoldSize}]
-\setCJKfamilyfont{fakehei}{SimHei.ttf}[Path=fonts/, AutoFakeBold={\FakeBoldSize}]
-\setCJKfamilyfont{fakeli}{LiSu.ttf}[Path=fonts/, AutoFakeBold={\FakeBoldSize}]
+\newif\ifcauc@localfonts@available
+\cauc@localfonts@availabletrue
 
-%%%% 设置全文中英文主字体
-\setCJKmainfont[Path=fonts/]{SimSun.ttf}
-\setmainfont{Times New Roman} % 英文主字体
+\def\cauc@localfonts@detect{%
+  \IfFileExists{fonts/simsun.ttf}{}{\cauc@localfonts@availablefalse}%
+  \IfFileExists{fonts/simhei.ttf}{}{\cauc@localfonts@availablefalse}%
+  \IfFileExists{fonts/kaiti.ttf}{}{\cauc@localfonts@availablefalse}%
+  \IfFileExists{fonts/lisu.ttf}{}{\cauc@localfonts@availablefalse}%
+}
 
-%%%% 创建字体格式设置命令
-% 伪粗体
-\newcommand{\fakehei}{\CJKfamily{fakehei}}
-\newcommand{\fakesong}{\CJKfamily{fakesong}}
-\newcommand{\fakeli}{\CJKfamily{fakeli}}
-% 正常体
-\renewcommand{\songti}{\CJKfamily{songti}}
-\renewcommand{\heiti}{\CJKfamily{heiti}}
+\ifx\cauc@localfonts\@empty
+  \cauc@localfonts@detect
+\else
+  \def\cauc@@temp{auto}%
+  \ifx\cauc@localfonts\cauc@@temp
+    \cauc@localfonts@detect
+  \else
+    \def\cauc@@temp{true}%
+    \ifx\cauc@localfonts\cauc@@temp
+      \cauc@localfonts@detect
+      \ifcauc@localfonts@available\else
+        \ClassError{cauc_thesis}{%
+          localfonts=true but font files not found in fonts/ directory.%
+          \MessageBreak
+          Please ensure fonts/simsun.ttf, fonts/simhei.ttf, fonts/kaiti.ttf, fonts/lisu.ttf exist.%
+          \MessageBreak
+          Falling back to system fonts.%
+        }{%
+          Place the required font files in the fonts/ directory, or set localfonts=false to use system fonts.%
+        }%
+      \fi
+    \else
+      \def\cauc@@temp{false}%
+      \ifx\cauc@localfonts\cauc@@temp
+        \cauc@localfonts@availablefalse
+      \else
+        \cauc@warning{Unknown localfonts value '\cauc@localfonts', expected: auto, true, false. Using auto.}%
+        \cauc@localfonts@detect
+      \fi
+    \fi
+  \fi
+\fi
 
-\newcommand{\chuhao}{\fontsize{42pt}{\baselineskip}\selectfont} % 初号
-\newcommand{\sanhao}{\fontsize{15.75pt}{\baselineskip}\selectfont} % 三号
-\newcommand{\sihao}{\fontsize{14pt}{\baselineskip}\selectfont} % 四号
-\newcommand{\xiaosi}{\fontsize{12pt}{\baselineskip}\selectfont} % 小四
-\newcommand{\wuhao}{\fontsize{10.5pt}{\baselineskip}\selectfont} % 五号
-\newcommand{\xiaowu}{\fontsize{9pt}{\baselineskip}\selectfont} % 小五
-\newcommand{\timu}{\fontsize{16pt}{\baselineskip}\selectfont\CJKfamily{heiti}} % 题目格式
-\newcommand{\zhaiyao}{\fontsize{16pt}{\baselineskip}\selectfont\CJKfamily{lishu}} % 摘要格式
+\ifcauc@localfonts@available
+  \IfFileExists{fonts/times.ttf}{}{\cauc@localfonts@availablefalse}
+  \IfFileExists{fonts/timesbd.ttf}{}{\cauc@localfonts@availablefalse}
+  \IfFileExists{fonts/timesi.ttf}{}{\cauc@localfonts@availablefalse}
+  \IfFileExists{fonts/timesbi.ttf}{}{\cauc@localfonts@availablefalse}
+\fi
 
-%%%% 目录字体
-\titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\quad}{}
-        {\titlerule*[10pt]{$\ldots$}\contentspage}
+\ifcauc@localfonts@available
+  % 宋体用于正文，黑体用于标题，楷体用于摘要关键词，隶书用于封面装饰
+  \setCJKfamilyfont{songti}{simsun.ttf}[Path=fonts/]
+  \setCJKfamilyfont{heiti}{simhei.ttf}[Path=fonts/]
+  \setCJKfamilyfont{kaiti}{kaiti.ttf}[Path=fonts/]
+  \setCJKfamilyfont{lishu}{lisu.ttf}[Path=fonts/]
 
-\titlecontents{section}[0pt]{\songti\zihao{-4}}{\quad\quad\thecontentslabel\quad}{}
-        {\titlerule*[10pt]{$\ldots$}\contentspage}
+  \setCJKfamilyfont{songtibold}{simsun.ttf}[Path=fonts/, AutoFakeBold={\cauc@fakebold@size}]
+  \setCJKfamilyfont{heitibold}{simhei.ttf}[Path=fonts/, AutoFakeBold={\cauc@fakebold@size}]
+  \setCJKfamilyfont{lishubold}{lisu.ttf}[Path=fonts/, AutoFakeBold={\cauc@fakebold@size}]
+  \setCJKfamilyfont{kaitibold}{kaiti.ttf}[Path=fonts/, AutoFakeBold={\cauc@fakebold@size}]
+
+  \IfFileExists{fonts/simfang.ttf}{%
+    \setCJKfamilyfont{fangsong}{simfang.ttf}[Path=fonts/, AutoFakeBold={\cauc@fangsong@boldsize}]%
+    \setCJKmonofont{simfang.ttf}[Path=fonts/, AutoFakeBold={\cauc@fangsong@boldsize}]%
+  }{%
+    \setCJKfamilyfont{fangsong}{simsun.ttf}[Path=fonts/, AutoFakeBold={\cauc@fangsong@boldsize}]%
+    \setCJKmonofont{simsun.ttf}[Path=fonts/, AutoFakeBold={\cauc@fangsong@boldsize}]%
+    \cauc@warning{FangSong font not found, falling back to SimSun for fangsong/monofont}%
+  }
+
+  % 宋体无斜体变体，用楷体替代宋体斜体，避免Font shape undefined警告
+  \setCJKmainfont[Path=fonts/, ItalicFont=kaiti.ttf]{simsun.ttf}
+  % fontset=none下需显式设置CJK无衬线字体族，黑体作为CJK sans-serif默认字体
+  \setCJKsansfont{simhei.ttf}[Path=fonts/]
+  \setmainfont{times.ttf}[Path=fonts/, BoldFont=timesbd.ttf, ItalicFont=timesi.ttf, BoldItalicFont=timesbi.ttf]
+\else
+  % 优先加载本地fonts/目录字体以确保跨平台一致性，不存在时回退到系统字体
+  \cauc@warning{Local font files not found in fonts/ directory. Falling back to system fonts.}
+
+  \setCJKfamilyfont{songti}{SimSun}
+  \setCJKfamilyfont{heiti}{SimHei}
+  \setCJKfamilyfont{kaiti}{KaiTi}
+  \setCJKfamilyfont{lishu}{LiSu}
+
+  \setCJKfamilyfont{songtibold}{SimSun}[AutoFakeBold={\cauc@fakebold@size}]
+  \setCJKfamilyfont{heitibold}{SimHei}[AutoFakeBold={\cauc@fakebold@size}]
+  \setCJKfamilyfont{lishubold}{LiSu}[AutoFakeBold={\cauc@fakebold@size}]
+  \setCJKfamilyfont{kaitibold}{KaiTi}[AutoFakeBold={\cauc@fakebold@size}]
+
+  \IfFontExistsTF{FangSong}{%
+    \setCJKfamilyfont{fangsong}{FangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+    \setCJKmonofont{FangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+  }{%
+    \IfFontExistsTF{STFangSong}{%
+      \setCJKfamilyfont{fangsong}{STFangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+      \setCJKmonofont{STFangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+    }{%
+      \setCJKfamilyfont{fangsong}{SimSun}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+      \setCJKmonofont{SimSun}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+      \cauc@warning{FangSong font not found, falling back to SimSun for fangsong/monofont}%
+    }%
+  }
+
+  % 宋体无斜体变体，用楷体替代宋体斜体，避免Font shape undefined警告
+  \setCJKmainfont{SimSun}[ItalicFont=KaiTi]
+  % fontset=none下需显式设置CJK无衬线字体族，黑体作为CJK sans-serif默认字体
+  \setCJKsansfont{SimHei}
+  \setmainfont{Times New Roman}
+\fi
+
+\newcommand{\heitibold}{\CJKfamily{heitibold}}
+\newcommand{\songtibold}{\CJKfamily{songtibold}}
+\newcommand{\lishubold}{\CJKfamily{lishubold}}
+\newcommand{\kaitibold}{\CJKfamily{kaitibold}}
+\let\fakehei\heitibold
+\let\fakesong\songtibold
+\let\fakeli\lishubold
+\let\fakekai\kaitibold
+% fontset=none下ctex不预定义字体命令，使用\DeclareDocumentCommand兼容"已存在"和"不存在"两种情况
+\DeclareDocumentCommand{\songti}{}{\CJKfamily{songti}}
+\DeclareDocumentCommand{\heiti}{}{\CJKfamily{heiti}}
+\newcommand{\kaiti}{\CJKfamily{kaiti}}
+\DeclareDocumentCommand{\lishu}{}{\CJKfamily{lishu}}
+\DeclareDocumentCommand{\fangsong}{}{\CJKfamily{fangsong}}
+
+\newcommand{\timu}{\fontsize{16pt}{\baselineskip}\selectfont\CJKfamily{heiti}}
+\newcommand{\zhaiyao}{\fontsize{16pt}{\baselineskip}\selectfont\CJKfamily{lishu}}

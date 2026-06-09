@@ -1,4 +1,20 @@
-%%%%% 目录设置
+% 本科目录格式：章节号前用\quad\quad缩进（2em），与原始模板一致
+\ifcauc@bachelor
+\titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\quad}{}
+        {\titlerule*[10pt]{$\ldots$}\contentspage}
+\titlecontents{section}[0pt]{\songti\zihao{-4}}{\quad\quad\thecontentslabel\quad}{}
+        {\titlerule*[10pt]{$\ldots$}\contentspage}
+\else
+% 研究生目录格式由下方 \dottedcontents 定义
+% 原始模板规范：研究生目录section使用\quad\quad前缀（与本科一致），subsection不单独定义
+\titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\quad}{}
+        {\titlerule*[10pt]{$\ldots$}\contentspage}
+\titlecontents{section}[0pt]{\songti\zihao{-4}}{\quad\quad\thecontentslabel\quad}{}
+        {\titlerule*[10pt]{$\ldots$}\contentspage}
+\fi
+
+% 本科目录使用阿拉伯数字章节号+点引导线，研究生目录使用中文数字章节号，符合各学位论文格式规范
+\ifcauc@bachelor
 \ctexset{
     chapter = {
         nameformat = {\bfseries\zihao{3}},
@@ -7,26 +23,116 @@
         aftername={\quad},
         name={第~,~章},
         beforeskip=-5pt,
-        afterskip=30pt
+        afterskip=30pt,
+        pagestyle=fancy
     },
     section = {
-        % name={,},
         name={},
         format={\bfseries\zihao{4}},
         aftername={\quad},
+        beforeskip=7pt,
+        afterskip=7pt
     },
     subsection = {
-        % name={,},
         name={},
         format={\heiti\zihao{-4}},
-        aftername={\quad}
+        aftername={\quad},
+        beforeskip=7pt,
+        afterskip=7pt
     },
-    contentsname={\centerline{\heiti\zihao{3}目~~录}},
+    % 原始模板规范：本科subsubsection间距7pt/7pt
+    subsubsection = {
+        name={},
+        format={\heiti\zihao{-4}},
+        aftername={\quad},
+        beforeskip=7pt,
+        afterskip=7pt
+    },
+    contentsname={\centerline{\heiti\zihao{3}\texorpdfstring{目~~录}{目录}}},
+    bibname={\centerline{\heiti\zihao{3}参考文献}},
+    paragraph={format={\zihao{-4}}}
+}
+\else
+\ctexset{
+    chapter = {
+        nameformat = {\heiti\zihao{3}},
+        format={\heiti\zihao{3}},
+        number={\zhnum{chapter}},
+        aftername={\enspace},
+        name={第,章},
+        beforeskip=-5pt,
+        afterskip=30pt,
+        pagestyle=fancy
+    },
+    section = {
+        name={},
+        format={\bfseries\zihao{4}},
+        aftername={\enspace},
+        beforeskip=24pt,
+        afterskip=6pt
+    },
+    subsection = {
+        name={},
+        format={\bfseries\zihao{4}},
+        aftername={\enspace},
+        beforeskip=12pt,
+        afterskip=6pt
+    },
+    subsubsection = {
+        name={},
+        format={\bfseries\zihao{4}},
+        aftername={\enspace},
+        beforeskip=6pt,
+        afterskip=6pt
+    },
+    contentsname={\centerline{\normalfont\heiti\zihao{3}\texorpdfstring{目\qquad 录}{目录}}},
+    bibname={\centerline{\heiti\zihao{3}参考文献}},
     paragraph={format={\zihao{-4}}}
 }
 
+% 研究生目录缩进：section 55pt = 1.5em(章节号) + 2.3em(标签宽) + 间距, subsection 70pt = 55pt + 15pt(层级偏移)
+\dottedcontents{section}[55pt]{}{2.3em}{5pt}
+\dottedcontents{subsection}[70pt]{}{2.3em}{5pt}
+\fi
 
-\titlespacing{\section}{0pt}{7pt}{7pt}%设置章节标题间距
-\titlespacing{\subsection}{0pt}{7pt}{7pt}%设置章节标题间距
-\titlespacing{\subsubsection}{0pt}{7pt}{7pt}%设置章节标题间距
+% 原始模板规范：本科tocdepth=2（目录显示到subsection），研究生tocdepth=4（目录显示到paragraph）
+% 原始模板中研究生tocdepth在commands.tex中设为4，覆盖contents.tex中的2
+\ifcauc@bachelor
 \setcounter{tocdepth}{2}
+\else
+\setcounter{tocdepth}{4}
+\fi
+
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+% 图/表/公式编号格式在 commands.tex 中 \counterwithin 之后设置，避免被覆盖
+
+\ifcauc@bachelor
+\IfFileExists{gbt7714-2005-numerical.bst}{%
+  \bibliographystyle{gbt7714-2005-numerical}%
+}{%
+  \ClassWarning{cauc_thesis}{%
+    Bibliography style file 'gbt7714-2005-numerical.bst' not found.%
+    \MessageBreak
+    Falling back to 'plain' style.%
+    \MessageBreak
+    Install: tlmgr install gbt7714%
+  }%
+  \bibliographystyle{plain}%
+}%
+\else
+\IfFileExists{gbt7714-numerical.bst}{%
+  \bibliographystyle{gbt7714-numerical}%
+}{%
+  \ClassWarning{cauc_thesis}{%
+    Bibliography style file 'gbt7714-numerical.bst' not found.%
+    \MessageBreak
+    Falling back to 'plain' style.%
+    \MessageBreak
+    Install: tlmgr install gbt7714%
+  }%
+  \bibliographystyle{plain}%
+}%
+\fi

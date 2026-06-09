@@ -1,30 +1,132 @@
-%%%% 导入文件
-\newcommand{\inputfiles}[1]{
-    \input{settings/#1}
+% 原始模板规范：所有学位类型baselineskip=20pt，小四号(12pt)下stretch=20/14.4≈1.389
+\ifx\cauc@linespacing\@empty
+  \setstretch{1.389}
+\else
+  \setstretch{\cauc@linespacing}
+\fi
+% 原始模板规范：本科默认pagestyle=empty，后续由fancyhdr接管
+\ifcauc@bachelor
+  \pagestyle{empty}
+\fi
+% footskip 经验值，用于将页码对齐到下边距
+\setlength{\footskip}{0.5552cm}
+
+\newcommand{\cauc@header@text}{}
+
+\newcommand{\cauc@setheader}{%
+  \ifx\cauc@headertext\@empty
+    \ifcauc@bachelor
+      \ifcauc@proposal
+        \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计（论文）开题报告}%
+      \else
+        \ifcauc@design
+          \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计}%
+        \else
+          \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计（论文）}%
+        \fi
+      \fi
+    \else
+      \ifcauc@doctor
+        \def\cauc@header@text{\zihao{-5}中国民航大学博士学位论文}%
+      \else
+        \def\cauc@header@text{\zihao{-5}中国民航大学硕士学位论文}%
+      \fi
+    \fi
+  \else
+    \def\cauc@header@text{\cauc@headertext}%
+  \fi
 }
-\inputfiles{packages}
-\inputfiles{fonts}
-\inputfiles{contents}
 
-%%%% 颜色
-\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
-\definecolor{mylilas}{RGB}{170,55,241}
-
-%%%% 
-\captionsetup[figure]{font={normalsize,rm},name={图},labelsep=quad} %设置图标题标号后面有一个空格
-\captionsetup[subfigure]{font={normalsize,rm},name={图},labelsep=quad} %设置图标题标号后面有一个空格
-
-%-----------基本页面设置------------------
-\setlength{\baselineskip}{20pt}
-\setlength{\topmargin}{-0.94cm}  %页眉高度1.5cm-1in
-\setlength{\footskip}{0.5552cm}  %页角高度1.75: 下边距2.5-0.0376*10.5-1.75
-\pagestyle{empty}
-\chead{\zihao{5}中国民航大学本科毕业设计（论文）}% 使用rhead 定义右侧上方页眉
-\rhead{~}% 设置左侧页眉为空
-\lhead{~}% 设置右侧页眉为空
-\cfoot{\thepage}% 设定页脚为页码
+\AtBeginDocument{%
+  \cauc@setheader
+  \chead{\cauc@header@text}%
+}
+\rhead{~}
+\lhead{~}
+\cfoot{\thepage}
 \renewcommand{\headrulewidth}{0.5pt}
 \setlength{\headsep}{0.624cm}
+\newlength{\cauc@headheight}
+\settoheight{\cauc@headheight}{\small\strut}
+\addtolength{\cauc@headheight}{6pt}
+\setlength{\headheight}{\cauc@headheight}
+% 原始模板规范：topmargin固定值-0.94cm，与原始模板一致
+\setlength{\topmargin}{-0.94cm}
 
+% 章节起始页页眉控制：headeronplain=true 时显示页眉（与原始模板一致），false 时不显示
+\ifcauc@headeronplain
+  \fancypagestyle{plain}{
+      \fancyhf{}
+      \fancyhead[C]{\cauc@header@text}
+      \fancyfoot[C]{\thepage}
+      \renewcommand{\headrulewidth}{0.5pt}
+  }
+\fi
 
+% 双面打印时偶数页页眉显示在左侧(CE)，奇数页在右侧(CO)，符合学位论文装订规范
+\ifcauc@twoside
+  \fancypagestyle{blank}{%
+    \fancyhf{}%
+    \ifcauc@blankpagestandard
+      \fancyhead[CE,CO]{\cauc@header@text}%
+      \fancyfoot[CE,CO]{\thepage}%
+    \fi
+    \renewcommand{\headrulewidth}{0.5pt}%
+  }
+  \renewcommand{\cleardoublepage}{%
+    \clearpage
+    \if@twoside
+      \ifodd\c@page\else
+        \hbox{}%
+        \thispagestyle{blank}%
+        \newpage
+      \fi
+    \fi
+  }
+  \pagestyle{fancy}
+  \fancyhf{}
+  \fancyhead[CE,CO]{\cauc@header@text}
+  \fancyfoot[CE,CO]{\thepage}
+  \renewcommand{\headrulewidth}{0.5pt}
+\fi
 
+\ifx\cauc@captionlabelsep\@empty
+  \captionsetup[figure]{font={normalsize,rm},name={图},labelsep=quad}
+  \captionsetup[subfigure]{font={normalsize,rm},name={图},labelsep=quad}
+  \captionsetup[table]{labelsep=space}
+\else
+  \captionsetup[figure]{font={normalsize,rm},name={图},labelsep=\cauc@captionlabelsep}
+  \captionsetup[subfigure]{font={normalsize,rm},name={图},labelsep=\cauc@captionlabelsep}
+  \captionsetup[table]{labelsep=\cauc@captionlabelsep}
+\fi
+
+\setlist[1]{itemindent=2em}
+
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=3em
+\tolerance=200
+
+\raggedbottom
+
+\renewcommand{\listfigurename}{\centerline{\heiti\zihao{3}插图目录}}
+\renewcommand{\listtablename}{\centerline{\heiti\zihao{3}表格目录}}
+
+\ifcauc@draft
+  \RequirePackage{lineno}
+  \linenumbers
+  \@ifundefined{AddToHook}{%
+    \PackageWarning{cauc_thesis}{Draft watermark requires LaTeX 2020-10-01 or later}%
+  }{%
+    \AddToHook{shipout/background}{%
+      \put(0.5\paperwidth,0.5\paperheight){%
+        \makebox[0pt]{\textcolor[gray]{0.9}{\fontsize{5cm}{5cm}\selectfont\cauc@draftwatermark}}%
+      }%
+    }%
+  }
+\fi
+\ifcauc@lineno
+  \@ifpackageloaded{lineno}{}{\RequirePackage{lineno}}
+  \linenumbers
+\fi

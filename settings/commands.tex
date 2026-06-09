@@ -1,15 +1,441 @@
-\newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}%引用标在右上角
+% 原始模板规范：所有学位类型引用均为双重上标格式
+\newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
 
 \newcommand{\underlineFixlen}[2][3.5cm]{\underline{\makebox[#1][c]{#2}}}
 
-% \renewcommand{\contentsname}{\centerline{\sanhao\heiti目\quad 录}}
+\newlength{\cauc@saved@headsep}
+\newcommand{\cauc@abstractspacing}{%
+    \ifx\cauc@linespacing\@empty
+        % 原始模板规范：所有学位类型摘要均使用baselineskip=20pt(stretch≈1.389)
+        1.389%
+    \else
+        \cauc@linespacing
+    \fi
+}
 
-%%%% 标题
-\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}%一级标题前序号用中文序号
-\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}%二级标题
-\renewcommand{\thesubsubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}%三级标题
+\newcount\cauc@abstract@lines
 
-%%%% 图、表、公式
-\renewcommand {\thefigure} {\thechapter{}-\arabic{figure}}
-\renewcommand {\thetable} {\thechapter{}-\arabic{table}}
-\renewcommand {\theequation} {\thechapter{}-\arabic{equation}}
+\newenvironment{abstract-zh}{
+    \setlength{\cauc@saved@headsep}{\headsep}
+    \ifcauc@bachelor
+        \begin{center}
+            \zihao{3}\fakehei 摘\quad 要
+        \end{center}
+    \else
+        \chapter*{\heiti \texorpdfstring{摘\qquad 要}{摘要}}
+        \phantomsection
+        \addcontentsline{toc}{chapter}{\texorpdfstring{摘\qquad 要}{摘要}}
+    \fi
+    \markboth{}{}
+    \setlength{\headsep}{1.224cm}
+    % 原始模板规范：本科用\begin{center}排版标题，无afterskip，需手动间距；研究生用\chapter*，已有afterskip=30pt
+    \ifcauc@bachelor
+        \vspace{21pt}%
+    \fi
+    \zihao{-4}\songti
+    \cauc@abstract@lines=0%
+    \everypar{\advance\cauc@abstract@lines by \prevgraf}%
+    \begin{spacing}{\cauc@abstractspacing}
+}{%
+    \end{spacing}%
+    \advance\cauc@abstract@lines by \prevgraf
+    % 中文摘要阈值10行（约300字），依据学位论文规范最低字数要求
+    \ifnum\cauc@abstract@lines<10
+        \cauc@warning{Chinese abstract appears too short (approximately \the\cauc@abstract@lines\space lines, expected at least 300 characters / 10 lines)}%
+    \fi
+    \everypar{}%
+    \setlength{\headsep}{\cauc@saved@headsep}%
+}
+
+\newenvironment{abstract-en}{
+    \setlength{\cauc@saved@headsep}{\headsep}
+    \ifcauc@bachelor
+        \begin{center}
+            \zihao{3}\textbf{Abstract}
+        \end{center}
+    \else
+        % 原始模板规范：研究生英文摘要标题使用\textbf（粗体），与中文摘要标题\heiti不同
+        \chapter*{\normalfont\zihao{3}\textbf{Abstract}}
+        \phantomsection
+        \addcontentsline{toc}{chapter}{Abstract}
+    \fi
+    \markboth{}{}
+    \setlength{\headsep}{1.224cm}
+    % 原始模板规范：本科需手动间距，研究生\chapter*已有afterskip
+    \ifcauc@bachelor
+        \vspace{21pt}%
+    \fi
+    \zihao{-4}
+    \cauc@abstract@lines=0%
+    \everypar{\advance\cauc@abstract@lines by \prevgraf}%
+    \begin{spacing}{\cauc@abstractspacing}
+}{%
+    \end{spacing}%
+    \advance\cauc@abstract@lines by \prevgraf
+    % 英文摘要阈值6行（约100词），依据学位论文规范最低字数要求
+    \ifnum\cauc@abstract@lines<6
+        \cauc@warning{English abstract appears too short (approximately \the\cauc@abstract@lines\space lines, expected at least 100 words / 6 lines)}%
+    \fi
+    \everypar{}%
+    \setlength{\headsep}{\cauc@saved@headsep}%
+}
+
+\newcount\cauc@keyword@count
+\newcommand{\cauc@check@keywords}[1]{%
+    \cauc@keyword@count=1%
+    \cauc@count@sep#1；\@nil
+    \ifnum\cauc@keyword@count<3
+        \cauc@warning{Keywords count (\the\cauc@keyword@count) is less than 3}%
+    \fi
+}
+\def\cauc@count@sep#1；#2\@nil{%
+    \ifx\relax#2\relax\else
+        \advance\cauc@keyword@count by 1\relax
+        \cauc@count@sep#2\@nil
+    \fi
+}
+
+\newcommand{\keywordszh}[1]{
+    % 原始模板规范：本科用\newline\newline，研究生用\newline；\leavevmode确保在垂直模式下也可用
+    \ifcauc@bachelor
+        \leavevmode\newline\leavevmode\newline\indent{\bfseries\zihao{-4} 关键词：}\zihao{-4}\songti #1
+    \else
+        \leavevmode\newline
+        \noindent{\bfseries\zihao{-4} 关键词：}\zihao{-4}\songti #1
+    \fi
+    \cauc@check@keywords{#1}
+}
+
+\newcommand{\keywordsen}[1]{
+    % 原始模板规范：本科用\newline\newline，研究生用\newline；博士英文关键词不使用\songti（默认Times New Roman）
+    \ifcauc@bachelor
+        \leavevmode\newline\leavevmode\newline\indent{\bfseries\zihao{-4} Key Words: }\zihao{-4}\songti #1
+    \else
+        \leavevmode\newline
+        \noindent{\bfseries\zihao{-4} Key words: }\zihao{-4}%
+        \ifcauc@doctor\else\songti\fi #1
+    \fi
+}
+
+\newenvironment{acknowledgment}{
+    \chapter*{\heiti \texorpdfstring{致\qquad 谢}{致谢}}
+    \phantomsection
+    \addcontentsline{toc}{chapter}{\texorpdfstring{致\qquad 谢}{致谢}}
+    \markboth{}{}
+    \zihao{-4}\songti
+}{}
+
+% 研究生作者简介，原始模板规范要求
+\ifcauc@graduate
+\newenvironment{authorintro}{
+    \chapter*{\heiti 作者简介}
+    \phantomsection
+    \addcontentsline{toc}{chapter}{作者简介}
+    \markboth{}{}
+    \zihao{-4}\songti
+}{}
+\fi
+
+\newif\ifcauc@tabularx
+\newcommand{\cauc@if@tabularx}[1]{%
+    \cauc@tabularxfalse
+    \@tfor\cauc@temp:=#1\do{%
+        \expandafter\ifx\cauc@temp X\cauc@tabularxtrue\fi
+    }%
+}
+\NewDocumentCommand{\threelinetable}{m m m m m}{
+    \begin{table}[!ht]
+        \centering
+        \caption{#2}\label{#3}
+        \cauc@if@tabularx{#1}%
+        \ifcauc@tabularx
+            \begin{tabularx}{\textwidth}{#1}
+        \else
+            \begin{tabular}{#1}
+        \fi
+        \toprule
+        #4
+        \midrule
+        #5
+        \bottomrule
+        \ifcauc@tabularx
+            \end{tabularx}
+        \else
+            \end{tabular}
+        \fi
+    \end{table}
+}
+
+\RequirePackage{amsthm}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{proposition}[theorem]{命题}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{example}[theorem]{例}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{注}
+\renewcommand{\proofname}{证明}
+
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+\counterwithin{equation}{chapter}
+% 在 \counterwithin 之后设置编号格式，确保不被覆盖
+% 本科：图/表/公式用 - 分隔（如 1-1），研究生：表/公式用 . 分隔（如 1.1）
+\renewcommand{\thefigure}{\arabic{chapter}-\arabic{figure}}
+\ifcauc@bachelor
+\renewcommand{\thetable}{\arabic{chapter}-\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}-\arabic{equation}}
+\else
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+\fi
+\ifcauc@graduate
+\counterwithin{algocf}{chapter}
+\renewcommand{\thealgocf}{\arabic{chapter}.\arabic{algocf}}
+\fi
+
+\ifcauc@graduate
+\makenomenclature
+
+\renewcommand{\nomname}{\centerline{\heiti\zihao{3}符号说明}}
+
+\renewcommand{\nompreamble}{}
+\renewcommand{\nompostamble}{}
+
+\setlength{\nomlabelwidth}{2.5cm}
+\setlength{\nomitemsep}{0pt}
+
+\renewcommand{\nomgroup}[1]{%
+  \ifx#1A\item[\textbf{\heiti 缩略语}]%
+  \else\item[\textbf{\heiti 符号}]%
+  \fi
+}
+
+\renewcommand{\nomlabel}[1]{\textsf{#1}\hfill}
+
+% 原始模板规范：研究生四级标题使用\paragraph+换行，标题独占一行，正文另起一行
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+\setcounter{secnumdepth}{4}
+
+\renewcommand\thefootnote{\zihao{-5}\ding{\numexpr171+\value{footnote}}}
+
+\bibpunct{[}{]}{,}{n}{,}{,}
+
+\NewDocumentEnvironment{thesislongtable}{m m m m m o}{%
+    \setlength{\abovecaptionskip}{0cm}
+    \renewcommand\arraystretch{1.2}
+    \begin{longtable}{#4}
+        \bicaption{#1}{#2}\label{#3}\\
+        \toprule
+        #5 \\
+        \midrule
+    \endfirsthead
+        \bicaption{#1}{#2}（续）\\
+        \toprule
+        #5 \\
+        \midrule
+    \endhead
+        \midrule
+    \endfoot
+        \bottomrule
+    \endlastfoot
+}{%
+    \end{longtable}
+    \IfNoValueF{#6}{%
+        \linespread{1.0}\setlength{\parindent}{2em}
+        \par\smallskip
+        #6
+    }
+    \vspace{-10pt}
+}
+
+\fi
+
+\ifcauc@bachelor
+\providecommand{\printnomenclature}{%
+    \ClassWarning{cauc_thesis}{printnomenclature is only available in graduate mode}%
+}
+\bibpunct{[}{]}{,}{n}{,}{,}
+\fi
+
+\NewDocumentEnvironment{thesistable}{m m m m m o o}{%
+    \setlength{\abovecaptionskip}{0cm}
+    \begin{table}[!ht]
+        \renewcommand\arraystretch{1.2}
+        \ifcauc@bachelor
+            \caption{#1}
+        \else
+            \bicaption{#1}{#2}
+        \fi
+        \label{#3}
+        \vspace{-10pt}
+        \begin{center}
+        \cauc@if@tabularx{#4}%
+        \ifcauc@tabularx
+            \IfNoValueTF{#7}{%
+            \begin{tabularx}{\textwidth}{#4}%
+            }{%
+            \begin{tabularx}{#7}{#4}%
+            }%
+        \else
+            \begin{tabular}{#4}%
+        \fi
+            #5
+        \ifcauc@tabularx
+            \end{tabularx}
+        \else
+            \end{tabular}
+        \fi
+        \end{center}
+        \vspace{-5pt}
+        \IfNoValueF{#6}{%
+            \linespread{1.0}\setlength{\parindent}{2em}
+            \par\smallskip
+            #6
+        }
+        \vspace{-10pt}
+    \end{table}
+}{}
+
+\NewDocumentEnvironment{thesisfigure}{m m m O{0.8\textwidth} o}{%
+    \setlength{\abovecaptionskip}{0cm}
+    \begin{figure}[!ht]
+        \ifcauc@bachelor
+            \caption{#1}
+        \else
+            \bicaption{#1}{#2}
+        \fi
+        \label{#3}
+        \vspace{-10pt}
+        \begin{center}
+        \setlength{\linewidth}{#4}
+}{%
+        \end{center}
+        \vspace{-5pt}
+        \IfNoValueF{#5}{%
+            \linespread{1.0}\setlength{\parindent}{2em}
+            \par\smallskip
+            #5
+        }
+        \vspace{-10pt}
+    \end{figure}
+}
+
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}
+\crefname{equation}{式}{式}
+\crefname{chapter}{第\,章}{第\,章}
+\crefname{section}{第\,节}{第\,节}
+\crefname{subsection}{第\,小节}{第\,小节}
+\crefname{subsubsection}{第\,小小节}{第\,小小节}
+\crefname{paragraph}{第\,段}{第\,段}
+\crefname{appendix}{附录}{附录}
+\ifcauc@graduate
+\crefname{algocf}{算法}{算法}
+\fi
+\crefname{subfigure}{子图}{子图}
+\crefname{subtable}{子表}{子表}
+\Crefname{figure}{图}{图}
+\Crefname{table}{表}{表}
+\Crefname{equation}{式}{式}
+\Crefname{chapter}{第\,章}{第\,章}
+\Crefname{section}{第\,节}{第\,节}
+\Crefname{subsection}{第\,小节}{第\,小节}
+\Crefname{subsubsection}{第\,小小节}{第\,小小节}
+\Crefname{paragraph}{第\,段}{第\,段}
+\Crefname{appendix}{附录}{附录}
+\ifcauc@graduate
+\Crefname{algocf}{算法}{算法}
+\fi
+\Crefname{subfigure}{子图}{子图}
+\Crefname{subtable}{子表}{子表}
+
+\ifcauc@graduate
+\crefname{nomenclature}{符号说明}{符号说明}
+\Crefname{nomenclature}{符号说明}{符号说明}
+\fi
+
+\renewcommand{\appendixname}{附录}
+\renewcommand{\appendixtocname}{附录}
+
+\g@addto@macro\appendix{%
+    \renewcommand{\chaptername}{附录}%
+    \ifcauc@bachelor\else
+        \renewcommand{\thechapter}{\Alph{chapter}}%
+    \fi
+}
+\ifcauc@graduate
+\renewcommand{\listalgorithmcfname}{\centerline{\heiti\zihao{3}算法列表}}
+\fi
+
+\newcommand{\makereviewpage}{%
+    \ifcauc@graduate
+        \newpage
+        \thispagestyle{empty}
+        \begin{center}
+            \vspace*{2cm}
+            {\zihao{3}\heiti 答辩委员会评语}\\[2cm]
+            \begin{minipage}{0.85\textwidth}
+                \zihao{4}\songti
+                \vspace{8cm}
+            \end{minipage}\\[1cm]
+            {\zihao{4}答辩委员会主席签字：\underline{\hspace{4cm}}}\\[1.5cm]
+            {\zihao{4}日期：\underline{\hspace{4cm}}}
+        \end{center}
+    \fi
+}
+
+\newcommand{\cauccheck}{%
+    \typeout{===== CAUC Thesis Template Configuration =====}%
+    \typeout{Degree type: \cauc@degree}%
+    \typeout{Bachelor: \ifcauc@bachelor true\else false\fi}%
+    \typeout{Graduate: \ifcauc@graduate true\else false\fi}%
+    \typeout{Doctor: \ifcauc@doctor true\else false\fi}%
+    \typeout{Master: \ifcauc@master true\else false\fi}%
+    \typeout{Master-Academic: \ifcauc@masteracademic true\else false\fi}%
+    \typeout{Master-Professional: \ifcauc@masterprofessional true\else false\fi}%
+    \typeout{Period: \ifcauc@proposal proposal\else final\fi}%
+    \typeout{Student Name: \cauc@StudentName}%
+    \typeout{Title: \cauc@Title}%
+    \typeout{Local Fonts: \ifcauc@localfonts@available true\else false\fi}%
+    \typeout{Local Fonts Option: \ifx\cauc@localfonts\@empty auto\else\cauc@localfonts\fi}%
+    \typeout{Draft Mode: \ifcauc@draft true\else false\fi}%
+    \typeout{Line Numbers: \ifcauc@lineno true\else false\fi}%
+    \typeout{Blind Review: \ifcauc@blind true\else false\fi}%
+    \typeout{PDF/A: \ifcauc@pdfa true\else false\fi}%
+    \typeout{Two-side: \ifcauc@twoside true\else false\fi}%
+    \typeout{Open Right: \ifcauc@openright true\else false\fi}%
+    \typeout{Engine: \ifxetex XeLaTeX\else\ifluatex LuaLaTeX\else pdfLaTeX\fi\fi}%
+    \typeout{Font Config: \ifcauc@localfonts@available local (fonts/ directory)\else system fonts\fi}%
+    \typeout{Math Font: \ifx\cauc@mathfont\@empty cm\else\cauc@mathfont\fi}%
+    \typeout{Bibliography Style: \ifcauc@bachelor gbt7714-2005-numerical\else gbt7714-numerical\fi}%
+    \typeout{Line Spacing: \ifx\cauc@linespacing\@empty 1.389\else\cauc@linespacing\fi}%
+    \typeout{Abstract Line Spacing: \cauc@abstractspacing}%
+    \typeout{Page Margins: top=\cauc@topmargin, bottom=\cauc@bottommargin, left=\cauc@leftmargin, right=\cauc@rightmargin}%
+    \typeout{PDF/A Mode: \ifcauc@pdfa enabled\else disabled\fi}%
+    \typeout{Widow/Club Penalty: \the\widowpenalty/\the\clubpenalty}%
+    \typeout{Page Alignment: raggedbottom}%
+    \typeout{Package: natbib \@ifundefined{natbibversion}{unknown}{\natbibversion}}%
+    \typeout{Package: booktabs \@ifundefined{booktabs@version}{unknown}{\booktabs@version}}%
+    \typeout{===== End Configuration =====}%
+}
+
+\newcommand{\makefrontpages}{%
+    \makecover
+    \makefrontmatter
+}
+
+\@ifundefined{addbibresource}{%
+    \let\cauc@orig@bibliography\bibliography
+    \renewcommand{\bibliography}[1]{%
+        \cauc@orig@bibliography{#1}%
+        \addcontentsline{toc}{chapter}{参考文献}%
+    }%
+}{%
+}

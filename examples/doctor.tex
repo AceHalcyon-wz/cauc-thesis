@@ -1,0 +1,202 @@
+\documentclass[
+	degree              = doctor,
+	StudentName         = 张三,
+	StudentNameEng      = {San Zhang},
+	StudentID           = 2020123456,
+	AdvisorName         = 李四,
+	AdvisorNameEng      = {Si Li},
+	AdvisorNameEngOut   = {Wu Wang},
+	Grade               = 2020,
+	Major               = 计算机科学与技术,
+	Department          = 计算机学院,
+	DepartmentEng       = {College of Computer Science},
+	ResearchInterest    = 人工智能,
+	SubmitYear		    = 2024,
+	SubmitMonth		    = 6,
+	SubmitDay           = 1,
+	DefenseYear         = 2024,
+	DefenseMonth        = 6,
+	DefenseDay          = 15,
+	DefenseDateEng      = {{June 15, 2024}},
+	CLCNumber           = TP391,
+	UDCNumber           = 004.9,
+	Title               = 基于XXX的YYY研究,
+	TitleEng            = {{Research on YYY Based on XXX}}
+]{cauc_thesis}
+
+\begin{document}
+
+\frontmatter
+
+\makecover
+
+\begin{abstract-zh}
+	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+
+	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+
+	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+\end{abstract-zh}
+
+\begin{abstract-en}
+	English abstract content goes here. It should correspond to the Chinese abstract above.
+
+	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+\end{abstract-en}
+
+\makefrontmatter
+\printnomenclature
+\clearpage
+
+\mainmatter
+\pagestyle{fancy}
+
+\chapter{绪论}\label{ch:intro}
+
+\nomenclature{$\alpha$}{学习率}
+\nomenclature{$\beta$}{动量参数}
+\nomenclature{CNN}{卷积神经网络}
+\nomenclature{LSTM}{长短期记忆网络}
+
+\section{研究背景}
+
+研究背景内容。
+
+\section{研究目的与意义}
+
+研究目的与意义内容。
+
+\chapter{文献综述}
+
+文献综述内容。
+
+\section{研究现状}
+
+如\cref{ch:intro}所述，本研究的核心问题在于如何提升模型泛化能力。近年来，深度学习方法在该领域取得了显著进展\upcite{he2016deep,zhang2020deep}。
+
+\begin{thesisfigure}{研究发展趋势}{Development trends of related research}{fig:trend}
+    \includegraphics[width=\linewidth]{figures/fig2a}
+\end{thesisfigure}
+
+\cref{fig:trend}展示了近年来相关研究的发展趋势。
+
+\chapter{研究方法}\label{ch:method}
+
+\section{理论基础}
+
+\begin{lemma}\label{lem:rank}
+设 $A$ 为 $m \times n$ 矩阵，$B$ 为 $n \times p$ 矩阵，则 $\operatorname{rank}(AB) \leq \min\{\operatorname{rank}(A), \operatorname{rank}(B)\}$。
+\end{lemma}
+
+\begin{proof}
+由矩阵乘法的定义可知 $AB$ 的列空间包含于 $A$ 的列空间，$AB$ 的行空间包含于 $B$ 的行空间，结论显然。
+\end{proof}
+
+\begin{corollary}
+若 $A$ 为可逆矩阵，则 $\operatorname{rank}(AB) = \operatorname{rank}(B)$。
+\end{corollary}
+
+\begin{proof}
+由\cref{lem:rank}知 $\operatorname{rank}(AB) \leq \operatorname{rank}(B)$，又 $B = A^{-1}(AB)$，故 $\operatorname{rank}(B) \leq \operatorname{rank}(AB)$，从而等号成立。
+\end{proof}
+
+\section{方法框架}
+
+\begin{thesisfigure}{所提方法的整体框架}{Overall framework of the proposed method}{fig:method}
+    \includegraphics[width=\linewidth]{figures/fig1}
+\end{thesisfigure}
+
+\cref{fig:method}展示了本研究所提方法的整体框架。该方法包含三个核心阶段：数据预处理、特征学习和模型优化。
+
+\chapter{实验与分析}\label{ch:experiment}
+
+\section{定理环境示例}
+
+\begin{theorem}
+设 $f(x)$ 在 $[a,b]$ 上连续，在 $(a,b)$ 上可导，则存在 $\xi \in (a,b)$ 使得
+\[
+f'(\xi) = \frac{f(b)-f(a)}{b-a}
+\]
+\end{theorem}
+
+\begin{proof}
+由拉格朗日中值定理的证明可得。
+\end{proof}
+
+\begin{definition}
+设 $X$ 是一个随机变量，其期望定义为
+\[
+E(X) = \int_{-\infty}^{+\infty} x f(x) dx
+\]
+其中 $f(x)$ 为 $X$ 的概率密度函数。
+\end{definition}
+
+\section{算法环境示例}
+
+\begin{algorithm}[!ht]
+\caption{快速排序算法}
+\KwIn{数组 $A[1..n]$}
+\KwOut{排序后的数组 $A$}
+\If{$n \leq 1$}{
+    \Return $A$\;
+}
+$p \leftarrow A[1]$\;
+$i \leftarrow 1$, $j \leftarrow n$\;
+\While{$i < j$}{
+    \While{$i < j$ \textbf{and} $A[j] \geq p$}{
+        $j \leftarrow j - 1$\;
+    }
+    $A[i] \leftarrow A[j]$\;
+    \While{$i < j$ \textbf{and} $A[i] \leq p$}{
+        $i \leftarrow i + 1$\;
+    }
+    $A[j] \leftarrow A[i]$\;
+}
+$A[i] \leftarrow p$\;
+递归排序 $A[1..i-1]$ 和 $A[i+1..n]$\;
+\Return $A$\;
+\end{algorithm}
+
+\section{横排图表示例}
+
+\begin{sidewaystable}[!ht]
+\caption{多模型多指标综合对比}\label{tab:wide}
+\begin{tabularx}{\textwidth}{Xcccccc}
+\toprule
+模型 & 精度 & 召回率 & F1值 & AUC & 训练时间(s) & 参数量(M) \\
+\midrule
+Model A & 0.92 & 0.89 & 0.90 & 0.95 & 120 & 25.6 \\
+Model B & 0.94 & 0.91 & 0.92 & 0.97 & 180 & 38.2 \\
+Model C & 0.91 & 0.88 & 0.89 & 0.93 & 90 & 15.8 \\
+\bottomrule
+\end{tabularx}
+\end{sidewaystable}
+
+\section{横排图示例}
+
+\begin{sidewaysfigure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/fig21a}
+    \bicaption{多尺度特征提取流程}{Multi-scale feature extraction pipeline}
+    \label{fig:pipeline}
+\end{sidewaysfigure}
+
+\chapter{结论与展望}
+
+本文围绕\cref{ch:intro}中提出的研究问题，从理论分析（\cref{ch:method}）和实验验证（\cref{ch:experiment}）两个层面进行了系统研究。\cref{fig:method}所示的方法框架在多个数据集上均取得了优异性能（见\cref{tab:wide}），验证了所提方法的有效性。
+
+未来工作将从以下方面展开：一是进一步优化\cref{fig:pipeline}中的多尺度特征提取策略，二是探索更高效的模型压缩方法。
+
+\backmatter
+
+\bibliography{reference}
+
+\begin{acknowledgment}
+	致谢内容。
+\end{acknowledgment}
+
+\begin{authorintro}
+	作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
+\end{authorintro}
+
+\end{document}

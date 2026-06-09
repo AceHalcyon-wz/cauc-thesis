@@ -1,0 +1,42 @@
+{
+    "name": "CAUC Thesis",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "forwardPorts": [],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "James-Yu.latex-workshop",
+                "mhutchie.git-graph",
+                "eamodio.gitlens"
+            ],
+            "settings": {
+                "latex-workshop.latex.tools": [
+                    {
+                        "name": "latexmk",
+                        "command": "latexmk",
+                        "args": [
+                            "-synctex=1",
+                            "-interaction=nonstopmode",
+                            "-file-line-error",
+                            "-xelatex",
+                            "-outdir=build",
+                            "%DOC%"
+                        ]
+                    }
+                ],
+                "latex-workshop.latex.recipes": [
+                    {
+                        "name": "latexmk",
+                        "tools": [
+                            "latexmk"
+                        ]
+                    }
+                ],
+                "latex-workshop.latex.outDir": "%DIR%/build",
+                "latex-workshop.view.pdf.viewer": "tab"
+            }
+        }
+    }
+}

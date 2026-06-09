@@ -1,0 +1,105 @@
+name: Compile
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: bachelor
+            degree: bachelor
+            extra_options: ""
+            engine: xelatex
+          - name: master-academic
+            degree: master-academic
+            extra_options: ""
+            engine: xelatex
+          - name: master-professional
+            degree: master-professional
+            extra_options: ""
+            engine: xelatex
+          - name: doctor
+            degree: doctor
+            extra_options: ""
+            engine: xelatex
+          - name: bachelor-design
+            degree: bachelor
+            extra_options: "Type=design"
+            engine: xelatex
+          - name: bachelor-declaration
+            degree: bachelor
+            extra_options: "declaration=true"
+            engine: xelatex
+          - name: master-academic-twoside
+            degree: master-academic
+            extra_options: "twoside=true"
+            engine: xelatex
+          - name: master-academic-blind
+            degree: master-academic
+            extra_options: "blind=true"
+            engine: xelatex
+          - name: master-academic-draft
+            degree: master-academic
+            extra_options: "draft=true"
+            engine: xelatex
+          - name: master-academic-pdfa
+            degree: master-academic
+            extra_options: "pdfa=true"
+            engine: xelatex
+          - name: master-academic-lineno
+            degree: master-academic
+            extra_options: "lineno=true"
+            engine: xelatex
+          - name: doctor-lualatex-mathfont-times
+            degree: doctor
+            extra_options: "mathfont=times,localfonts=false"
+            engine: lualatex
+
+    name: Compile ${{ matrix.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-xetex \
+            texlive-luatex \
+            texlive-lang-chinese \
+            texlive-science \
+            texlive-bibtex-extra \
+            texlive-fonts-recommended \
+            latexmk
+
+      - name: Prepare test file
+        run: |
+          cp examples/${{ matrix.degree }}.tex test_compile.tex
+          # 将 extra_options 注入 \documentclass 行，使 CI 真正测试各选项变体
+          if [ -n "${{ matrix.extra_options }}" ]; then
+            sed -i "s/\\]/,${{ matrix.extra_options }}]/" test_compile.tex
+          fi
+
+      - name: Compile with latexmk
+        run: |
+          latexmk -${{ matrix.engine || 'xelatex' }} test_compile.tex
+
+      - name: Check PDF size
+        run: |
+          pdf_size=$(stat -c%s build/test_compile.pdf 2>/dev/null)
+          max_size=5242880
+          if [ "$pdf_size" -gt "$max_size" ]; then
+            echo "::warning::PDF size exceeds 5MB ($(( pdf_size / 1024 / 1024 ))MB)"
+          fi
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: build/test_compile.pdf
