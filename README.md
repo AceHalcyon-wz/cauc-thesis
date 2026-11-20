@@ -47,14 +47,17 @@ xelatex -output-directory=build cauc_thesis.tex
 
 > 直接运行 `xelatex cauc_thesis.tex` 且不加 `-output-directory` 时，产物会输出到项目根目录。建议始终使用 `latexmk` 或上述命令。
 
-研究生论文若使用符号说明（`\printnomenclature`），需在 `bibtex` 之后额外执行：
+研究生论文若使用符号说明（`\printnomenclature`），需在首次 `xelatex` 与 `bibtex` 之后、最终两次 `xelatex` 之前插入 `makeindex` 步骤：
 
 ```bash
+xelatex -output-directory=build cauc_thesis.tex
+bibtex build/cauc_thesis
 makeindex -s nomencl.ist -o build/cauc_thesis.nls build/cauc_thesis.nlo
+xelatex -output-directory=build cauc_thesis.tex
 xelatex -output-directory=build cauc_thesis.tex
 ```
 
-latexmk 会自动处理此步骤，无需手动执行。
+`makeindex` 读取首次 `xelatex` 生成的 `.nlo`，随后仍需两次 `xelatex` 以稳定目录与页码。latexmk 会自动处理此步骤，无需手动执行。
 
 > 请勿安装 CTEX 集成包（与 TeX Live 冲突），此处 CTEX 指集成工具包，非 LaTeX 中的 `ctex` 宏包。
 
@@ -208,7 +211,7 @@ body/
 |-----------|------|
 | `theorem`/`lemma`/`corollary` 等 | 定理类环境，编号与章节关联 |
 | `algorithm`（algorithm2e） | 算法排版，支持 `\KwIn`/`\KwOut`/`\If`/`\For` 等命令（仅研究生） |
-| `sidewaystable`/`sidewaysfigure` | 横排图表，内容以横向页面显示 |
+| `sidewaystable`/`sidewaysfigure` | 横排图表，内容在页面内旋转 90° 排版 |
 | `lstlisting`（listings） | 代码排版，清单标题为“代码 X-1/X.1”，支持中文注释（`(*@中文@*)` 转义） |
 | `\appendix` | 附录模式，章节编号自动切换为大写字母 |
 
@@ -263,6 +266,8 @@ body/
 \caucsetup{draftwatermark=草稿}
 ```
 
+封面页不参与行号编号，避免行号覆盖封面信息。
+
 ### 盲审模式
 
 添加 `blind` 选项启用盲审模式，封面页隐藏学生姓名、学号等个人信息，PDF 元数据中的作者字段也会留空，适用于论文盲审场景：
@@ -281,13 +286,13 @@ body/
 
 ### 章首奇数页起排
 
-添加 `openright` 选项使章节从奇数页（右手页）开始，不足时自动插入空白页。所有学位类型默认关闭此选项（与原始模板一致）：
+添加 `openright` 选项使章节从奇数页（右手页）开始，不足时自动插入空白页。该选项隐含启用双面排版（`twoside`）。所有学位类型默认关闭此选项（与原始模板一致）：
 
 ```tex
 \documentclass[degree=doctor, openright, ...]{cauc_thesis}
 ```
 
-> `openright` 和 `twoside` 是**加载期选项**，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中。在导言区用 `\caucsetup{openright=true}` 无法改变已经加载的文档类选项。
+> `openright` 和 `twoside` 是**加载期选项**，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中。在导言区用 `\caucsetup{openright=true}` 无法改变已经加载的文档类选项；单独设置 `openright` 时会自动启用 `twoside`。
 
 ### 空白页样式
 
@@ -407,7 +412,7 @@ make wordcount
 
 常用配置键包括：`linespacing`（行距，所有学位类型默认 1.389 即 baselineskip=20pt）、`blankpage`（空白页样式）、`headeronplain`（章节起始页页眉）、`coverinfowidth`/`coverlabelwidth`（封面尺寸），以及 `StudentName`、`Title` 等个人信息字段。
 
-> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 选项或 `cauc_thesis.cfg` 中（配置文件在文档类与宏包加载前读取）。在 `\documentclass` 之后的导言区用 `\caucsetup` 设置这些键不会生效；`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage` 和目录开关则可以在导言区设置。
+> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 选项或 `cauc_thesis.cfg` 中（配置文件在文档类与宏包加载前读取）。在 `\documentclass` 之后的导言区用 `\caucsetup` 设置这些键不会生效；单独设置 `openright` 会自动启用 `twoside`。`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage` 和目录开关则可以在导言区设置。
 
 > **行距与间距说明**：所有学位类型正文行距均为 1.389（baselineskip=20pt），摘要行距均为 1.389（baselineskip=20pt），与原始模板规范一致。摘要标题与正文间距：本科由 `\begin{center}` 排版标题后手动添加 21pt 间距，研究生由 `\chapter*` 的 afterskip=30pt 自动提供。关键词与摘要正文间距：本科空一行，研究生仅换行，与原始模板规范一致。摘要标题字体：中文摘要标题使用黑体（\heiti），英文摘要标题使用粗体（\textbf），与原始模板规范一致。英文关键词字体：本科和硕士使用宋体（\songti），博士使用默认 Times New Roman，与原始模板规范一致。页码格式：封面不显示页码，也不生成 PDF 页面锚点；封面结束后前置部分从罗马数字 I 重新编号，因此研究生摘要为第 I 页，目录、插图目录、表格目录和符号说明依次编号。正文从阿拉伯数字 1 开始。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），但内部仍使用罗马数字编号以避免 PDF 页面锚点重名。正文字号：所有学位类型正文均为小四号（12pt）。目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。
 

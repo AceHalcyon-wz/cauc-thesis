@@ -46,11 +46,11 @@ latexmk -xelatex cauc_thesis
 | `Type` | `thesis` | 本科论文类型（thesis/design） |
 | `period` | `final` | 学位阶段（final/proposal） |
 | `blind` | `false` | 盲审模式 |
-| `draft` | `false` | 草稿模式（添加 DRAFT 水印） |
+| `draft` | `false` | 草稿模式（添加 DRAFT 水印，封面不显示行号） |
 | `lineno` | `false` | 仅启用行号，不添加草稿水印 |
 | `pdfa` | `false` | PDF/A-2b 输出 |
 | `twoside` | `false` | 双面打印模式 |
-| `openright` | `false` | 章节从奇数页开始 |
+| `openright` | `false` | 章节从奇数页开始（自动启用 `twoside`） |
 | `declaration` | `false` | 本科是否包含原创性声明页（研究生默认包含） |
 | `headeronplain` | `true` | 章节起始页是否显示页眉 |
 | `nocontents` | 未设置 | 关闭目录 |
@@ -122,16 +122,16 @@ latexmk -xelatex cauc_thesis
 
 ### 布尔选项
 
-以下布尔选项可在 `\caucsetup` 中设置。其中 `declaration`、`draft`、`blind`、`headeronplain`、`lineno` 也可直接写在 `\documentclass` 选项中；`pdfa`、`twoside`、`openright` 属于加载期选项，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中。`blankpage`、`listcontents`、`listfigures`、`listtables` 仅在 `\caucsetup` 中可用；`\documentclass` 中可使用 `nocontents`、`nofigures`、`notables` 关闭对应目录。
+以下布尔选项可在 `\caucsetup` 中设置。其中 `declaration`、`draft`、`blind`、`headeronplain`、`lineno` 也可直接写在 `\documentclass` 选项中；`pdfa`、`twoside`、`openright` 属于加载期选项，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中（`openright` 会自动启用 `twoside`）。`blankpage`、`listcontents`、`listfigures`、`listtables` 仅在 `\caucsetup` 中可用；`\documentclass` 中可使用 `nocontents`、`nofigures`、`notables` 关闭对应目录。
 
 | 选项 | 默认值 | 说明 |
 |------|--------|------|
 | `declaration` | `false` | 是否包含原创性声明和使用授权页（研究生默认包含，无需设置） |
-| `draft` | `false` | 草稿模式，显示行号和 DRAFT 水印 |
+| `draft` | `false` | 草稿模式，显示行号和 DRAFT 水印（封面不显示行号） |
 | `blind` | `false` | 盲审模式，隐藏个人信息 |
 | `pdfa` | `false` | 生成 PDF/A-2b 文档 |
 | `twoside` | `false` | 双面打印模式 |
-| `openright` | `false` | 章节从奇数页开始 |
+| `openright` | `false` | 章节从奇数页开始（自动启用 `twoside`） |
 | `blankpage` | `false` | 双面排版时空白页是否显示页眉页脚（仅 `\caucsetup`） |
 | `headeronplain` | `true` | 章节起始页是否显示页眉（默认 true 与原始模板一致） |
 | `listcontents` | `true` | 是否生成目录（仅 `\caucsetup`） |
@@ -139,7 +139,7 @@ latexmk -xelatex cauc_thesis
 | `listtables` | `true` | 是否生成表格目录（仅 `\caucsetup`） |
 | `lineno` | `false` | 启用行号 |
 
-> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中；在 `\documentclass` 之后的导言区用 `\caucsetup` 设置不会生效。其余键（`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage`、目录开关等）可以在导言区或 `cauc_thesis.cfg` 中设置。
+> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中；在 `\documentclass` 之后的导言区用 `\caucsetup` 设置不会生效（`openright` 会自动启用 `twoside`）。其余键（`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage`、目录开关等）可以在导言区或 `cauc_thesis.cfg` 中设置。
 
 ### 方式三：配置文件
 
@@ -335,9 +335,11 @@ English abstract content
 \end{thesislongtable}
 ```
 
+跨页后的续表使用“表题（续）”形式重复表头，不重复编号，也不会在表格目录中生成额外条目。
+
 ### `\threelinetable`（仅本科）
 
-本科三线表快捷命令，参数顺序为：列格式、中文表题、标签、表头、表体：
+本科三线表快捷命令，参数顺序为：列格式、中文表题、标签、表头、表体。表头行无需手动添加 `\\`，命令会自动补行结束符：
 
 ```latex
 \threelinetable{cc}{三线表示例}{tab:three}{表头1 & 表头2}{

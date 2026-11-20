@@ -12,7 +12,7 @@ $bibtex = 'bibtex';
 # 此处不要再根据 $lualatex 变量改写 $pdf_mode，否则默认引擎会被错误地设为 LuaLaTeX。
 $pdf_mode = 5;
 
-$clean_ext = 'aux log out toc lof lot bbl blg fls fdb_latexmk synctex.gz xdv nlo nls ilg idx ind thm bcf run.xml xmpdata xmp xmpi glo ist acn acr alg loa fgs';
+$clean_ext = 'aux log out toc lof lot bbl blg fls fdb_latexmk synctex.gz xdv nlo nls ilg idx ind thm bcf run.xml xmp xmpi glo ist acn acr alg loa fgs';
 
 add_cus_dep( 'nlo', 'nls', 0, 'makenomenclature' );
 sub makenomenclature {

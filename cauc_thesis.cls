@@ -251,12 +251,13 @@
   \providecommand{\cauc@rightmargin}{2.5cm}
 \fi
 
+% openright 在 oneside 下不会插入空白页，因此该选项隐含开启双面排版。
 \ifcauc@openright
-  \ifcauc@twoside
-    \PassOptionsToClass{twoside,openright}{ctexrep}
-  \else
-    \PassOptionsToClass{oneside,openright}{ctexrep}
+  \ifcauc@twoside\else
+    \cauc@twosidetrue
+    \ClassInfo{cauc_thesis}{Option 'openright' enables 'twoside'.}%
   \fi
+  \PassOptionsToClass{twoside,openright}{ctexrep}
 \else
   \ifcauc@twoside
     \PassOptionsToClass{twoside,openany}{ctexrep}
@@ -330,7 +331,11 @@
 
 \newcommand{\makecover}{%
     \makeatletter
+    % 封面不参与行号编号，避免草稿模式下行号出现在封面信息栏中。
+    \nolinenumbers
     \input{settings/cover}%
+    \ifcauc@draft\linenumbers\fi
+    \ifcauc@lineno\linenumbers\fi
     \makeatother
 }
 

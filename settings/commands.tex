@@ -150,7 +150,7 @@
             \begin{tabular}{#1}
         \fi
         \toprule
-        #4
+        #4 \\
         \midrule
         #5
         \bottomrule
@@ -219,6 +219,9 @@
 % 使其自动生成“符号说明”目录条目，并保留原有的可选参数。
 \let\cauc@orig@printnomenclature\printnomenclature
 \renewcommand{\printnomenclature}{%
+  % openright 下若需要插入空白页，应在写入目录条目之前完成，
+  % 确保条目页码指向符号说明首页；openany 下保持普通换页。
+  \ifcauc@openright\cleardoublepage\else\clearpage\fi
   \phantomsection
   \addcontentsline{toc}{chapter}{符号说明}%
   \cauc@orig@printnomenclature
@@ -241,7 +244,7 @@
         #5 \\
         \midrule
     \endfirsthead
-        \bicaption{#1（续）}{#2 (continued)}\\
+        \bicaption*{#1（续）}{#2 (continued)}\\
         \toprule
         #5 \\
         \midrule

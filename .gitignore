@@ -28,8 +28,9 @@
 *.dvi
 *.xdv
 *.ps
-*.pdf
-!README.pdf
+# 仅忽略编译生成的 PDF，保留 figures/ 等目录中的 PDF 插图资源
+/*.pdf
+/examples/*.pdf
 *.xmpi
 *.synctex(busy)
 *.nav

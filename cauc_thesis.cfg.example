@@ -83,5 +83,5 @@
 %   mathfont=times,       % cm/times；times 需 newtxmath
 %   pdfa=false,           % PDF/A-2b；需 colorprofiles 或根目录 ICC
 %   twoside=false,
-%   openright=false,
+%   openright=false,      % 设为 true 时章节从奇数页起排，并自动启用 twoside
 % }

@@ -272,7 +272,7 @@ sudo pacman -S noto-fonts-cjk wqy-microhei
 
 ### Q23: 在导言区用 \caucsetup 设置 twoside/openright/pdfa 不生效
 
-**A:** `degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 是加载期选项，必须在 `\documentclass` 中设置，或写入 `cauc_thesis.cfg`（模板在加载文档类与宏包之前读取该文件）。在 `\documentclass` 之后的导言区再设置时，文档类/宏包已经加载完成，无法改变已生效的选项。`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage` 和目录开关则可以在导言区设置。
+**A:** `degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 是加载期选项，必须在 `\documentclass` 中设置，或写入 `cauc_thesis.cfg`（模板在加载文档类与宏包之前读取该文件）。在 `\documentclass` 之后的导言区再设置时，文档类/宏包已经加载完成，无法改变已生效的选项。单独设置 `openright` 时会自动启用 `twoside`，否则单面排版下 `\cleardoublepage` 不会插入空白页。`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage` 和目录开关则可以在导言区设置。
 
 ### Q24: 为什么前置部分的页码从 I 开始，封面没有页码
 
