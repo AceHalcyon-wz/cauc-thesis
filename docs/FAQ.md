@@ -6,8 +6,8 @@
 
 **A:** 本模板要求使用 XeLaTeX（推荐）或 LuaLaTeX 引擎编译。请确认：
 
-1. 已安装 TeX Live 2022 或更高版本
-2. 编译命令使用 `latexmk -xelatex` 而非 `pdflatex`
+1. 已安装 TeX Live 2022 或更高版本，或 MiKTeX
+2. 编译命令使用 `latexmk -xelatex`（或 `latexmk`，`.latexmkrc` 默认 XeLaTeX）而非 `pdflatex`
 3. 如果使用 VS Code LaTeX Workshop，在 settings.json 中配置 `"latex-workshop.latex.tools"` 使用 xelatex
 
 ### Q2: 编译报错 "fontspec Error: The font "FangSong" cannot be found"
@@ -44,7 +44,7 @@ latexmk -xelatex cauc_thesis
 1. 下载最新版本的 zip 包上传到 Overleaf
 2. 在 Menu 中将 Compiler 设置为 XeLaTeX
 3. 将 TeX Live version 设置为 2022 或更高
-4. 上传字体文件到 `fonts/` 目录（Overleaf 不包含本地字体）
+4. 如需与本地一致的字体，上传字体文件到 `fonts/` 目录；否则模板会回退到 Overleaf 的 TeX Live 字体
 
 ## 格式相关
 
@@ -93,7 +93,16 @@ latexmk -xelatex cauc_thesis
 \documentclass[degree=doctor,pdfa=true]{cauc_thesis}
 ```
 
-同时需要将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在**项目根目录**（不是 `fonts/`）。缺少该文件时模板会给出明确错误提示，而不是晦涩的 pdfx 报错。
+PDF/A 模式需要 `colorprofiles` 宏包（TeX Live 2022 及以上通常自带；MiKTeX 需安装）和完整的 `hyperref`；XeLaTeX 还需要 `puenc-greek.def`。若发行版没有 `colorprofiles`，需将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在**项目根目录**（不是 `fonts/`）。模板会先检查这些依赖并给出明确错误提示。
+
+> `pdfx` 在 XeLaTeX 下可能输出 `xdvipdfmx:warning: Could not find any valid object`，且 XMP 元数据默认不完整。若需要严格校验，建议使用 LuaLaTeX，并提供 `<主文件名>.xmpdata`（如 `cauc_thesis.xmpdata`）：
+>
+> ```latex
+> \Title{论文中文题目}
+> \Author{张三}
+> \Subject{中国民航大学学位论文}
+> \Keywords{关键词1, 关键词2}
+> ```
 
 ## 内容相关
 
@@ -185,7 +194,7 @@ latexmk -xelatex cauc_thesis
 \documentclass[degree=master-academic,mathfont=times]{cauc_thesis}
 ```
 
-默认数学字体为 Computer Modern（`mathfont=cm`），与正文 Times New Roman 风格不完全匹配。设置 `mathfont=times` 后会加载 `newtxmath` 宏包，使数学公式中的字母与正文 Times 风格一致。
+默认数学字体为 Computer Modern（`mathfont=cm`），与正文 Times New Roman 风格不完全匹配。设置 `mathfont=times` 后会加载 `newtxmath` 宏包，使数学公式中的字母与正文 Times 风格一致。`newtxmath` 属于 TeX Live 的 `texlive-fonts-extra`，MiKTeX 会自动安装 `newtx`；缺少时请先安装对应宏包。
 
 ### Q17: Linux/macOS 上编译报字体错误
 
@@ -263,7 +272,7 @@ sudo pacman -S noto-fonts-cjk wqy-microhei
 
 ### Q23: 在导言区用 \caucsetup 设置 twoside/openright/pdfa 不生效
 
-**A:** 这些是加载期选项，必须在 `\documentclass` 中设置，或写入 `cauc_thesis.cfg`（模板在加载文档类与宏包之前读取该文件）。在 `\documentclass` 之后的导言区再设置时，文档类/宏包已经加载完成，无法改变已生效的选项。
+**A:** `degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 是加载期选项，必须在 `\documentclass` 中设置，或写入 `cauc_thesis.cfg`（模板在加载文档类与宏包之前读取该文件）。在 `\documentclass` 之后的导言区再设置时，文档类/宏包已经加载完成，无法改变已生效的选项。`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage` 和目录开关则可以在导言区设置。
 
 ### Q24: 为什么前置部分的页码从 I 开始，封面没有页码
 

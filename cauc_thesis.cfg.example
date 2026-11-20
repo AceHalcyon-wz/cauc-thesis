@@ -44,21 +44,44 @@
 % ---- 格式调整 ----
 % \caucsetup{
 %   linespacing=1.5,
-%   period=final,
+%   period=final,          % final/proposal
+%   Type=thesis,           % 本科：thesis/design
+%   headertext=,           % 留空则按学位类型自动生成页眉
+%   captionlabelsep=quad,  % 图题/表题标签与标题的间距
+%   topmargin=2.5cm,
+%   bottommargin=2.5cm,
+%   leftmargin=2.5cm,
+%   rightmargin=2.5cm,
 % }
 
 % ---- 封面配置 ----
 % \caucsetup{
 %   coverinfowidth=240pt,
 %   coverlabelwidth=11em,
+%   coverlogo=./pic/pic1.jpg,
+%   coverimage=./pic/pic2.png,
+% }
+
+% ---- 目录与草稿 ----
+% \caucsetup{
+%   listcontents=true,
+%   listfigures=true,
+%   listtables=true,
+%   blankpage=false,       % 双面排版空白页是否显示页眉页脚
+%   headeronplain=true,    % 章节起始页是否显示页眉
+%   declaration=false,     % 本科是否包含声明页
+%   draft=false,
+%   lineno=false,
+%   blind=false,
+%   draftwatermark=DRAFT,
 % }
 
 % ---- 加载期选项（也可直接写在 \documentclass 中） ----
 % \caucsetup{
 %   degree=master-academic,
 %   localfonts=auto,      % auto/true/false
-%   mathfont=times,       % cm/times
-%   pdfa=false,           % 需要项目根目录下的 sRGB ICC 配置文件
+%   mathfont=times,       % cm/times；times 需 newtxmath
+%   pdfa=false,           % PDF/A-2b；需 colorprofiles 或根目录 ICC
 %   twoside=false,
 %   openright=false,
 % }

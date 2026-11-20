@@ -30,7 +30,7 @@
 latexmk -xelatex cauc_thesis.tex
 ```
 
-使用 LuaLaTeX 编译：
+`.latexmkrc` 默认使用 XeLaTeX，因此也可直接运行 `latexmk cauc_thesis.tex`。使用 LuaLaTeX 编译：
 
 ```bash
 latexmk -lualatex cauc_thesis.tex
@@ -63,7 +63,7 @@ latexmk 会自动处理此步骤，无需手动执行。
 1. 将项目打包为 `.zip` 上传至 Overleaf
 2. 在菜单中将编译器设置为 **XeLaTeX**
 3. 将主文档设置为 `cauc_thesis.tex`
-4. 确保 `fonts/` 目录中的字体文件完整上传
+4. 如需固定字体，确保 `fonts/` 目录中的字体文件完整上传；否则模板会回退到 Overleaf 的 TeX Live 字体
 
 > Overleaf 不支持自定义输出目录，编译产物将输出到项目根目录。本地编译时，`latexmk` 会自动将产物输出到 `build/` 目录。
 
@@ -162,6 +162,8 @@ body/
 
 使用 `\bibliography{reference}` 时，"参考文献"会自动出现在目录中，无需手动添加 `\addcontentsline`。手动添加会导致目录中出现重复条目。
 
+> 示例文件：`examples/bachelor.tex` 包含完整的 BibTeX 演示；研究生示例为避免不同 TeX Live 版本 BibTeX 对大型 bst 的兼容性差异，未放置 `\bibliography`。需要时在 `\backmatter` 后加入 `\bibliography{reference}` 即可。
+
 ### 图表环境
 
 模板提供 `thesisfigure` 和 `thesistable` 环境用于排版图和表格，支持中英文双语标题、自定义宽度、图注/表注等功能。本科模式还提供 `\threelinetable` 快捷命令（标准三线表：顶线、中线、底线），研究生模式提供 `thesislongtable` 跨页长表环境。
@@ -185,6 +187,15 @@ body/
 \end{thesistable}
 ```
 
+研究生跨页长表使用 `thesislongtable`。表体行直接写在 5 个必选参数之后，**不要**再套一层花括号：
+
+```tex
+\begin{thesislongtable}{中文表标题}{English Title}{tab:label}{cc}{表头1 & 表头2}
+数据1 & 数据2 \\
+数据3 & 数据4 \\
+\end{thesislongtable}
+```
+
 > 图题位于图下方，表题位于表上方，符合学位论文排版规范。研究生模式下 `thesisfigure`、`thesistable` 和 `thesislongtable` 自动生成中英文双语图题/表题；直接使用 `\caption` 的浮动体仍需手动调用 `\bicaption`。英文图题/表题不会重复写入插图目录和表格目录。
 
 > 各环境的完整参数说明和用法示例请参阅 [使用指南](docs/usage.md)。
@@ -198,7 +209,7 @@ body/
 | `theorem`/`lemma`/`corollary` 等 | 定理类环境，编号与章节关联 |
 | `algorithm`（algorithm2e） | 算法排版，支持 `\KwIn`/`\KwOut`/`\If`/`\For` 等命令（仅研究生） |
 | `sidewaystable`/`sidewaysfigure` | 横排图表，内容以横向页面显示 |
-| `lstlisting`（listings） | 代码排版，支持中文注释（`(*@中文@*)` 转义） |
+| `lstlisting`（listings） | 代码排版，清单标题为“代码 X-1/X.1”，支持中文注释（`(*@中文@*)` 转义） |
 | `\appendix` | 附录模式，章节编号自动切换为大写字母 |
 
 > 各环境的详细用法请参阅 [使用指南](docs/usage.md)。
@@ -211,17 +222,32 @@ body/
 \documentclass[degree=bachelor, declaration, ...]{cauc_thesis}
 ```
 
-- 研究生模式声明页默认包含在封面中，无需额外设置。
+- 研究生模式声明页默认包含在封面流程中，无需额外设置。
 
 ### PDF/A 输出
 
-添加 `pdfa` 选项生成符合 PDF/A-2b 标准的归档文档：
+添加 `pdfa` 选项生成 PDF/A-2b 文档：
 
 ```tex
 \documentclass[degree=bachelor, pdfa, ...]{cauc_thesis}
 ```
 
-> `pdfa` 选项建议在本地编译使用，Overleaf 可能因 ICC 色彩配置文件路径问题无法正常工作。使用前需将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在**项目根目录**（不是 `fonts/`），否则模板会给出明确错误提示。
+模板在加载 `hyperref` 之前加载 `pdfx`，确保 PDF/A 模式生效。PDF/A 输出需要：
+
+- `colorprofiles` 宏包（TeX Live 2022 及以上通常自带；MiKTeX 需安装 `colorprofiles`）；
+- 完整的 `hyperref` 安装（XeLaTeX 还需要 `puenc-greek.def`，部分 MiKTeX 安装缺失）；
+- 若发行版没有 `colorprofiles`，需将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在**项目根目录**（不是 `fonts/`），否则模板会给出明确错误提示。
+
+> `pdfx` 在 XeLaTeX 下可能输出 `xdvipdfmx:warning: Could not find any valid object`，且 XMP 元数据默认不完整。若需要严格的 PDF/A 校验或完整元数据，建议使用 LuaLaTeX，并在主文件旁提供 `<主文件名>.xmpdata`（如 `cauc_thesis.xmpdata`）：
+>
+> ```tex
+> \Title{论文中文题目}
+> \Author{张三}
+> \Subject{中国民航大学学位论文}
+> \Keywords{关键词1, 关键词2}
+> ```
+>
+> 模板不自动生成 `.xmpdata`；缺少该文件时 `pdfx` 会提示 `Metadata will be incomplete!`。Overleaf 上使用 PDF/A 还可能受 ICC 色彩配置文件路径限制，建议本地编译。
 
 ### 草稿模式
 
@@ -239,7 +265,7 @@ body/
 
 ### 盲审模式
 
-添加 `blind` 选项启用盲审模式，封面页隐藏学生姓名、学号等个人信息，摘要页隐藏作者信息，适用于论文盲审场景：
+添加 `blind` 选项启用盲审模式，封面页隐藏学生姓名、学号等个人信息，PDF 元数据中的作者字段也会留空，适用于论文盲审场景：
 
 ```tex
 \documentclass[degree=doctor, blind, ...]{cauc_thesis}
@@ -381,9 +407,9 @@ make wordcount
 
 常用配置键包括：`linespacing`（行距，所有学位类型默认 1.389 即 baselineskip=20pt）、`blankpage`（空白页样式）、`headeronplain`（章节起始页页眉）、`coverinfowidth`/`coverlabelwidth`（封面尺寸），以及 `StudentName`、`Title` 等个人信息字段。
 
-> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 选项或 `cauc_thesis.cfg` 中（配置文件在文档类与宏包加载前读取）。在 `\documentclass` 之后的导言区用 `\caucsetup` 设置这些键不会生效；`draft`、`lineno`、`linespacing`、`Type`、`period` 等则可以在导言区设置。
+> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 选项或 `cauc_thesis.cfg` 中（配置文件在文档类与宏包加载前读取）。在 `\documentclass` 之后的导言区用 `\caucsetup` 设置这些键不会生效；`declaration`、`draft`、`blind`、`lineno`、`linespacing`、`Type`、`period`、`headeronplain`、`blankpage` 和目录开关则可以在导言区设置。
 
-> **行距与间距说明**：所有学位类型正文行距均为 1.389（baselineskip=20pt），摘要行距均为 1.389（baselineskip=20pt），与原始模板规范一致。摘要标题与正文间距：本科由 `\begin{center}` 排版标题后手动添加 21pt 间距，研究生由 `\chapter*` 的 afterskip=30pt 自动提供。关键词与摘要正文间距：本科使用 `\newline\newline`，研究生使用 `\newline`，与原始模板规范一致。摘要标题字体：中文摘要标题使用黑体（\heiti），英文摘要标题使用粗体（\textbf），与原始模板规范一致。英文关键词字体：本科和硕士使用宋体（\songti），博士使用默认 Times New Roman，与原始模板规范一致。页码格式：封面不显示页码，也不生成 PDF 页面锚点；封面结束后前置部分从罗马数字 I 重新编号，因此研究生摘要为第 I 页，目录、插图目录、表格目录和符号说明依次编号。正文从阿拉伯数字 1 开始。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），但内部仍使用罗马数字编号以避免 PDF 页面锚点重名。正文字号：所有学位类型正文均为小四号（12pt）。目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。
+> **行距与间距说明**：所有学位类型正文行距均为 1.389（baselineskip=20pt），摘要行距均为 1.389（baselineskip=20pt），与原始模板规范一致。摘要标题与正文间距：本科由 `\begin{center}` 排版标题后手动添加 21pt 间距，研究生由 `\chapter*` 的 afterskip=30pt 自动提供。关键词与摘要正文间距：本科空一行，研究生仅换行，与原始模板规范一致。摘要标题字体：中文摘要标题使用黑体（\heiti），英文摘要标题使用粗体（\textbf），与原始模板规范一致。英文关键词字体：本科和硕士使用宋体（\songti），博士使用默认 Times New Roman，与原始模板规范一致。页码格式：封面不显示页码，也不生成 PDF 页面锚点；封面结束后前置部分从罗马数字 I 重新编号，因此研究生摘要为第 I 页，目录、插图目录、表格目录和符号说明依次编号。正文从阿拉伯数字 1 开始。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），但内部仍使用罗马数字编号以避免 PDF 页面锚点重名。正文字号：所有学位类型正文均为小四号（12pt）。目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。
 
 > **字体管理说明**：模板使用 `fontset=none` 选项加载 ctex，由模板自行管理所有 CJK 字体定义，避免与 ctex 默认字体集冲突产生编译警告。宋体斜体自动映射为楷体，避免 "Font shape undefined" 警告。`localfonts=true` 要求 `fonts/` 中的中文与 Times 字体完整，缺失时直接报错而不会静默回退；`localfonts=auto` 才会在字体不完整时回退至系统字体。研究生四级标题（`\subsubsubsection`）采用换行标题格式（标题独占一行，正文另起一行），与原始模板规范一致。
 
@@ -422,6 +448,8 @@ make wordcount
 
 个人信息选项包括：`StudentName`、`StudentID`、`AdvisorName`、`Major`、`Department`、`Title`、`TitleEng`、`SubmitYear`/`SubmitMonth`、`DefenseYear`/`DefenseMonth`、`Keywords`/`KeywordsEng` 等。
 
+> `mathfont=times` 会加载 `newtxmath`；TeX Live 需安装 `texlive-fonts-extra`，MiKTeX 会自动安装 `newtx`。
+>
 > 完整的选项列表、类型、默认值及适用学位请参阅 [使用指南](docs/usage.md)。
 
 ## 文件结构
@@ -454,7 +482,7 @@ cauc-thesis/
 │   ├── contents.tex             目录格式设置
 │   ├── commands.tex             自定义与重定义命令
 │   └── cover.tex                封面页（按学位类型自动切换）
-├── body/                        章节内容（各章独立 .tex 文件）
+├── body/                        章节内容（各章独立 .tex 文件，含 acknowledgement.tex）
 ├── examples/                    各学位类型示例文件
 │   ├── bachelor.tex             本科毕业设计示例
 │   ├── master-academic.tex      学术学位硕士示例
@@ -486,7 +514,7 @@ cauc-thesis/
 
 **Overleaf 字体上传**
 
-在 Overleaf 上使用时，必须将 `fonts/` 目录中的所有字体文件完整上传。Overleaf 文件系统区分大小写，字体文件名需使用小写（如 `simsun.ttf` 而非 `SimSun.ttf`），否则模板无法正确加载字体。
+在 Overleaf 上使用时，如需固定本地字体，需将 `fonts/` 目录中的所有字体文件完整上传；不上传时模板会回退到 Overleaf 的 TeX Live 字体。Overleaf 文件系统区分大小写，字体文件名需使用小写（如 `simsun.ttf` 而非 `SimSun.ttf`），否则模板无法正确加载字体。
 
 **研究生符号说明编译**
 
