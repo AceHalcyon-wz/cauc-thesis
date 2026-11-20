@@ -93,6 +93,8 @@ latexmk -xelatex cauc_thesis
 \documentclass[degree=doctor,pdfa=true]{cauc_thesis}
 ```
 
+同时需要将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在**项目根目录**（不是 `fonts/`）。缺少该文件时模板会给出明确错误提示，而不是晦涩的 pdfx 报错。
+
 ## 内容相关
 
 ### Q10: 如何使用 body/ 目录组织章节
@@ -185,11 +187,13 @@ latexmk -xelatex cauc_thesis
 
 ### Q17: Linux/macOS 上编译报字体错误
 
-**A:** Linux 和 macOS 的中文字体与 Windows 不同。建议：
+**A:** Linux 和 macOS 的中文字体与 Windows 不同。模板的系统字体回退顺序为：
 
-1. 将 Windows 字体文件复制到 `fonts/` 目录
-2. 或安装对应的中文字体包（如 `fonts-noto-cjk`）
-3. 模板会自动检测并回退到可用字体
+1. Windows 字体（SimSun/SimHei/KaiTi/LiSu）
+2. Noto CJK（`fonts-noto-cjk`）
+3. TeX Live 自带的 Fandol 字体（`texlive-lang-chinese` 已包含）
+
+拉丁字体在缺少 Times New Roman 时回退到 TeX Gyre Termes。也可将 Windows 字体文件复制到 `fonts/` 目录使用。
 
 ### Q18: VS Code LaTeX Workshop 如何配置
 
@@ -244,3 +248,17 @@ sudo pacman -S noto-fonts-cjk wqy-microhei
 1. 将 Windows 字体文件复制到 `fonts/` 目录
 2. 或安装 Homebrew Cask 字体：`brew install --cask font-noto-sans-cjk-sc`
 3. 设置 `localfonts=true` 强制使用本地字体
+
+### Q22: 英文姓名/学院名中的空格消失了
+
+**A:** 这是 LaTeX 文档类选项的空格处理规则导致的：`\documentclass` 选项中 `=` 两侧如果有空格，值内部的空格也会被删除。请写成：
+
+```latex
+\documentclass[degree=master-academic,StudentNameEng={San Zhang},DepartmentEng={College of Computer Science}]{cauc_thesis}
+```
+
+即 `=` 两侧不要加空格；或改用 `\caucsetup` / `cauc_thesis.cfg`（键值解析会保留空格）。
+
+### Q23: 在导言区用 \caucsetup 设置 twoside/openright/pdfa 不生效
+
+**A:** 这些是加载期选项，必须在 `\documentclass` 中设置，或写入 `cauc_thesis.cfg`（模板在加载文档类与宏包之前读取该文件）。在 `\documentclass` 之后的导言区再设置时，文档类/宏包已经加载完成，无法改变已生效的选项。

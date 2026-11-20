@@ -1,14 +1,17 @@
+% cauc_thesis.tex - 论文主文件
+% 通过 \documentclass 选项配置学位类型与个人信息，\input 各章节内容
+
 \documentclass[
-	degree          = bachelor,
-	StudentName     = 姓名,
-	StudentID       = 学号,
-	AdvisorName     = 指导教师,
-	Grade           = 年级,
-	Major           = 专业,
-	Department      = 一个很长很长的名字,
-	SubmitYear		= 2022,
-	SubmitMonth		= 5,
-	Title           = 论文中文题目
+    degree=bachelor,
+    StudentName=姓名,
+    StudentID=学号,
+    AdvisorName=指导教师,
+    Major=专业,
+    Department=某某学院,
+    SubmitYear=2022,
+    SubmitMonth=5,
+    Title=论文中文题目,
+    TitleEng={Research on Some Topic}
 ]{cauc_thesis}
 
 
@@ -19,17 +22,17 @@
 \makecover
 
 \begin{abstract-zh}
-	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息，供读者确定有无必要阅读全文。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+    摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息，供读者确定有无必要阅读全文。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
 
-	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+    摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
 
-	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+    \keywordszh{关键词1；关键词2；关键词3；关键词4}
 \end{abstract-zh}
 
 \begin{abstract-en}
-	English abstract content goes here. It should correspond to the Chinese abstract above.
+    English abstract content goes here. It should correspond to the Chinese abstract above.
 
-	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+    \keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
 \end{abstract-en}
 
 \makefrontmatter

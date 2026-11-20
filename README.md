@@ -36,22 +36,22 @@ latexmk -xelatex cauc_thesis.tex
 latexmk -lualatex cauc_thesis.tex
 ```
 
-手动编译需执行完整流程：
+手动编译需执行完整流程（统一输出到 `build/`）：
 
 ```bash
-xelatex cauc_thesis.tex
+xelatex -output-directory=build cauc_thesis.tex
 bibtex build/cauc_thesis
-xelatex cauc_thesis.tex
-xelatex cauc_thesis.tex
+xelatex -output-directory=build cauc_thesis.tex
+xelatex -output-directory=build cauc_thesis.tex
 ```
 
-> 手动编译时，辅助文件和 PDF 输出在 `build/` 目录中（由 `.latexmkrc` 配置）。若直接使用 `xelatex` 而非 `latexmk`，编译产物将输出到项目根目录。
+> 直接运行 `xelatex cauc_thesis.tex` 且不加 `-output-directory` 时，产物会输出到项目根目录。建议始终使用 `latexmk` 或上述命令。
 
 研究生论文若使用符号说明（`\printnomenclature`），需在 `bibtex` 之后额外执行：
 
 ```bash
 makeindex -s nomencl.ist -o build/cauc_thesis.nls build/cauc_thesis.nlo
-xelatex cauc_thesis.tex
+xelatex -output-directory=build cauc_thesis.tex
 ```
 
 latexmk 会自动处理此步骤，无需手动执行。
@@ -97,6 +97,8 @@ latexmk 会自动处理此步骤，无需手动执行。
 \documentclass[degree=bachelor, StudentName=姓名, ...]{cauc_thesis}
 ```
 
+> **重要**：LaTeX 会在处理文档类选项时删除其中的空格，因此 ` = ` 两侧不要加空格，否则英文姓名、英文学院名等值中的空格也会被删除。含空格的值应写成 `StudentNameEng={San Zhang}`（`=` 两侧无空格）；也可以改用 `\caucsetup`（pgfkeys 会保留值中的空格）。
+
 如需调整下划线宽度，可在 `settings/cover.tex` 中修改对应的 `tabularx` 或 `\underlineFixlen` 环境。
 
 也可在导言区通过 `\caucsetup` 设置个人信息：
@@ -125,7 +127,7 @@ latexmk 会自动处理此步骤，无需手动执行。
 }
 ```
 
-3. 模板编译时自动加载 `cauc_thesis.cfg`，无需在主文件中手动 `\input`
+3. 模板在加载文档类和宏包之前自动读取 `cauc_thesis.cfg`，无需在主文件中手动 `\input`；因此该文件也可用于设置 `pdfa`、`twoside`、`localfonts` 等加载期选项
 
 > `cauc_thesis.cfg` 已加入 `.gitignore`，可将个人信息与模板代码分离，避免提交到版本库。项目提供 `cauc_thesis.cfg.example` 作为模板参考，首次使用时复制为 `cauc_thesis.cfg` 即可。
 
@@ -183,6 +185,8 @@ body/
 \end{thesistable}
 ```
 
+> 图题位于图下方，表题位于表上方，符合学位论文排版规范。研究生模式下自动生成中英文双语图题/表题。
+
 > 各环境的完整参数说明和用法示例请参阅 [使用指南](docs/usage.md)。
 
 ### 其他排版环境
@@ -217,7 +221,7 @@ body/
 \documentclass[degree=bachelor, pdfa, ...]{cauc_thesis}
 ```
 
-> `pdfa` 选项建议在本地编译使用，Overleaf 可能因 ICC 色彩配置文件路径问题无法正常工作。
+> `pdfa` 选项建议在本地编译使用，Overleaf 可能因 ICC 色彩配置文件路径问题无法正常工作。使用前需将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在**项目根目录**（不是 `fonts/`），否则模板会给出明确错误提示。
 
 ### 草稿模式
 
@@ -257,11 +261,7 @@ body/
 \documentclass[degree=doctor, openright, ...]{cauc_thesis}
 ```
 
-如需启用此行为：
-
-```tex
-\caucsetup{openright=true}
-```
+> `openright` 和 `twoside` 是**加载期选项**，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中。在导言区用 `\caucsetup{openright=true}` 无法改变已经加载的文档类选项。
 
 ### 空白页样式
 
@@ -340,13 +340,17 @@ body/
 
 该命令根据 `nocontents`、`nofigures`、`notables` 选项自动决定生成哪些目录，各目录后自动换页。也可单独使用 `\maketableofcontents`、`\makelistoffigures`、`\makelistoftables` 命令。
 
+### 符号说明
+
+研究生模式使用 `\printnomenclature` 生成符号说明，模板会自动将其加入目录（无需手动 `\addcontentsline`）。
+
 ### 便捷命令
 
 模板提供以下快捷命令，简化常见操作：
 
 | 命令 | 说明 |
 |------|------|
-| `\makefrontpages` | 一键生成封面和前置页面（声明、摘要、目录等） |
+| `\makefrontpages` | 一键生成封面、目录、插图目录、表格目录（不含摘要） |
 | `\makereviewpage` | 生成答辩评语页（仅研究生模式） |
 | `\cauccheck` | 输出当前配置摘要到 `.log` 文件，便于排查问题 |
 
@@ -373,7 +377,9 @@ make wordcount
 \caucsetup{linespacing=1.5}
 ```
 
-常用配置键包括：`linespacing`（行距，所有学位类型默认 1.389 即 baselineskip=20pt）、`localfonts`（字体策略）、`mathfont`（数学字体）、`openright`（奇数页起排）、`blankpage`（空白页样式）、`headeronplain`（章节起始页页眉）、`coverinfowidth`/`coverlabelwidth`（封面尺寸），以及 `StudentName`、`Title` 等个人信息字段。
+常用配置键包括：`linespacing`（行距，所有学位类型默认 1.389 即 baselineskip=20pt）、`blankpage`（空白页样式）、`headeronplain`（章节起始页页眉）、`coverinfowidth`/`coverlabelwidth`（封面尺寸），以及 `StudentName`、`Title` 等个人信息字段。
+
+> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 选项或 `cauc_thesis.cfg` 中（配置文件在文档类与宏包加载前读取）。在 `\documentclass` 之后的导言区用 `\caucsetup` 设置这些键不会生效；`draft`、`lineno`、`linespacing`、`Type`、`period` 等则可以在导言区设置。
 
 > **行距与间距说明**：所有学位类型正文行距均为 1.389（baselineskip=20pt），摘要行距均为 1.389（baselineskip=20pt），与原始模板规范一致。摘要标题与正文间距：本科由 `\begin{center}` 排版标题后手动添加 21pt 间距，研究生由 `\chapter*` 的 afterskip=30pt 自动提供。关键词与摘要正文间距：本科使用 `\newline\newline`，研究生使用 `\newline`，与原始模板规范一致。摘要标题字体：中文摘要标题使用黑体（\heiti），英文摘要标题使用粗体（\textbf），与原始模板规范一致。英文关键词字体：本科和硕士使用宋体（\songti），博士使用默认 Times New Roman，与原始模板规范一致。页码格式：研究生前置页面使用罗马数字页码（I, II, ...），正文从阿拉伯数字 1 开始；本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），正文从阿拉伯数字 1 开始。正文字号：所有学位类型正文均为小四号（12pt）。目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。
 
@@ -393,9 +399,10 @@ make wordcount
 | `make clean` | 删除中间文件（保留 PDF） |
 | `make distclean` | 深度清理，删除 `build/` 目录（含 PDF） |
 | `make lint` | LaTeX 代码检查（chktex） |
+| `make lintindent` | 缩进与行尾检查 |
 | `make wordcount` | 统计正文字数 |
 | `make view` | 编译并打开 PDF |
-| `make check` | 编译所有学位类型示例并检查是否成功 |
+| `make check` | 编译所有学位类型示例和主模板并检查是否成功 |
 
 ### PDF 关键词
 
@@ -422,6 +429,7 @@ cauc-thesis/
 ├── cauc_thesis.cfg.example      配置文件模板（复制为 cauc_thesis.cfg 使用）
 ├── Makefile                     构建脚本（`make` / `make clean` / `make wordcount`）
 ├── .latexmkrc                   latexmk 编译配置
+├── .gitattributes               行尾与二进制文件属性
 ├── gbt7714-2005-numerical.bst   国标参考文献样式（本科）
 ├── gbt7714-numerical.bst        国标参考文献样式（研究生）
 ├── reference.bib                参考文献数据库
@@ -431,7 +439,8 @@ cauc-thesis/
 ├── build/                       编译产物输出目录（PDF、辅助文件等，已 gitignore）
 ├── scripts/                     工具脚本
 │   ├── word_count.sh            字数统计脚本
-│   └── check_indent.ps1         缩进检查脚本（Windows）
+│   ├── check_indent.sh          缩进检查脚本（bash）
+│   └── check_indent.ps1         缩进检查脚本（Windows PowerShell）
 ├── settings/                    配置模块
 │   ├── packages.tex             宏包导入
 │   ├── fonts.tex                字体配置与字体命令重定义
@@ -459,7 +468,7 @@ cauc-thesis/
 
 模板优先从 `fonts/` 目录加载本地字体文件。若该目录缺失或字体文件不完整，模板会自动回退至系统字体（SimSun、SimHei、KaiTi 等）并发出编译警告。如需使用本地字体，请将字体文件放入 `fonts/` 目录。
 
-> Windows 系统通常已预装所需字体，回退机制可正常工作。Linux 系统可能需要手动安装中文字体包（如 `fonts-wqy-microhei`）。
+> Windows 系统通常已预装所需字体，回退机制可正常工作。Linux/macOS 会优先使用 Noto CJK，其次使用 TeX Live 自带的 Fandol 字体（`texlive-lang-chinese`）。
 
 **参考文献显示问号**
 

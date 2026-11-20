@@ -1,7 +1,10 @@
 % CAUC 学位论文配置文件
-% 模板编译时自动加载此文件
+% 模板在加载文档类选项后、处理个人信息前自动读取此文件
 % 将此文件复制为 cauc_thesis.cfg，取消所需字段的注释即可使用
 % cauc_thesis.cfg 已加入 .gitignore，个人信息不会被提交到版本库
+%
+% 由于此文件在文档类加载早期读取，degree/localfonts/mathfont/pdfa/
+% twoside/openright 等加载期选项也可以在这里设置。
 
 %% ============================
 %% 必填字段
@@ -12,10 +15,9 @@
 %   StudentID=,            % [必填] 学号
 %   AdvisorName=,          % [必填] 指导教师姓名
 %   AdvisorNameEng=,       % [必填: 研究生] 指导教师英文姓名
-%   AdvisorNameEngSecond=, % [选填: 学术硕士] 第二指导教师英文姓名
+%   AdvisorNameEngSecond=, % [必填: 学术硕士] 第二指导教师英文姓名
 %   AdvisorNameOut=,       % [必填: 专业硕士] 校外指导教师姓名
 %   AdvisorNameEngOut=,    % [必填: 专业硕士、博士] 校外指导教师英文姓名
-%   Grade=,                % [必填: 本科] 年级
 %   Major=,                % [必填] 专业
 %   Department=,           % [必填] 学院
 %   DepartmentEng=,        % [必填: 研究生] 学院英文名
@@ -49,4 +51,14 @@
 % \caucsetup{
 %   coverinfowidth=240pt,
 %   coverlabelwidth=11em,
+% }
+
+% ---- 加载期选项（也可直接写在 \documentclass 中） ----
+% \caucsetup{
+%   degree=master-academic,
+%   localfonts=auto,      % auto/true/false
+%   mathfont=times,       % cm/times
+%   pdfa=false,           % 需要项目根目录下的 sRGB ICC 配置文件
+%   twoside=false,
+%   openright=false,
 % }

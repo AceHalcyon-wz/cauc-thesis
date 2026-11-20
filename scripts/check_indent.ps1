@@ -1,4 +1,4 @@
-$files = @('cauc_thesis.cls','settings\packages.tex','settings\fonts.tex','settings\format.tex','settings\contents.tex','settings\commands.tex','settings\cover.tex','examples\bachelor.tex','examples\master-academic.tex','examples\master-professional.tex','examples\doctor.tex','body\chap01.tex','body\chap02.tex','body\chap03.tex','body\chap04.tex','body\chap05.tex','body\acknowledgement.tex')
+$files = @('cauc_thesis.cls','cauc_thesis.tex','settings\packages.tex','settings\fonts.tex','settings\format.tex','settings\contents.tex','settings\commands.tex','settings\cover.tex','examples\bachelor.tex','examples\master-academic.tex','examples\master-professional.tex','examples\doctor.tex','body\chap01.tex','body\chap02.tex','body\chap03.tex','body\chap04.tex','body\chap05.tex','body\acknowledgement.tex')
 $errorCount = 0
 
 foreach ($f in $files) {

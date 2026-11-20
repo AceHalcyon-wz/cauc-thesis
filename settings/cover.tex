@@ -1,12 +1,14 @@
+% settings/cover.tex - 封面页配置
+% 负责生成各学位类型的封面、扉页、英文封面、声明页，按学位类型自动切换
+
 \newlength{\cauc@cover@logo@vspace}
 \newlength{\cauc@cover@title@vspace}
 \newlength{\cauc@cover@info@vspace}
 \newlength{\cauc@cover@date@vspace}
-\newlength{\cauc@cover@infowidth}
-\newlength{\cauc@cover@infowidth@second}
-\newlength{\cauc@cover@labelwidth}
 
-\newcommand{\cauc@blindfill}[1]{\ifcauc@blind\else #1\fi}
+% 盲审模式：保留一个空盒子，避免 \\ 出现在空行开头导致
+% "There's no line here to end" 错误。
+\newcommand{\cauc@blindfill}[1]{\ifcauc@blind\mbox{}\else #1\fi}
 
 \ifcauc@bachelor
   \setlength{\cauc@cover@logo@vspace}{-12mm}
@@ -21,12 +23,17 @@
 \fi
 
 \ifcauc@bachelor
-  \setlength{\cauc@cover@infowidth}{240pt}
+  \ifcauc@cover@infowidth@set\else
+    \setlength{\cauc@cover@infowidth}{240pt}
+  \fi
   \setlength{\cauc@cover@infowidth@second}{240pt}
-  \setlength{\cauc@cover@labelwidth}{11em}
 \else
-  \setlength{\cauc@cover@infowidth}{300pt}
+  \ifcauc@cover@infowidth@set\else
+    \setlength{\cauc@cover@infowidth}{300pt}
+  \fi
   \setlength{\cauc@cover@infowidth@second}{240pt}
+\fi
+\ifcauc@cover@labelwidth@set\else
   \setlength{\cauc@cover@labelwidth}{11em}
 \fi
 
@@ -385,7 +392,7 @@
     \restoregeometry
 }
 
-\begin{titlepage}
+\begin{cauc@coverpage}
 \ifcauc@bachelor
     \cauc@bachelor@firstcover
     \cauc@bachelor@secondcover
@@ -398,9 +405,6 @@
     \cauc@graduate@encover
     \cauc@graduate@declaration
 \fi
-\end{titlepage}
-\ifcauc@graduate
-    \newpage
-\fi
+\end{cauc@coverpage}
 \restoregeometry
 \thispagestyle{empty}

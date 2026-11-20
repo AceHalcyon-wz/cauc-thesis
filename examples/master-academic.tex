@@ -1,36 +1,39 @@
+% examples/master-academic.tex - 学术学位硕士示例
+% 演示学术硕士模式的封面、摘要、目录、符号说明、正文、参考文献、致谢、作者简介等完整结构
+
 \documentclass[
-	degree              = master-academic,
-	StudentName         = 张三,
-	StudentNameEng      = {San Zhang},
-	StudentID           = 2021123456,
-	AdvisorName         = 李四,
-	AdvisorNameEng      = {Si Li},
-	AdvisorNameEngSecond= {Wu Wang},
-	Grade               = 2021,
-	Major               = 计算机科学与技术,
-	Department          = 计算机学院,
-	DepartmentEng       = {College of Computer Science},
-	ResearchInterest    = 人工智能,
-	SubmitYear		    = 2024,
-	SubmitMonth		    = 6,
-	SubmitDay           = 1,
-	DefenseYear         = 2024,
-	DefenseMonth        = 6,
-	DefenseDay          = 15,
-	DefenseDateEng      = {{June 15, 2024}},
-	CLCNumber           = TP391,
-	UDCNumber           = 004.9,
-	Title               = 基于XXX的YYY研究,
-	TitleEng            = {{Research on YYY Based on XXX}}
+    degree=master-academic,
+    StudentName=张三,
+    StudentNameEng={San Zhang},
+    StudentID=2021123456,
+    AdvisorName=李四,
+    AdvisorNameEng={Si Li},
+    AdvisorNameEngSecond={Wu Wang},
+    Major=计算机科学与技术,
+    Department=计算机学院,
+    DepartmentEng={College of Computer Science},
+    ResearchInterest=人工智能,
+    SubmitYear=2024,
+    SubmitMonth=6,
+    SubmitDay=1,
+    DefenseYear=2024,
+    DefenseMonth=6,
+    DefenseDay=15,
+    DefenseDateEng={June 15, 2024},
+    CLCNumber=TP391,
+    UDCNumber=004.9,
+    Title=基于某某方法的某课题研究,
+    TitleEng={Research on Some Topic Based on Some Method}
 ]{cauc_thesis}
 
-% 也可以使用 \caucsetup 在导言区进行配置（与 \documentclass 选项等效）：
+% 也可以在导言区用 \caucsetup 设置个人信息和运行时选项；
+% 加载期选项（twoside/openright/pdfa 等）请写在 \documentclass 或 cauc_thesis.cfg 中：
 % \caucsetup{
 %   declaration=true,     % 包含原创性声明
-%   openright=true,       % 章节从奇数页开始
 %   draft=false,          % 草稿模式
 %   blind=false,          % 盲审模式
 % }
+% 加载期选项示例：\documentclass[degree=master-academic,twoside=true,openright=true]{cauc_thesis}
 
 \begin{document}
 
@@ -39,17 +42,17 @@
 \makecover
 
 \begin{abstract-zh}
-	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+    摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
 
-	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+    摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
 
-	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+    \keywordszh{关键词1；关键词2；关键词3；关键词4}
 \end{abstract-zh}
 
 \begin{abstract-en}
-	English abstract content goes here. It should correspond to the Chinese abstract above.
+    English abstract content goes here. It should correspond to the Chinese abstract above.
 
-	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+    \keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
 \end{abstract-en}
 
 \makefrontmatter
@@ -68,7 +71,7 @@
 
 \section{研究背景}
 
-研究背景内容。
+研究背景内容。相关研究已在图像识别领域取得显著进展\cite{he2016deep}。
 
 \section{研究目的与意义}
 
@@ -174,11 +177,11 @@ Model C & 0.91 & 0.88 & 0.89 & 0.93 & 90 & 15.8 \\
 \bibliography{reference}
 
 \begin{acknowledgment}
-	致谢内容。
+    致谢内容。
 \end{acknowledgment}
 
 \begin{authorintro}
-	作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
+    作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
 \end{authorintro}
 
 \end{document}

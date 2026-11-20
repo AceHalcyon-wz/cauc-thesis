@@ -15,7 +15,8 @@
 | timesi.ttf | Times New Roman Italic | 英文斜体 |
 | timesbi.ttf | Times New Roman Bold Italic | 英文粗斜体 |
 | simfang.ttf | 仿宋 | 代码/等宽字体（可选，缺失时回退至宋体） |
-| sRGB_IEC61966-2-1_black_scaled.icc | sRGB ICC 色彩配置文件 | PDF/A 模式色彩管理 |
+
+> **PDF/A 模式色彩管理**：启用 `pdfa` 选项时需要 sRGB ICC 色彩配置文件（如 `sRGB_IEC61966-2-1_black_scaled.icc`）。该文件因体积较大未包含在仓库中，使用 PDF/A 模式时需自行获取并放入**项目根目录**（xdvipdfmx 按当前工作目录解析该文件）。
 
 ## Overleaf 使用
 
@@ -30,7 +31,6 @@
 若 `fonts/` 目录缺失或字体文件不完整，模板会自动回退至系统字体：
 
 - Windows：SimSun、SimHei、KaiTi、LiSu、Times New Roman
-- macOS：需手动安装对应中文字体
-- Linux：需安装 `fonts-wqy-microhei` 或其他中文字体包
+- macOS / Linux：优先 Noto CJK，其次 TeX Live 自带的 Fandol 字体；拉丁字体回退到 TeX Gyre Termes
 
 回退时编译日志中会出现警告信息。

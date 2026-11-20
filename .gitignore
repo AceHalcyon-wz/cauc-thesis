@@ -46,3 +46,16 @@ texput.log
 *.tdo
 cauc_thesis.cfg
 build/
+
+# 原始模板参考目录（仅本地保留，不提交）
+中国民航大学学位论文latex模板/
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 归档文件
+*.zip
+*.tar.gz

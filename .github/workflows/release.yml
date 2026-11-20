@@ -14,13 +14,23 @@ jobs:
       - name: Install TeX Live
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-xetex texlive-lang-chinese texlive-science texlive-bibtex-extra latexmk
+          sudo apt-get install -y \
+            texlive-xetex \
+            texlive-lang-chinese \
+            texlive-science \
+            texlive-pictures \
+            texlive-publishers \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-bibtex-extra \
+            latexmk
 
       - name: Verify compilation
         run: |
-          for f in examples/*.tex; do
+          set -e
+          for f in cauc_thesis.tex examples/*.tex; do
             echo "Compiling $f..."
-            latexmk -xelatex -interaction=nonstopmode "$f" || true
+            latexmk -xelatex -interaction=nonstopmode "$f"
           done
 
       - name: Create release archive

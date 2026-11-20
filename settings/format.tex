@@ -1,9 +1,9 @@
+% settings/format.tex - 页面格式配置
+% 负责设置行距、页眉页脚、页边距、图表标题、目录标题等页面格式参数
+
 % 原始模板规范：所有学位类型baselineskip=20pt，小四号(12pt)下stretch=20/14.4≈1.389
-\ifx\cauc@linespacing\@empty
-  \setstretch{1.389}
-\else
-  \setstretch{\cauc@linespacing}
-\fi
+% 行距在 \AtBeginDocument 中应用，确保导言区或 cauc_thesis.cfg 中的
+% \caucsetup{linespacing=...} 能够生效。
 % 原始模板规范：本科默认pagestyle=empty，后续由fancyhdr接管
 \ifcauc@bachelor
   \pagestyle{empty}
@@ -26,10 +26,18 @@
         \fi
       \fi
     \else
-      \ifcauc@doctor
-        \def\cauc@header@text{\zihao{-5}中国民航大学博士学位论文}%
+      \ifcauc@proposal
+        \ifcauc@doctor
+          \def\cauc@header@text{\zihao{-5}中国民航大学博士学位论文开题报告}%
+        \else
+          \def\cauc@header@text{\zihao{-5}中国民航大学硕士学位论文开题报告}%
+        \fi
       \else
-        \def\cauc@header@text{\zihao{-5}中国民航大学硕士学位论文}%
+        \ifcauc@doctor
+          \def\cauc@header@text{\zihao{-5}中国民航大学博士学位论文}%
+        \else
+          \def\cauc@header@text{\zihao{-5}中国民航大学硕士学位论文}%
+        \fi
       \fi
     \fi
   \else
@@ -38,6 +46,11 @@
 }
 
 \AtBeginDocument{%
+  \ifx\cauc@linespacing\@empty
+    \setstretch{1.389}%
+  \else
+    \setstretch{\cauc@linespacing}%
+  \fi
   \cauc@setheader
   \chead{\cauc@header@text}%
 }
@@ -53,15 +66,21 @@
 % 原始模板规范：topmargin固定值-0.94cm，与原始模板一致
 \setlength{\topmargin}{-0.94cm}
 
-% 章节起始页页眉控制：headeronplain=true 时显示页眉（与原始模板一致），false 时不显示
-\ifcauc@headeronplain
-  \fancypagestyle{plain}{
-      \fancyhf{}
-      \fancyhead[C]{\cauc@header@text}
-      \fancyfoot[C]{\thepage}
-      \renewcommand{\headrulewidth}{0.5pt}
-  }
-\fi
+% 章节起始页页眉控制：headeronplain=true 时显示页眉（与原始模板一致），false 时不显示。
+% 条件在样式使用时求值，保证导言区或 cauc_thesis.cfg 中的 \caucsetup{headeronplain=false} 生效。
+\newcommand{\cauc@setplainstyle}{%
+  \fancypagestyle{plain}{%
+    \fancyhf{}%
+    \fancyfoot[C]{\thepage}%
+    \ifcauc@headeronplain
+      \fancyhead[C]{\cauc@header@text}%
+      \renewcommand{\headrulewidth}{0.5pt}%
+    \else
+      \renewcommand{\headrulewidth}{0pt}%
+    \fi
+  }%
+}
+\cauc@setplainstyle
 
 % 双面打印时偶数页页眉显示在左侧(CE)，奇数页在右侧(CO)，符合学位论文装订规范
 \ifcauc@twoside
@@ -70,8 +89,10 @@
     \ifcauc@blankpagestandard
       \fancyhead[CE,CO]{\cauc@header@text}%
       \fancyfoot[CE,CO]{\thepage}%
+      \renewcommand{\headrulewidth}{0.5pt}%
+    \else
+      \renewcommand{\headrulewidth}{0pt}%
     \fi
-    \renewcommand{\headrulewidth}{0.5pt}%
   }
   \renewcommand{\cleardoublepage}{%
     \clearpage
@@ -113,20 +134,23 @@
 \renewcommand{\listfigurename}{\centerline{\heiti\zihao{3}插图目录}}
 \renewcommand{\listtablename}{\centerline{\heiti\zihao{3}表格目录}}
 
-\ifcauc@draft
-  \RequirePackage{lineno}
-  \linenumbers
-  \@ifundefined{AddToHook}{%
-    \PackageWarning{cauc_thesis}{Draft watermark requires LaTeX 2020-10-01 or later}%
-  }{%
-    \AddToHook{shipout/background}{%
-      \put(0.5\paperwidth,0.5\paperheight){%
-        \makebox[0pt]{\textcolor[gray]{0.9}{\fontsize{5cm}{5cm}\selectfont\cauc@draftwatermark}}%
+% 草稿水印与行号在 \AtBeginDocument 中启用，确保导言区或
+% cauc_thesis.cfg 中的 \caucsetup{draft=...}/\caucsetup{lineno=...} 生效。
+\AtBeginDocument{%
+  \ifcauc@draft
+    \linenumbers
+    \@ifundefined{AddToHook}{%
+      \ClassWarning{cauc_thesis}{Draft watermark requires LaTeX 2020-10-01 or later}%
+    }{%
+      \AddToHook{shipout/background}{%
+        \begin{tikzpicture}[remember picture,overlay]
+          \node[rotate=45,text=gray!25,font=\fontsize{5cm}{5cm}\selectfont]
+            at (current page.center) {\cauc@draftwatermark};
+        \end{tikzpicture}%
       }%
     }%
-  }
-\fi
-\ifcauc@lineno
-  \@ifpackageloaded{lineno}{}{\RequirePackage{lineno}}
-  \linenumbers
-\fi
+  \fi
+  \ifcauc@lineno
+    \linenumbers
+  \fi
+}

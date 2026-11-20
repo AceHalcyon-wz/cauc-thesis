@@ -1,5 +1,11 @@
 $out_dir = 'build';
 
+# Windows + MiKTeX 环境下，latexmk 可能由 Git 自带的 Perl 解释执行，
+# 该 Perl 会把路径转换为 MSYS 风格（如 /d/Users/...），MiKTeX 的 bibtex 无法识别。
+# 关闭 bibtex 的工作目录切换，使 bibtex 直接在项目根目录运行，
+# 从而通过相对路径找到 .bst 和 .bib 文件。
+$bibtex_fudge = 0;
+
 if ($lualatex) {
     $lualatex = 'lualatex -synctex=1 -file-line-error -interaction=nonstopmode';
     $pdf_mode = 4;

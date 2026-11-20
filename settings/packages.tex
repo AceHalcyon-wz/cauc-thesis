@@ -1,3 +1,6 @@
+% settings/packages.tex - 宏包导入与配置
+% 负责加载模板所需的所有 LaTeX 宏包，并设置相关参数
+
 %% ==================== 页面与排版 ====================
 % XeLaTeX提供原生Unicode支持和fontspec字体加载能力，是中文论文排版的基础引擎要求
 \RequirePackage{iftex}
@@ -26,6 +29,9 @@
   \microtypecontext{spacing}
 \fi
 \RequirePackage{setspace}
+% lineno 始终加载，具体是否启用由 draft/lineno 选项在 \AtBeginDocument 中决定，
+% 这样导言区或 cauc_thesis.cfg 中的 \caucsetup{lineno=true} 也能生效。
+\RequirePackage{lineno}
 \RequirePackage{afterpage}
 \RequirePackage[top=\cauc@topmargin,bottom=\cauc@bottommargin,left=\cauc@leftmargin,right=\cauc@rightmargin]{geometry}
 
@@ -51,8 +57,12 @@
 
 %% ==================== 数学与算法 ====================
 \RequirePackage{bm, amsmath, amssymb}
+% amsthm 需在 newtxmath 之前加载：两者都定义 \openbox，顺序不当会报错
+\RequirePackage{amsthm}
 \def\cauc@@temp{times}%
 \ifx\cauc@mathfont\cauc@@temp
+  % amssymb 与 newtxmath 都会定义 \openbox，先释放再加载 newtxmath
+  \let\openbox\relax
   \RequirePackage{newtxmath}
 \fi
 \RequirePackage{siunitx}
@@ -71,25 +81,25 @@
 \definecolor{cauc@green}{RGB}{28,172,0}
 \definecolor{cauc@lilas}{RGB}{170,55,241}
 \lstset{
-	basicstyle=\zihao{-4}\ttfamily,
-	keywordstyle=\color{cauc@keywordcolor}\bfseries,
-	commentstyle=\color{cauc@commentcolor},
-	stringstyle=\color{cauc@stringcolor},
-	numbers=left,
-	numberstyle=\tiny\color{gray},
-	stepnumber=1,
-	numbersep=8pt,
-	backgroundcolor=\color{white},
-	frame=single,
-	rulecolor=\color{black!30},
-	breaklines=true,
-	breakatwhitespace=false,
-	tabsize=2,
-	showstringspaces=false,
-	captionpos=b,
-	extendedchars=true,
-	texcl=true,
-	escapeinside={(*@}{@*)}
+    basicstyle=\zihao{-4}\ttfamily,
+    keywordstyle=\color{cauc@keywordcolor}\bfseries,
+    commentstyle=\color{cauc@commentcolor},
+    stringstyle=\color{cauc@stringcolor},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    backgroundcolor=\color{white},
+    frame=single,
+    rulecolor=\color{black!30},
+    breaklines=true,
+    breakatwhitespace=false,
+    tabsize=2,
+    showstringspaces=false,
+    captionpos=b,
+    extendedchars=true,
+    texcl=true,
+    escapeinside={(*@}{@*)}
 }
 
 %% ==================== 文档结构 ====================
@@ -113,19 +123,22 @@
 \RequirePackage[sort&compress]{natbib}
 \fi
 \RequirePackage[colorlinks,
-	anchorcolor=black,
-	linkcolor=black,
-	citecolor=black,
-	urlcolor=black,
-	unicode,
-	pdfencoding=auto
+    anchorcolor=black,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black,
+    unicode,
+    pdfencoding=auto
 ]{hyperref}
-\hypersetup{
-	pdftitle={\cauc@Title},
-	pdfauthor={\cauc@StudentName},
-	pdfsubject={\ifcauc@bachelor Bachelor\else\ifcauc@doctor Doctor\else Master\fi\fi\ Thesis, \cauc@Department},
-	pdfkeywords={\cauc@Keywords},
-	pdfcreator={cauc\_thesis template with XeLaTeX}
+% PDF 元数据在 \AtBeginDocument 中设置，确保导言区 \caucsetup 设置的个人信息也能写入
+\AtBeginDocument{%
+  \hypersetup{
+    pdftitle={\cauc@Title},
+    pdfauthor={\ifcauc@blind\else\cauc@StudentName\fi},
+    pdfsubject={\ifcauc@blind 盲审论文\else\ifcauc@bachelor Bachelor\else\ifcauc@doctor Doctor\else Master\fi\fi\ Thesis, \cauc@Department\fi},
+    pdfkeywords={\cauc@Keywords\ifx\cauc@KeywordsEng\@empty\else, \cauc@KeywordsEng\fi},
+    pdfcreator={cauc\_thesis template with XeLaTeX}
+  }%
 }
 \RequirePackage{bookmark}
 % 消除hyperref PDF书签中的间距命令警告（~、\enspace、\quad等在PDF字符串中不支持）
@@ -139,8 +152,20 @@
 \RequirePackage{cleveref}
 
 %% ==================== 条件编译 ====================
-% PDF/A模式需加载pdfx宏包以生成符合存档标准的PDF文件
+% PDF/A模式需加载pdfx宏包以生成符合存档标准的PDF文件。
+% pdfx 需要 sRGB ICC 色彩配置文件；该文件必须放在项目根目录，
+% 因为 xdvipdfmx 按当前工作目录解析 \special 中嵌入的 ICC 文件。
 \ifcauc@pdfa
+  \IfFileExists{sRGB_IEC61966-2-1_black_scaled.icc}{}{%
+    \ClassError{cauc_thesis}{%
+      PDF/A mode requires the ICC color profile
+      sRGB_IEC61966-2-1_black_scaled.icc%
+      \MessageBreak
+      Place it in the project root, or disable the pdfa option%
+    }{%
+      See the pdfx package documentation for details about the required ICC profile.%
+    }%
+  }%
   \RequirePackage[a-2b,mathxmp]{pdfx}
 \fi
 

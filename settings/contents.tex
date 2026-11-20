@@ -1,3 +1,6 @@
+% settings/contents.tex - 目录与章节格式配置
+% 负责设置目录条目格式、章节标题样式、编号格式、参考文献样式等
+
 % 本科目录格式：章节号前用\quad\quad缩进（2em），与原始模板一致
 \ifcauc@bachelor
 \titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\quad}{}
@@ -5,12 +8,8 @@
 \titlecontents{section}[0pt]{\songti\zihao{-4}}{\quad\quad\thecontentslabel\quad}{}
         {\titlerule*[10pt]{$\ldots$}\contentspage}
 \else
-% 研究生目录格式由下方 \dottedcontents 定义
-% 原始模板规范：研究生目录section使用\quad\quad前缀（与本科一致），subsection不单独定义
-\titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\quad}{}
-        {\titlerule*[10pt]{$\ldots$}\contentspage}
-\titlecontents{section}[0pt]{\songti\zihao{-4}}{\quad\quad\thecontentslabel\quad}{}
-        {\titlerule*[10pt]{$\ldots$}\contentspage}
+% 研究生目录格式：chapter 使用 ctex 默认格式，section/subsection 由下方 \dottedcontents 定义
+% 原始模板规范：研究生目录未定义 \titlecontents，chapter 使用 ctex 默认，section/subsection 使用 \dottedcontents
 \fi
 
 % 本科目录使用阿拉伯数字章节号+点引导线，研究生目录使用中文数字章节号，符合各学位论文格式规范
@@ -23,8 +22,7 @@
         aftername={\quad},
         name={第~,~章},
         beforeskip=-5pt,
-        afterskip=30pt,
-        pagestyle=fancy
+        afterskip=30pt
     },
     section = {
         name={},
@@ -61,8 +59,7 @@
         aftername={\enspace},
         name={第,章},
         beforeskip=-5pt,
-        afterskip=30pt,
-        pagestyle=fancy
+        afterskip=30pt
     },
     section = {
         name={},
@@ -103,9 +100,10 @@
 \setcounter{tocdepth}{4}
 \fi
 
-\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
-\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
-\renewcommand{\thesubsubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+% 正文使用阿拉伯数字章节号，附录使用字母章节号（A.1、A.1.1）
+\renewcommand{\thesection}{\cauc@chapnum.\arabic{section}}
+\renewcommand{\thesubsection}{\cauc@chapnum.\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\cauc@chapnum.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
 
 % 图/表/公式编号格式在 commands.tex 中 \counterwithin 之后设置，避免被覆盖
 

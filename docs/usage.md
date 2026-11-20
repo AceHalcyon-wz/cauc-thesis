@@ -66,7 +66,7 @@ latexmk -xelatex cauc_thesis
 
 目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。原始模板中研究生 tocdepth 在 commands.tex 中设为 4，覆盖 contents.tex 中的初始值 2。
 
-页码格式：研究生前置页面（封面、摘要等）使用罗马数字页码（I, II, ...），正文从阿拉伯数字 1 开始编号，与原始模板规范一致。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），目录页使用 `\pagenumbering{gobble}` 隐藏页码，正文从阿拉伯数字 1 开始编号。正文字号：所有学位类型正文均为小四号（12pt），与原始模板规范一致。
+页码格式：研究生前置页面（封面、摘要等）使用罗马数字页码（I, II, ...），正文从阿拉伯数字 1 开始编号，与原始模板规范一致。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），内部仍使用罗马数字编号以避免 PDF 页面锚点重名，正文从阿拉伯数字 1 开始编号。正文字号：所有学位类型正文均为小四号（12pt），与原始模板规范一致。
 
 ### 示例
 
@@ -76,6 +76,8 @@ latexmk -xelatex cauc_thesis
 \documentclass[degree=doctor,pdfa=true,twoside=true]{cauc_thesis}
 \documentclass[degree=bachelor,period=proposal]{cauc_thesis}
 ```
+
+> **选项空格**：`\documentclass` 选项由 LaTeX 预处理，`=` 两侧的空格会导致值中的空格被删除。含空格的值请写成 `StudentNameEng={San Zhang}`（`=` 两侧无空格），或改用 `\caucsetup`。
 
 ## 个人信息设置
 
@@ -90,6 +92,8 @@ latexmk -xelatex cauc_thesis
   AdvisorName=李四~教授
 ]{cauc_thesis}
 ```
+
+> 注意 `degree=bachelor` 中 `=` 两侧不要加空格；英文名等含空格的值写成 `StudentNameEng={San Zhang}`。
 
 ### 方式二：\caucsetup 命令
 
@@ -128,6 +132,8 @@ latexmk -xelatex cauc_thesis
 | `listtables` | `true` | 是否生成表格目录 |
 | `lineno` | `false` | 启用行号 |
 
+> **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中；在 `\documentclass` 之后的导言区用 `\caucsetup` 设置不会生效。`draft`、`lineno`、`linespacing`、`Type`、`period` 等可以在导言区设置。
+
 ### 方式三：配置文件
 
 创建 `cauc_thesis.cfg` 文件：
@@ -140,7 +146,7 @@ latexmk -xelatex cauc_thesis
 }
 ```
 
-模板编译时自动加载此文件，无需修改 .cls。
+模板在加载文档类和宏包之前自动读取此文件，无需修改 .cls；因此也可在此设置 `pdfa`、`twoside`、`localfonts` 等加载期选项。
 
 ### 完整字段列表
 
@@ -156,7 +162,6 @@ latexmk -xelatex cauc_thesis
 | `AdvisorNameEngSecond` | 第二指导教师（英文） | 学术学位硕士 |
 | `AdvisorNameOut` | 校外指导教师 | 专业学位硕士 |
 | `AdvisorNameEngOut` | 校外指导教师（英文） | 专业学位硕士、博士 |
-| `Grade` | 年级 | 本科 |
 | `Major` | 专业 | 全部 |
 | `Department` | 学院 | 全部 |
 | `DepartmentEng` | 学院（英文） | 研究生 |
@@ -262,7 +267,7 @@ English abstract content
 |------|------|
 | `\makecover` | 生成封面页 |
 | `\makefrontmatter` | 生成前置页面（目录等） |
-| `\makefrontpages` | 一键生成封面+前置页面 |
+| `\makefrontpages` | 一键生成封面、目录、插图目录、表格目录（不含摘要） |
 | `\makereviewpage` | 生成答辩评语页（仅研究生） |
 | `\cauccheck` | 输出配置摘要到 .log 文件 |
 
@@ -286,6 +291,20 @@ English abstract content
 > **注意**：`\upcite` 命令在所有学位类型下均输出双重上标引用 `\textsuperscript{\textsuperscript{\cite{key}}}`，与原始模板规范一致。
 
 > **注意**：使用 `\bibliography{reference}` 时，"参考文献"会自动出现在目录中，无需手动添加 `\addcontentsline`。手动添加会导致目录中出现重复条目。
+
+## 符号说明
+
+研究生模式在 `\makefrontmatter` 之后调用：
+
+```latex
+\printnomenclature
+```
+
+模板会自动把“符号说明”加入目录。`nomenclature` 条目需在正文中定义，编译时由 latexmk 自动调用 makeindex。
+
+## PDF/A 输出
+
+使用 `pdfa=true` 时，需要将 `sRGB_IEC61966-2-1_black_scaled.icc` 放在项目根目录；缺少该文件时模板会给出明确的错误提示。
 
 ## 编译命令
 

@@ -37,7 +37,11 @@ else
 endif
 
 lintindent:
-	bash scripts/check_indent.sh
+ifeq ($(OS),Windows_NT)
+	@powershell -ExecutionPolicy Bypass -File scripts/check_indent.ps1
+else
+	@bash scripts/check_indent.sh
+endif
 
 wordcount:
 ifeq ($(OS),Windows_NT)
@@ -49,13 +53,15 @@ endif
 check:
 	@echo "===== Compiling all degree types ====="
 	@echo "--- Compiling bachelor ---"
-	@latexmk -xelatex -interaction=nonstopmode -outdir=build/check examples/bachelor.tex > /dev/null 2>&1 && echo "  bachelor: OK" || echo "  bachelor: FAILED"
+	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/bachelor.tex && echo "  bachelor: OK" || echo "  bachelor: FAILED"
 	@echo "--- Compiling master-academic ---"
-	@latexmk -xelatex -interaction=nonstopmode -outdir=build/check examples/master-academic.tex > /dev/null 2>&1 && echo "  master-academic: OK" || echo "  master-academic: FAILED"
+	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/master-academic.tex && echo "  master-academic: OK" || echo "  master-academic: FAILED"
 	@echo "--- Compiling master-professional ---"
-	@latexmk -xelatex -interaction=nonstopmode -outdir=build/check examples/master-professional.tex > /dev/null 2>&1 && echo "  master-professional: OK" || echo "  master-professional: FAILED"
+	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/master-professional.tex && echo "  master-professional: OK" || echo "  master-professional: FAILED"
 	@echo "--- Compiling doctor ---"
-	@latexmk -xelatex -interaction=nonstopmode -outdir=build/check examples/doctor.tex > /dev/null 2>&1 && echo "  doctor: OK" || echo "  doctor: FAILED"
+	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/doctor.tex && echo "  doctor: OK" || echo "  doctor: FAILED"
+	@echo "--- Compiling main template ---"
+	@latexmk -xelatex -interaction=batchmode -outdir=build/check $(MAIN).tex && echo "  main: OK" || echo "  main: FAILED"
 	@echo "--- Cleaning up ---"
 ifeq ($(OS),Windows_NT)
 	@if exist build\check rmdir /S /Q build\check

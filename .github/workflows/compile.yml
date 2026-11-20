@@ -2,7 +2,7 @@ name: Compile
 
 on:
   push:
-    branches: [master, main]
+    branches: ['**']
   pull_request:
     branches: [master, main]
 
@@ -10,6 +10,7 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: bachelor
@@ -48,17 +49,17 @@ jobs:
             degree: master-academic
             extra_options: "draft=true"
             engine: xelatex
-          - name: master-academic-pdfa
-            degree: master-academic
-            extra_options: "pdfa=true"
-            engine: xelatex
           - name: master-academic-lineno
             degree: master-academic
             extra_options: "lineno=true"
             engine: xelatex
-          - name: doctor-lualatex-mathfont-times
-            degree: doctor
+          - name: master-academic-systemfonts-times
+            degree: master-academic
             extra_options: "mathfont=times,localfonts=false"
+            engine: xelatex
+          - name: doctor-lualatex
+            degree: doctor
+            extra_options: ""
             engine: lualatex
 
     name: Compile ${{ matrix.name }}
@@ -74,8 +75,12 @@ jobs:
             texlive-luatex \
             texlive-lang-chinese \
             texlive-science \
-            texlive-bibtex-extra \
+            texlive-pictures \
+            texlive-publishers \
+            texlive-latex-extra \
+            texlive-fonts-extra \
             texlive-fonts-recommended \
+            texlive-bibtex-extra \
             latexmk
 
       - name: Prepare test file
@@ -88,7 +93,7 @@ jobs:
 
       - name: Compile with latexmk
         run: |
-          latexmk -${{ matrix.engine || 'xelatex' }} test_compile.tex
+          latexmk -${{ matrix.engine }} test_compile.tex
 
       - name: Check PDF size
         run: |

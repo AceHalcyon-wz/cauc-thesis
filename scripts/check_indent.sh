@@ -3,6 +3,7 @@ set -euo pipefail
 
 files=(
   "cauc_thesis.cls"
+  "cauc_thesis.tex"
   "settings/packages.tex"
   "settings/fonts.tex"
   "settings/format.tex"

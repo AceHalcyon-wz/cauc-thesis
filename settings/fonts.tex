@@ -1,3 +1,6 @@
+% settings/fonts.tex - 字体配置
+% 负责加载中英文字体（本地字体优先，回退至系统字体），定义字体命令
+
 \newcommand{\cauc@fakebold@size}{4}
 \let\FakeBoldSize\cauc@fakebold@size
 \newcommand{\cauc@fangsong@boldsize}{2.167}
@@ -82,35 +85,110 @@
   % 优先加载本地fonts/目录字体以确保跨平台一致性，不存在时回退到系统字体
   \cauc@warning{Local font files not found in fonts/ directory. Falling back to system fonts.}
 
-  \setCJKfamilyfont{songti}{SimSun}
-  \setCJKfamilyfont{heiti}{SimHei}
-  \setCJKfamilyfont{kaiti}{KaiTi}
-  \setCJKfamilyfont{lishu}{LiSu}
-
-  \setCJKfamilyfont{songtibold}{SimSun}[AutoFakeBold={\cauc@fakebold@size}]
-  \setCJKfamilyfont{heitibold}{SimHei}[AutoFakeBold={\cauc@fakebold@size}]
-  \setCJKfamilyfont{lishubold}{LiSu}[AutoFakeBold={\cauc@fakebold@size}]
-  \setCJKfamilyfont{kaitibold}{KaiTi}[AutoFakeBold={\cauc@fakebold@size}]
-
-  \IfFontExistsTF{FangSong}{%
-    \setCJKfamilyfont{fangsong}{FangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
-    \setCJKmonofont{FangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
-  }{%
-    \IfFontExistsTF{STFangSong}{%
-      \setCJKfamilyfont{fangsong}{STFangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
-      \setCJKmonofont{STFangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+  % 拉丁字体回退：Windows/macOS 优先 Times New Roman，Linux 使用 TeX Gyre Termes
+  \newcommand{\cauc@set@latin@fallback}{%
+    \IfFontExistsTF{Times New Roman}{%
+      \setmainfont{Times New Roman}%
     }{%
-      \setCJKfamilyfont{fangsong}{SimSun}[AutoFakeBold={\cauc@fangsong@boldsize}]%
-      \setCJKmonofont{SimSun}[AutoFakeBold={\cauc@fangsong@boldsize}]%
-      \cauc@warning{FangSong font not found, falling back to SimSun for fangsong/monofont}%
+      \IfFileExists{texgyretermes-regular.otf}{%
+        \setmainfont{texgyretermes}[Extension=.otf,
+          UprightFont=*-regular, BoldFont=*-bold,
+          ItalicFont=*-italic, BoldItalicFont=*-bolditalic]%
+      }{%
+        \setmainfont{TeX Gyre Termes}%
+      }%
     }%
   }
 
-  % 宋体无斜体变体，用楷体替代宋体斜体，避免Font shape undefined警告
-  \setCJKmainfont{SimSun}[ItalicFont=KaiTi]
-  % fontset=none下需显式设置CJK无衬线字体族，黑体作为CJK sans-serif默认字体
-  \setCJKsansfont{SimHei}
-  \setmainfont{Times New Roman}
+  \IfFontExistsTF{SimSun}{%
+    % Windows 常见字体
+    \setCJKfamilyfont{songti}{SimSun}
+    \setCJKfamilyfont{heiti}{SimHei}
+    \setCJKfamilyfont{kaiti}{KaiTi}
+    \setCJKfamilyfont{lishu}{LiSu}
+
+    \setCJKfamilyfont{songtibold}{SimSun}[AutoFakeBold={\cauc@fakebold@size}]
+    \setCJKfamilyfont{heitibold}{SimHei}[AutoFakeBold={\cauc@fakebold@size}]
+    \setCJKfamilyfont{lishubold}{LiSu}[AutoFakeBold={\cauc@fakebold@size}]
+    \setCJKfamilyfont{kaitibold}{KaiTi}[AutoFakeBold={\cauc@fakebold@size}]
+
+    \IfFontExistsTF{FangSong}{%
+      \setCJKfamilyfont{fangsong}{FangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+      \setCJKmonofont{FangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+    }{%
+      \IfFontExistsTF{STFangSong}{%
+        \setCJKfamilyfont{fangsong}{STFangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+        \setCJKmonofont{STFangSong}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+      }{%
+        \setCJKfamilyfont{fangsong}{SimSun}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+        \setCJKmonofont{SimSun}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+        \cauc@warning{FangSong font not found, falling back to SimSun for fangsong/monofont}%
+      }%
+    }
+
+    % 宋体无斜体变体，用楷体替代宋体斜体，避免Font shape undefined警告
+    \setCJKmainfont{SimSun}[ItalicFont=KaiTi]
+    % fontset=none下需显式设置CJK无衬线字体族，黑体作为CJK sans-serif默认字体
+    \setCJKsansfont{SimHei}
+    \cauc@set@latin@fallback
+  }{%
+    \IfFontExistsTF{Noto Serif CJK SC}{%
+      % Linux/macOS 常见 Noto CJK 字体
+      \setCJKfamilyfont{songti}{Noto Serif CJK SC}
+      \setCJKfamilyfont{heiti}{Noto Sans CJK SC}
+      \setCJKfamilyfont{kaiti}{Noto Serif CJK SC}
+      \setCJKfamilyfont{lishu}{Noto Serif CJK SC}
+
+      \setCJKfamilyfont{songtibold}{Noto Serif CJK SC}[AutoFakeBold={\cauc@fakebold@size}]
+      \setCJKfamilyfont{heitibold}{Noto Sans CJK SC}[AutoFakeBold={\cauc@fakebold@size}]
+      \setCJKfamilyfont{lishubold}{Noto Serif CJK SC}[AutoFakeBold={\cauc@fakebold@size}]
+      \setCJKfamilyfont{kaitibold}{Noto Serif CJK SC}[AutoFakeBold={\cauc@fakebold@size}]
+
+      \setCJKfamilyfont{fangsong}{Noto Serif CJK SC}[AutoFakeBold={\cauc@fangsong@boldsize}]
+      \setCJKmonofont{Noto Serif CJK SC}[AutoFakeBold={\cauc@fangsong@boldsize}]
+      \cauc@warning{FangSong/KaiTi not found, using Noto Serif CJK SC as fallback}%
+
+      \setCJKmainfont{Noto Serif CJK SC}[ItalicFont=Noto Serif CJK SC]
+      \setCJKsansfont{Noto Sans CJK SC}
+      \cauc@set@latin@fallback
+    }{%
+      \IfFileExists{FandolSong-Regular.otf}{%
+        % TeX Live 自带 Fandol 字体，作为最小可用的中文字体回退
+        \setCJKfamilyfont{songti}{FandolSong-Regular.otf}
+        \setCJKfamilyfont{heiti}{FandolHei-Regular.otf}
+        \setCJKfamilyfont{kaiti}{FandolKai-Regular.otf}
+        \setCJKfamilyfont{lishu}{FandolSong-Regular.otf}
+
+        \setCJKfamilyfont{songtibold}{FandolSong-Regular.otf}[AutoFakeBold={\cauc@fakebold@size}]
+        \setCJKfamilyfont{heitibold}{FandolHei-Regular.otf}[AutoFakeBold={\cauc@fakebold@size}]
+        \setCJKfamilyfont{lishubold}{FandolSong-Regular.otf}[AutoFakeBold={\cauc@fakebold@size}]
+        \setCJKfamilyfont{kaitibold}{FandolKai-Regular.otf}[AutoFakeBold={\cauc@fakebold@size}]
+
+        \IfFileExists{FandolFang-Regular.otf}{%
+          \setCJKfamilyfont{fangsong}{FandolFang-Regular.otf}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+          \setCJKmonofont{FandolFang-Regular.otf}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+        }{%
+          \setCJKfamilyfont{fangsong}{FandolSong-Regular.otf}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+          \setCJKmonofont{FandolSong-Regular.otf}[AutoFakeBold={\cauc@fangsong@boldsize}]%
+          \cauc@warning{FandolFang not found, using FandolSong for fangsong/monofont}%
+        }%
+
+        \setCJKmainfont{FandolSong-Regular.otf}[ItalicFont=FandolKai-Regular.otf]
+        \setCJKsansfont{FandolHei-Regular.otf}
+        \cauc@set@latin@fallback
+      }{%
+        \ClassError{cauc_thesis}{%
+          No usable Chinese fonts found%
+          \MessageBreak
+          Install Windows CJK fonts, Noto CJK fonts, or the Fandol fonts (TeX Live lang-chinese),%
+          \MessageBreak
+          or place font files in the fonts/ directory and use localfonts=true%
+        }{%
+          The template needs at least one CJK font family to compile.%
+        }%
+      }%
+    }%
+  }%
 \fi
 
 \newcommand{\heitibold}{\CJKfamily{heitibold}}

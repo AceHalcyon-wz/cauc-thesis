@@ -1,27 +1,29 @@
+% examples/doctor.tex - 博士学位示例
+% 演示博士模式的封面、英文封面、摘要、目录、符号说明、正文、定理环境、算法、横排图表、参考文献、致谢、作者简介等完整结构
+
 \documentclass[
-	degree              = doctor,
-	StudentName         = 张三,
-	StudentNameEng      = {San Zhang},
-	StudentID           = 2020123456,
-	AdvisorName         = 李四,
-	AdvisorNameEng      = {Si Li},
-	AdvisorNameEngOut   = {Wu Wang},
-	Grade               = 2020,
-	Major               = 计算机科学与技术,
-	Department          = 计算机学院,
-	DepartmentEng       = {College of Computer Science},
-	ResearchInterest    = 人工智能,
-	SubmitYear		    = 2024,
-	SubmitMonth		    = 6,
-	SubmitDay           = 1,
-	DefenseYear         = 2024,
-	DefenseMonth        = 6,
-	DefenseDay          = 15,
-	DefenseDateEng      = {{June 15, 2024}},
-	CLCNumber           = TP391,
-	UDCNumber           = 004.9,
-	Title               = 基于XXX的YYY研究,
-	TitleEng            = {{Research on YYY Based on XXX}}
+    degree=doctor,
+    StudentName=张三,
+    StudentNameEng={San Zhang},
+    StudentID=2020123456,
+    AdvisorName=李四,
+    AdvisorNameEng={Si Li},
+    AdvisorNameEngOut={Wu Wang},
+    Major=计算机科学与技术,
+    Department=计算机学院,
+    DepartmentEng={College of Computer Science},
+    ResearchInterest=人工智能,
+    SubmitYear=2024,
+    SubmitMonth=6,
+    SubmitDay=1,
+    DefenseYear=2024,
+    DefenseMonth=6,
+    DefenseDay=15,
+    DefenseDateEng={June 15, 2024},
+    CLCNumber=TP391,
+    UDCNumber=004.9,
+    Title=基于某某方法的某课题研究,
+    TitleEng={Research on Some Topic Based on Some Method}
 ]{cauc_thesis}
 
 \begin{document}
@@ -31,17 +33,17 @@
 \makecover
 
 \begin{abstract-zh}
-	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+    摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
 
-	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+    摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
 
-	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+    \keywordszh{关键词1；关键词2；关键词3；关键词4}
 \end{abstract-zh}
 
 \begin{abstract-en}
-	English abstract content goes here. It should correspond to the Chinese abstract above.
+    English abstract content goes here. It should correspond to the Chinese abstract above.
 
-	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+    \keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
 \end{abstract-en}
 
 \makefrontmatter
@@ -192,11 +194,11 @@ Model C & 0.91 & 0.88 & 0.89 & 0.93 & 90 & 15.8 \\
 \bibliography{reference}
 
 \begin{acknowledgment}
-	致谢内容。
+    致谢内容。
 \end{acknowledgment}
 
 \begin{authorintro}
-	作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
+    作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
 \end{authorintro}
 
 \end{document}

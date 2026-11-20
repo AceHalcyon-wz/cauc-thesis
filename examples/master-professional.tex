@@ -1,28 +1,30 @@
+% examples/master-professional.tex - 专业学位硕士示例
+% 演示专业硕士模式的封面（含校外导师）、摘要、目录、符号说明、正文、参考文献、致谢、作者简介等完整结构
+
 \documentclass[
-	degree              = master-professional,
-	StudentName         = 张三,
-	StudentNameEng      = {San Zhang},
-	StudentID           = 2021123456,
-	AdvisorName         = 李四,
-	AdvisorNameEng      = {Si Li},
-	AdvisorNameOut      = 王五,
-	AdvisorNameEngOut   = {Wu Wang},
-	Grade               = 2021,
-	Major               = 电子信息硕士,
-	Department          = 计算机学院,
-	DepartmentEng       = {College of Computer Science},
-	ResearchInterest    = 计算机技术,
-	SubmitYear		    = 2024,
-	SubmitMonth		    = 6,
-	SubmitDay           = 1,
-	DefenseYear         = 2024,
-	DefenseMonth        = 6,
-	DefenseDay          = 15,
-	DefenseDateEng      = {{June 15, 2024}},
-	CLCNumber           = TP391,
-	UDCNumber           = 004.9,
-	Title               = 基于XXX的YYY研究,
-	TitleEng            = {{Research on YYY Based on XXX}}
+    degree=master-professional,
+    StudentName=张三,
+    StudentNameEng={San Zhang},
+    StudentID=2021123456,
+    AdvisorName=李四,
+    AdvisorNameEng={Si Li},
+    AdvisorNameOut=王五,
+    AdvisorNameEngOut={Wu Wang},
+    Major=电子信息硕士,
+    Department=计算机学院,
+    DepartmentEng={College of Computer Science},
+    ResearchInterest=计算机技术,
+    SubmitYear=2024,
+    SubmitMonth=6,
+    SubmitDay=1,
+    DefenseYear=2024,
+    DefenseMonth=6,
+    DefenseDay=15,
+    DefenseDateEng={June 15, 2024},
+    CLCNumber=TP391,
+    UDCNumber=004.9,
+    Title=基于某某方法的某课题研究,
+    TitleEng={Research on Some Topic Based on Some Method}
 ]{cauc_thesis}
 
 \begin{document}
@@ -32,17 +34,17 @@
 \makecover
 
 \begin{abstract-zh}
-	摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
+    摘要应具有独立性和自含性，即不需阅读报告、论文的全文，就能获得必要的信息。摘要是一篇完整的短文，一般应说明研究工作目的、实验方法、结果和最终结论等，而重点是结果和结论。
 
-	摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
+    摘要要求结构严谨，表达简明，语义确切，字数300-500字为宜。
 
-	\keywordszh{关键词1；关键词2；关键词3；关键词4}
+    \keywordszh{关键词1；关键词2；关键词3；关键词4}
 \end{abstract-zh}
 
 \begin{abstract-en}
-	English abstract content goes here. It should correspond to the Chinese abstract above.
+    English abstract content goes here. It should correspond to the Chinese abstract above.
 
-	\keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
+    \keywordsen{Keyword1; Keyword2; Keyword3; Keyword4}
 \end{abstract-en}
 
 \makefrontmatter
@@ -61,7 +63,7 @@
 
 \section{研究背景}
 
-研究背景内容。
+研究背景内容。相关研究已在图像识别领域取得显著进展\cite{he2016deep}。
 
 \section{研究目的与意义}
 
@@ -129,11 +131,11 @@
 \bibliography{reference}
 
 \begin{acknowledgment}
-	致谢内容。
+    致谢内容。
 \end{acknowledgment}
 
 \begin{authorintro}
-	作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
+    作者简介内容，包括姓名、性别、出生年月、籍贯、学历、研究方向等。
 \end{authorintro}
 
 \end{document}

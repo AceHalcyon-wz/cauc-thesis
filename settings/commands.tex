@@ -1,3 +1,6 @@
+% settings/commands.tex - 自定义命令与环境
+% 负责定义摘要环境、关键词命令、图表环境、定理环境、引用命令等自定义功能
+
 % 原始模板规范：所有学位类型引用均为双重上标格式
 \newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
 
@@ -169,17 +172,18 @@
 \RequirePackage{amsthm}
 
 \theoremstyle{plain}
+% 各定理类环境使用独立计数器，确保 cleveref 正确识别“定理/引理/推论”等名称
 \newtheorem{theorem}{定理}[chapter]
-\newtheorem{lemma}[theorem]{引理}
-\newtheorem{corollary}[theorem]{推论}
-\newtheorem{proposition}[theorem]{命题}
+\newtheorem{lemma}{引理}[chapter]
+\newtheorem{corollary}{推论}[chapter]
+\newtheorem{proposition}{命题}[chapter]
 
 \theoremstyle{definition}
-\newtheorem{definition}[theorem]{定义}
-\newtheorem{example}[theorem]{例}
+\newtheorem{definition}{定义}[chapter]
+\newtheorem{example}{例}[chapter]
 
 \theoremstyle{remark}
-\newtheorem{remark}[theorem]{注}
+\newtheorem{remark}{注}[chapter]
 \renewcommand{\proofname}{证明}
 
 \counterwithin{figure}{chapter}
@@ -187,17 +191,13 @@
 \counterwithin{equation}{chapter}
 % 在 \counterwithin 之后设置编号格式，确保不被覆盖
 % 本科：图/表/公式用 - 分隔（如 1-1），研究生：表/公式用 . 分隔（如 1.1）
-\renewcommand{\thefigure}{\arabic{chapter}-\arabic{figure}}
-\ifcauc@bachelor
-\renewcommand{\thetable}{\arabic{chapter}-\arabic{table}}
-\renewcommand{\theequation}{\arabic{chapter}-\arabic{equation}}
-\else
-\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
-\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
-\fi
+% 附录中的章节号为字母（A、B），通过 \cauc@chapnum 自动切换
+\renewcommand{\thefigure}{\cauc@chapnum-\arabic{figure}}
+\renewcommand{\thetable}{\cauc@chapnum\ifcauc@bachelor-\else.\fi\arabic{table}}
+\renewcommand{\theequation}{\cauc@chapnum\ifcauc@bachelor-\else.\fi\arabic{equation}}
 \ifcauc@graduate
 \counterwithin{algocf}{chapter}
-\renewcommand{\thealgocf}{\arabic{chapter}.\arabic{algocf}}
+\renewcommand{\thealgocf}{\cauc@chapnum.\arabic{algocf}}
 \fi
 
 \ifcauc@graduate
@@ -218,6 +218,15 @@
 }
 
 \renewcommand{\nomlabel}[1]{\textsf{#1}\hfill}
+
+% nomencl 默认不把符号说明写入目录；这里包装 \printnomenclature，
+% 使其自动生成“符号说明”目录条目，并保留原有的可选参数。
+\let\cauc@orig@printnomenclature\printnomenclature
+\renewcommand{\printnomenclature}{%
+  \phantomsection
+  \addcontentsline{toc}{chapter}{符号说明}%
+  \cauc@orig@printnomenclature
+}
 
 % 原始模板规范：研究生四级标题使用\paragraph+换行，标题独占一行，正文另起一行
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
@@ -306,17 +315,17 @@
 \NewDocumentEnvironment{thesisfigure}{m m m O{0.8\textwidth} o}{%
     \setlength{\abovecaptionskip}{0cm}
     \begin{figure}[!ht]
+        \begin{center}
+        \setlength{\linewidth}{#4}
+}{%
+        \end{center}
+        % 中文规范：图题位于图下方，表题位于表上方
         \ifcauc@bachelor
             \caption{#1}
         \else
             \bicaption{#1}{#2}
         \fi
         \label{#3}
-        \vspace{-10pt}
-        \begin{center}
-        \setlength{\linewidth}{#4}
-}{%
-        \end{center}
         \vspace{-5pt}
         \IfNoValueF{#5}{%
             \linespread{1.0}\setlength{\parindent}{2em}
@@ -327,34 +336,56 @@
     \end{figure}
 }
 
+% 中文 cref 格式：章节使用“第X章/第X节”，避免出现“第 章一”之类错误。
+% chapter/section 使用空名称 + 标签格式，名称与编号之间不会插入多余空格。
 \crefname{figure}{图}{图}
 \crefname{table}{表}{表}
 \crefname{equation}{式}{式}
-\crefname{chapter}{第\,章}{第\,章}
-\crefname{section}{第\,节}{第\,节}
-\crefname{subsection}{第\,小节}{第\,小节}
-\crefname{subsubsection}{第\,小小节}{第\,小小节}
-\crefname{paragraph}{第\,段}{第\,段}
+\crefname{chapter}{}{}
+\creflabelformat{chapter}{#2第#1章#3}
+\crefname{section}{}{}
+\creflabelformat{section}{#2第#1节#3}
+\crefname{subsection}{}{}
+\creflabelformat{subsection}{#2第#1小节#3}
+\crefname{subsubsection}{}{}
+\creflabelformat{subsubsection}{#2第#1小小节#3}
+\crefname{paragraph}{}{}
+\creflabelformat{paragraph}{#2第#1段#3}
 \crefname{appendix}{附录}{附录}
 \ifcauc@graduate
 \crefname{algocf}{算法}{算法}
 \fi
 \crefname{subfigure}{子图}{子图}
 \crefname{subtable}{子表}{子表}
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{corollary}{推论}{推论}
+\crefname{proposition}{命题}{命题}
+\crefname{definition}{定义}{定义}
+\crefname{example}{例}{例}
+\crefname{remark}{注}{注}
+
 \Crefname{figure}{图}{图}
 \Crefname{table}{表}{表}
 \Crefname{equation}{式}{式}
-\Crefname{chapter}{第\,章}{第\,章}
-\Crefname{section}{第\,节}{第\,节}
-\Crefname{subsection}{第\,小节}{第\,小节}
-\Crefname{subsubsection}{第\,小小节}{第\,小小节}
-\Crefname{paragraph}{第\,段}{第\,段}
+\Crefname{chapter}{}{}
+\Crefname{section}{}{}
+\Crefname{subsection}{}{}
+\Crefname{subsubsection}{}{}
+\Crefname{paragraph}{}{}
 \Crefname{appendix}{附录}{附录}
 \ifcauc@graduate
 \Crefname{algocf}{算法}{算法}
 \fi
 \Crefname{subfigure}{子图}{子图}
 \Crefname{subtable}{子表}{子表}
+\Crefname{theorem}{定理}{定理}
+\Crefname{lemma}{引理}{引理}
+\Crefname{corollary}{推论}{推论}
+\Crefname{proposition}{命题}{命题}
+\Crefname{definition}{定义}{定义}
+\Crefname{example}{例}{例}
+\Crefname{remark}{注}{注}
 
 \ifcauc@graduate
 \crefname{nomenclature}{符号说明}{符号说明}
@@ -365,10 +396,9 @@
 \renewcommand{\appendixtocname}{附录}
 
 \g@addto@macro\appendix{%
+    \cauc@appendixtrue
     \renewcommand{\chaptername}{附录}%
-    \ifcauc@bachelor\else
-        \renewcommand{\thechapter}{\Alph{chapter}}%
-    \fi
+    \renewcommand{\thechapter}{\Alph{chapter}}%
 }
 \ifcauc@graduate
 \renewcommand{\listalgorithmcfname}{\centerline{\heiti\zihao{3}算法列表}}
@@ -426,7 +456,9 @@
     \typeout{===== End Configuration =====}%
 }
 
+% 便捷命令：生成封面 + 目录/插图目录/表格目录（不含摘要，摘要需单独排版）
 \newcommand{\makefrontpages}{%
+    \frontmatter
     \makecover
     \makefrontmatter
 }

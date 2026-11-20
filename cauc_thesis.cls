@@ -82,6 +82,13 @@
 
 \RequirePackage{pgfkeys}
 
+% 封面尺寸：需在读取 cauc_thesis.cfg 前定义，供 coverinfowidth/coverlabelwidth 使用
+\newlength{\cauc@cover@infowidth}
+\newlength{\cauc@cover@infowidth@second}
+\newlength{\cauc@cover@labelwidth}
+\newif\ifcauc@cover@infowidth@set
+\newif\ifcauc@cover@labelwidth@set
+
 \newcommand{\cauc@linespacing}{}
 \newcommand{\cauc@headertext}{}
 \newcommand{\cauc@captionlabelsep}{}
@@ -91,9 +98,42 @@
 \newif\ifcauc@margin@pending
 \cauc@margin@pendingfalse
 
+% 学位类型与附录状态标志（\caucsetup 的 Type/period 回调需要）
+\newif\ifcauc@design
+\newif\ifcauc@bachelor
+\newif\ifcauc@graduate
+\newif\ifcauc@doctor
+\newif\ifcauc@master
+\newif\ifcauc@masteracademic
+\newif\ifcauc@masterprofessional
+\newif\ifcauc@proposal
+\newif\ifcauc@final
+\cauc@finaltrue
+\newif\ifcauc@appendix
+\newcommand{\cauc@chapnum}{\ifcauc@appendix\thechapter\else\arabic{chapter}\fi}
+
+% 枚举型选项在解析时去掉空格，避免 cauc_thesis.cfg 中换行/缩进产生的
+% 尾部空格导致 \ifx / \ifdefstring 比较失败。
+\newcommand{\cauc@applytype}{%
+  \def\cauc@@temp{design}%
+  \ifx\cauc@Type\cauc@@temp
+    \cauc@designtrue
+  \else
+    \cauc@designfalse
+  \fi
+}
+\newcommand{\cauc@applyperiod}{%
+  \ifdefstring{\cauc@period}{proposal}{%
+    \cauc@proposaltrue\cauc@finalfalse
+  }{%
+    \cauc@proposalfalse\cauc@finaltrue
+  }%
+}
+
 \newcommand{\caucsetup}[1]{%
     \pgfkeys{
         /caucsetup/.cd,
+        degree/.code={\edef\cauc@degree{\zap@space##1 \@empty}},
         linespacing/.store in=\cauc@linespacing,
         topmargin/.code={\def\cauc@topmargin{##1}\cauc@margin@pendingtrue},
         bottommargin/.code={\def\cauc@bottommargin{##1}\cauc@margin@pendingtrue},
@@ -128,16 +168,14 @@
         UDCNumber/.store in=\cauc@UDCNumber,
         Keywords/.store in=\cauc@Keywords,
         KeywordsEng/.store in=\cauc@KeywordsEng,
-        Type/.store in=\cauc@Type,
-        Type/.append code={\def\cauc@@temp{design}\ifx\cauc@Type\cauc@@temp\cauc@designtrue\else\cauc@designfalse\fi},
-        localfonts/.store in=\cauc@localfonts,
-        mathfont/.store in=\cauc@mathfont,
-        period/.store in=\cauc@period,
-        period/.append code={\ifdefstring{\cauc@period}{proposal}{\cauc@proposaltrue\cauc@finalfalse}{\cauc@proposalfalse\cauc@finaltrue}},
+        Type/.code={\edef\cauc@Type{\zap@space##1 \@empty}\cauc@applytype},
+        localfonts/.code={\edef\cauc@localfonts{\zap@space##1 \@empty}},
+        mathfont/.code={\edef\cauc@mathfont{\zap@space##1 \@empty}},
+        period/.code={\edef\cauc@period{\zap@space##1 \@empty}\cauc@applyperiod},
         coverlogo/.store in=\cauc@coverlogo,
         coverimage/.store in=\cauc@coverimage,
-        coverinfowidth/.code={\setlength{\cauc@cover@infowidth}{##1}},
-        coverlabelwidth/.code={\setlength{\cauc@cover@labelwidth}{##1}},
+        coverinfowidth/.code={\setlength{\cauc@cover@infowidth}{##1}\cauc@cover@infowidth@settrue},
+        coverlabelwidth/.code={\setlength{\cauc@cover@labelwidth}{##1}\cauc@cover@labelwidth@settrue},
         openright/.is if=cauc@openright,
         headeronplain/.is if=cauc@headeronplain,
         blankpage/.is if=cauc@blankpagestandard,
@@ -150,21 +188,21 @@
         blind/.is if=cauc@blind,
         pdfa/.is if=cauc@pdfa,
         twoside/.is if=cauc@twoside,
-        /.unknown/.code={\cauc@warning{Unknown key '\pgfkeyscurrentkey' in caucsetup}},
-        #1
+        /.unknown/.code={\cauc@warning{Unknown key '\pgfkeyscurrentkey' in caucsetup}}%
     }%
+    % 逐项处理，利用 etoolbox 去掉每项开头的空格/换行，
+    % 使 cauc_thesis.cfg 中缩进书写的键值也能正确识别。
+    \forcsvlist{\cauc@setup@item}{#1}%
+}
+\newcommand{\cauc@setup@item}[1]{%
+    \pgfkeys{/caucsetup/.cd, #1}%
 }
 
-\newif\ifcauc@design
-\newif\ifcauc@bachelor
-\newif\ifcauc@graduate
-\newif\ifcauc@doctor
-\newif\ifcauc@master
-\newif\ifcauc@masteracademic
-\newif\ifcauc@masterprofessional
-\newif\ifcauc@proposal
-\newif\ifcauc@final
-\cauc@finaltrue
+% 先读取用户配置，使 \caucsetup 中的加载期选项（degree/localfonts/mathfont/
+% pdfa/twoside/openright/linespacing 等）与个人信息在后续处理前生效。
+\IfFileExists{cauc_thesis.cfg}{\input{cauc_thesis.cfg}}{%
+  \ClassInfo{cauc_thesis}{No cauc_thesis.cfg found. Please copy cauc_thesis.cfg.example to cauc_thesis.cfg and fill in your personal information.}%
+}
 
 \def\cauc@parse@degree{%
   \ifdefstring{\cauc@degree}{bachelor}{%
@@ -196,28 +234,28 @@
 \ifdefstring{\cauc@period}{proposal}{\cauc@proposaltrue}{\cauc@finaltrue}
 
 \ifcauc@bachelor
-  \newcommand{\cauc@topmargin}{2.5cm}
-  \newcommand{\cauc@bottommargin}{2.5cm}
-  \newcommand{\cauc@leftmargin}{3cm}
-  \newcommand{\cauc@rightmargin}{2.5cm}
+  \providecommand{\cauc@topmargin}{2.5cm}
+  \providecommand{\cauc@bottommargin}{2.5cm}
+  \providecommand{\cauc@leftmargin}{3cm}
+  \providecommand{\cauc@rightmargin}{2.5cm}
 \else
-  \newcommand{\cauc@topmargin}{2.5cm}
-  \newcommand{\cauc@bottommargin}{2.5cm}
-  \newcommand{\cauc@leftmargin}{2.5cm}
-  \newcommand{\cauc@rightmargin}{2.5cm}
+  \providecommand{\cauc@topmargin}{2.5cm}
+  \providecommand{\cauc@bottommargin}{2.5cm}
+  \providecommand{\cauc@leftmargin}{2.5cm}
+  \providecommand{\cauc@rightmargin}{2.5cm}
 \fi
 
 \ifcauc@openright
   \ifcauc@twoside
-    \PassOptionsToClass{openright}{ctexrep}
+    \PassOptionsToClass{twoside,openright}{ctexrep}
   \else
-    \PassOptionsToClass{openright,oneside}{ctexrep}
+    \PassOptionsToClass{oneside,openright}{ctexrep}
   \fi
 \else
   \ifcauc@twoside
-    \PassOptionsToClass{openany}{ctexrep}
+    \PassOptionsToClass{twoside,openany}{ctexrep}
   \else
-    \PassOptionsToClass{openany,oneside}{ctexrep}
+    \PassOptionsToClass{oneside,openany}{ctexrep}
   \fi
 \fi
 
@@ -232,6 +270,9 @@
 % 研究生前置页面使用罗马数字页码，并显示页眉（与原始模板一致）
 % 本科前置页面不显示页眉和页码（与原始模板一致，原始模板本科前置页面使用pagestyle=empty）
 \newcommand{\frontmatter}{%
+    % 前置页面统一使用罗马数字编号。本科虽不显示页码，但保留内部编号，
+    % 避免 \pagenumbering{gobble} 造成 PDF 页面锚点重名。
+    \pagenumbering{Roman}%
     \ifcauc@bachelor
         \pagestyle{empty}%
         % 本科前置页面：临时将plain样式重定义为empty，避免\chapter*触发页眉
@@ -240,7 +281,6 @@
             \renewcommand{\headrulewidth}{0pt}%
         }%
     \else
-        \pagenumbering{Roman}%
         \pagestyle{fancy}%
     \fi
 }
@@ -248,15 +288,8 @@
     \pagenumbering{arabic}%
     \zihao{-4}%
     \pagestyle{fancy}%
-    % 恢复plain样式：章节起始页显示页眉（与原始模板一致）
-    \ifcauc@headeronplain
-      \fancypagestyle{plain}{
-          \fancyhf{}
-          \fancyhead[C]{\cauc@header@text}
-          \fancyfoot[C]{\thepage}
-          \renewcommand{\headrulewidth}{0.5pt}
-      }%
-    \fi
+    % 恢复plain样式：按当前的 headeronplain 设置重新定义（见 settings/format.tex）
+    \cauc@setplainstyle
 }
 \newcommand{\backmatter}{%
 }
@@ -266,6 +299,15 @@
 \input{settings/format}
 \input{settings/contents}
 \input{settings/commands}
+
+% 封面页环境：不重置页码，避免封面页码与摘要/正文页码锚点重复。
+% report 的 titlepage 环境会把页码重置为 1，导致 PDF 书签和链接锚点冲突。
+\newenvironment{cauc@coverpage}{%
+    \clearpage
+    \thispagestyle{empty}%
+}{%
+    \clearpage
+}
 
 \newcommand{\makecover}{%
     \makeatletter
@@ -294,44 +336,47 @@
   \fi
 }
 
-\ifcauc@bachelor
-  \@tfor\cauc@field:={StudentName}{StudentID}{Title}{Major}{Department}{AdvisorName}{SubmitYear}{SubmitMonth}\do{%
-    \expandafter\cauc@validate@field\expandafter{\cauc@field}{bachelor}%
-  }%
-  \@tfor\cauc@field:={StudentNameEng}{AdvisorNameEng}{AdvisorNameOut}\do{%
-    \expandafter\cauc@warn@unused\expandafter{\cauc@field}{degree=bachelor}%
-  }%
-\fi
+% 必填字段检查放在 \AtBeginDocument，使导言区中的 \caucsetup 也能设置个人信息。
+\AtBeginDocument{%
+  \ifcauc@bachelor
+    \@tfor\cauc@field:={StudentName}{StudentID}{Title}{Major}{Department}{AdvisorName}{SubmitYear}{SubmitMonth}\do{%
+      \expandafter\cauc@validate@field\expandafter{\cauc@field}{bachelor}%
+    }%
+    \@tfor\cauc@field:={StudentNameEng}{AdvisorNameEng}{AdvisorNameOut}\do{%
+      \expandafter\cauc@warn@unused\expandafter{\cauc@field}{degree=bachelor}%
+    }%
+  \fi
 
-\ifcauc@graduate
-  \@tfor\cauc@field:={StudentName}{StudentID}{AdvisorName}{AdvisorNameEng}{Department}{SubmitYear}{SubmitMonth}{StudentNameEng}{DefenseYear}{CLCNumber}{UDCNumber}{ResearchInterest}{DepartmentEng}{Title}{TitleEng}{Major}{DefenseDateEng}\do{%
-    \expandafter\cauc@validate@field\expandafter{\cauc@field}{graduate}%
-  }%
-\fi
+  \ifcauc@graduate
+    \@tfor\cauc@field:={StudentName}{StudentID}{AdvisorName}{AdvisorNameEng}{Department}{SubmitYear}{SubmitMonth}{SubmitDay}{StudentNameEng}{DefenseYear}{DefenseMonth}{DefenseDay}{CLCNumber}{UDCNumber}{ResearchInterest}{DepartmentEng}{Title}{TitleEng}{Major}{DefenseDateEng}\do{%
+      \expandafter\cauc@validate@field\expandafter{\cauc@field}{graduate}%
+    }%
+  \fi
 
-\ifcauc@masterprofessional
-  \cauc@validate@field{AdvisorNameOut}{master-professional}%
-  \cauc@validate@field{AdvisorNameEngOut}{master-professional}%
-  \cauc@warn@unused{AdvisorNameEngSecond}{degree=master-professional}%
-\fi
+  \ifcauc@masterprofessional
+    \cauc@validate@field{AdvisorNameOut}{master-professional}%
+    \cauc@validate@field{AdvisorNameEngOut}{master-professional}%
+    \cauc@warn@unused{AdvisorNameEngSecond}{degree=master-professional}%
+  \fi
 
-\ifcauc@doctor
-  \cauc@validate@field{AdvisorNameEngOut}{doctor}%
-  \cauc@warn@unused{AdvisorNameEngSecond}{degree=doctor}%
-\fi
+  \ifcauc@doctor
+    \cauc@validate@field{AdvisorNameEngOut}{doctor}%
+    \cauc@warn@unused{AdvisorNameEngSecond}{degree=doctor}%
+  \fi
 
-\ifcauc@masteracademic
-  \cauc@warn@unused{AdvisorNameOut}{degree=master-academic}%
-  \cauc@warn@unused{AdvisorNameEngOut}{degree=master-academic}%
-\fi
+  \ifcauc@masteracademic
+    \cauc@validate@field{AdvisorNameEngSecond}{master-academic}%
+    \cauc@warn@unused{AdvisorNameOut}{degree=master-academic}%
+    \cauc@warn@unused{AdvisorNameEngOut}{degree=master-academic}%
+  \fi
+}
 
 \newcommand{\makefrontmatter}{%
     \ifcauc@listcontents
         \ifcauc@bachelor
-            % 本科目录页：去除页码，调整页眉间距（与原始模板一致）
+            % 本科目录页：调整页眉间距（与原始模板一致）
             \setlength{\cauc@saved@headsep}{\headsep}%
             \setlength{\headsep}{-0.3cm}%
-            \pagenumbering{gobble}%
         \fi
         \tableofcontents
         \ifcauc@bachelor
@@ -342,10 +387,6 @@
         \clearpage
     \fi
     \ifcauc@listfigures
-        \ifcauc@bachelor
-            % 本科插图目录页：去除页码
-            \pagenumbering{gobble}%
-        \fi
         \listoffigures
         \ifcauc@bachelor
             % 本科插图目录页：强制使用empty页面样式
@@ -354,10 +395,6 @@
         \clearpage
     \fi
     \ifcauc@listtables
-        \ifcauc@bachelor
-            % 本科表格目录页：去除页码
-            \pagenumbering{gobble}%
-        \fi
         \listoftables
         \ifcauc@bachelor
             % 本科表格目录页：强制使用empty页面样式
@@ -365,8 +402,8 @@
         \fi
         \clearpage
     \fi
-    % 所有前置目录完成后，重置页码为阿拉伯数字从1开始
-    \pagenumbering{arabic}%
+    % 页码保持前置页面的罗马数字，由 \mainmatter 切换为阿拉伯数字，
+    % 避免符号说明等后续前置内容出现重复页码。
 }
 \newcommand{\maketableofcontents}{\ifcauc@listcontents\tableofcontents\fi}
 \newcommand{\makelistoffigures}{\ifcauc@listfigures\listoffigures\fi}
@@ -417,10 +454,6 @@
             \cauc@warning{Bibliography style gbt7714-numerical.bst not found. Citations may not render correctly.}%
         }%
     \fi
-}
-
-\IfFileExists{cauc_thesis.cfg}{\input{cauc_thesis.cfg}}{%
-  \ClassInfo{cauc_thesis}{No cauc_thesis.cfg found. Please copy cauc_thesis.cfg.example to cauc_thesis.cfg and fill in your personal information.}%
 }
 
 \endinput
