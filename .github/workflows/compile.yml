@@ -18,7 +18,7 @@ jobs:
       - name: Install TeX Live
         run: |
           sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
             texlive-xetex \
             texlive-lang-chinese \
             texlive-science \
