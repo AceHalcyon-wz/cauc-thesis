@@ -95,7 +95,20 @@ jobs:
 
       - name: Compile with latexmk
         run: |
+          set +e
           latexmk -${{ matrix.engine }} test_compile.tex
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo "===== AUX (citation/bibdata/bibstyle) ====="
+            grep -nE 'citation|bibdata|bibstyle' build/test_compile.aux || true
+            echo "===== BLG ====="
+            cat build/test_compile.blg || true
+            echo "===== BBL ====="
+            cat build/test_compile.bbl || true
+            echo "===== LOG tail ====="
+            tail -120 build/test_compile.log || true
+          fi
+          exit "$status"
 
       - name: Check PDF size
         run: |
