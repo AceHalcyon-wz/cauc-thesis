@@ -1,5 +1,5 @@
 % examples/master-professional.tex - 专业学位硕士示例
-% 演示专业硕士模式的封面（含校外导师）、摘要、目录、符号说明、正文、参考文献、致谢、作者简介等完整结构
+% 演示专业硕士模式的封面（含校外导师）、摘要、目录、符号说明、正文、致谢、作者简介等完整结构
 
 \documentclass[
     degree=master-professional,
@@ -128,8 +128,8 @@
 
 \backmatter
 
-\bibliography{reference}
-
+% 参考文献示例见 examples/bachelor.tex；研究生示例不放置文献条目，
+% 以避免不同 TeX Live 版本 BibTeX 对大型 bst 的兼容性差异。
 \begin{acknowledgment}
     致谢内容。
 \end{acknowledgment}

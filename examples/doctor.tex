@@ -1,5 +1,5 @@
 % examples/doctor.tex - 博士学位示例
-% 演示博士模式的封面、英文封面、摘要、目录、符号说明、正文、定理环境、算法、横排图表、参考文献、致谢、作者简介等完整结构
+% 演示博士模式的封面、英文封面、摘要、目录、符号说明、正文、定理环境、算法、横排图表、致谢、作者简介等完整结构
 
 \documentclass[
     degree=doctor,
@@ -191,8 +191,8 @@ Model C & 0.91 & 0.88 & 0.89 & 0.93 & 90 & 15.8 \\
 
 \backmatter
 
-\bibliography{reference}
-
+% 参考文献示例见 examples/bachelor.tex；研究生示例不放置文献条目，
+% 以避免不同 TeX Live 版本 BibTeX 对大型 bst 的兼容性差异。
 \begin{acknowledgment}
     致谢内容。
 \end{acknowledgment}
