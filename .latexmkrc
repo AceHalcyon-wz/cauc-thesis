@@ -8,13 +8,9 @@ $bibtex_fudge = 0 if $^O =~ /^(msys|cygwin)$/;
 $xelatex = 'xelatex -synctex=1 -file-line-error -interaction=nonstopmode';
 $lualatex = 'lualatex -synctex=1 -file-line-error -interaction=nonstopmode';
 $bibtex = 'bibtex';
+# 默认使用 XeLaTeX；命令行 -lualatex 会由 latexmk 自身切换为 LuaLaTeX，
+# 此处不要再根据 $lualatex 变量改写 $pdf_mode，否则默认引擎会被错误地设为 LuaLaTeX。
 $pdf_mode = 5;
-
-# -lualatex 时切换为 LuaLaTeX 模式；必须放在默认 $pdf_mode 之后，
-# 否则会被 XeLaTeX 的默认设置覆盖。
-if ($lualatex) {
-    $pdf_mode = 4;
-}
 
 $clean_ext = 'aux log out toc lof lot bbl blg fls fdb_latexmk synctex.gz xdv nlo nls ilg idx ind thm bcf run.xml xmpdata xmp xmpi glo ist acn acr alg loa fgs';
 

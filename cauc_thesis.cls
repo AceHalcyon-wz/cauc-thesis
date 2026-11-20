@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{cauc_thesis}
-              [2025/06/01 Unified LaTeX Template for CAUC Thesis]
+              [2026/11/20 Unified LaTeX Template for CAUC Thesis]
 \newcommand{\cauc@warning}[1]{\ClassWarning{cauc_thesis}{#1}}
 \newcommand{\cauc@error}[2]{\ClassError{cauc_thesis}{#1}{#2}}
 
@@ -291,6 +291,11 @@
     \fi
 }
 \newcommand{\mainmatter}{%
+    % 先结束前置部分当前页，再切换页码与页面样式；
+    % 否则在未生成目录（或目录被禁用）时，最后一页摘要会被改成正文页码和 fancy 页眉。
+    % 使用 \clearpage 而不是 \cleardoublepage：openright 下的空白页由
+    % 随后第一个 \chapter 的 \cleardoublepage 处理，避免 openany 时多插一页。
+    \clearpage
     \pagenumbering{arabic}%
     \zihao{-4}%
     \pagestyle{fancy}%

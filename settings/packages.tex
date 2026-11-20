@@ -75,6 +75,15 @@
 %% ==================== 代码与列表 ====================
 \RequirePackage{enumitem}
 \RequirePackage{listings}
+% 代码清单使用中文名称，编号与图表保持一致：本科“代码 B-1”，研究生“代码 B.1”
+\renewcommand{\lstlistingname}{代码}
+% 代码清单标题使用空格分隔标签与标题，与图表标题保持一致。
+\captionsetup*[lstlisting]{labelsep=space}
+% listings 在 \AtBeginDocument 中才创建 lstlisting 计数器与 \thelstlisting，
+% 因此编号格式也延迟到此时重定义。
+\AtBeginDocument{%
+  \renewcommand{\thelstlisting}{\cauc@chapnum\ifcauc@bachelor-\else.\fi\arabic{lstlisting}}%
+}
 \definecolor{cauc@keywordcolor}{RGB}{0,0,180}
 \definecolor{cauc@commentcolor}{RGB}{0,128,0}
 \definecolor{cauc@stringcolor}{RGB}{180,0,0}
@@ -122,24 +131,75 @@
 \else
 \RequirePackage[sort&compress]{natbib}
 \fi
-\RequirePackage[colorlinks,
-    anchorcolor=black,
-    linkcolor=black,
-    citecolor=black,
-    urlcolor=black,
-    unicode,
-    pdfencoding=auto
-]{hyperref}
-% PDF 元数据在 \AtBeginDocument 中设置，确保导言区 \caucsetup 设置的个人信息也能写入
-\AtBeginDocument{%
-  \hypersetup{
-    pdftitle={\cauc@Title},
-    pdfauthor={\ifcauc@blind\else\cauc@StudentName\fi},
-    pdfsubject={\ifcauc@blind 盲审论文\else\ifcauc@bachelor Bachelor\else\ifcauc@doctor Doctor\else Master\fi\fi\ Thesis, \cauc@Department\fi},
-    pdfkeywords={\cauc@Keywords\ifx\cauc@KeywordsEng\@empty\else, \cauc@KeywordsEng\fi},
-    pdfcreator={cauc\_thesis template with XeLaTeX}
+% PDF/A 模式必须先加载 pdfx，由 pdfx 以 pdfa 选项加载 hyperref；
+% 若先加载 hyperref，再加载 pdfx，hyperref 已固定为非 PDF/A 模式，
+% 会产生 "Option `pdfa' has already been used" 警告且输出不符合 PDF/A。
+\ifcauc@pdfa
+  % pdfx 优先使用 colorprofiles 宏包提供的 sRGB.icc；
+  % 若发行版没有 colorprofiles，则退回到项目根目录的 ICC 文件，
+  % 因为 xdvipdfmx 按当前工作目录解析 \special 中嵌入的 ICC 文件。
+  \IfFileExists{colorprofiles.tex}{}{%
+    \IfFileExists{sRGB_IEC61966-2-1_black_scaled.icc}{}{%
+      \ClassError{cauc_thesis}{%
+        PDF/A mode requires either the 'colorprofiles' package
+        or the ICC profile sRGB_IEC61966-2-1_black_scaled.icc%
+        \MessageBreak
+        Place the ICC file in the project root, or disable the pdfa option%
+      }{%
+        Install 'colorprofiles' (TeX Live: tlmgr install colorprofiles; MiKTeX: install colorprofiles),%
+        \MessageBreak
+        or see the pdfx package documentation for the required ICC profile.%
+      }%
+    }%
   }%
-}
+  \ifxetex
+    % XeLaTeX 下 pdfx/hyperref 需要完整的 puenc-greek.def；部分 MiKTeX 安装缺失该文件。
+    \IfFileExists{puenc-greek.def}{}{%
+      \ClassError{cauc_thesis}{%
+        PDF/A mode on XeLaTeX requires a complete hyperref installation.%
+        \MessageBreak
+        File puenc-greek.def is missing%
+      }{%
+        Update or reinstall the hyperref package, or use LuaLaTeX,%
+        \MessageBreak
+        or disable the pdfa option.%
+      }%
+    }%
+  \fi
+  \RequirePackage[a-2b,mathxmp]{pdfx}
+  \hypersetup{colorlinks,
+      anchorcolor=black,
+      linkcolor=black,
+      citecolor=black,
+      urlcolor=black,
+      unicode,
+      pdfencoding=auto
+  }
+\else
+  \RequirePackage[colorlinks,
+      anchorcolor=black,
+      linkcolor=black,
+      citecolor=black,
+      urlcolor=black,
+      unicode,
+      pdfencoding=auto
+  ]{hyperref}
+\fi
+% PDF 元数据在 \AtBeginDocument 中设置，确保导言区 \caucsetup 设置的个人信息也能写入。
+% PDF/A 模式下由 pdfx 通过 <jobname>.xmpdata 管理 XMP 元数据；
+% 此时不要再调用 \hypersetup 设置同样的键，否则 hyperref 会报告
+% "Option `pdftitle' has already been used" 并忽略设置。
+\ifcauc@pdfa\else
+  \AtBeginDocument{%
+    \hypersetup{
+      pdftitle={\cauc@Title},
+      pdfauthor={\ifcauc@blind\else\cauc@StudentName\fi},
+      pdfsubject={\ifcauc@blind 盲审论文\else\ifcauc@bachelor Bachelor\else\ifcauc@doctor Doctor\else Master\fi\fi\ Thesis, \cauc@Department\fi},
+      pdfkeywords={\cauc@Keywords\ifx\cauc@KeywordsEng\@empty\else, \cauc@KeywordsEng\fi},
+      pdfcreator={cauc\_thesis template with \ifxetex XeLaTeX\else LuaLaTeX\fi}
+    }%
+  }
+\fi
 \RequirePackage{bookmark}
 % 消除hyperref PDF书签中的间距命令警告（~、\enspace、\quad等在PDF字符串中不支持）
 \pdfstringdefDisableCommands{%
@@ -152,31 +212,15 @@
 \RequirePackage{cleveref}
 
 %% ==================== 条件编译 ====================
-% PDF/A模式需加载pdfx宏包以生成符合存档标准的PDF文件。
-% pdfx 需要 sRGB ICC 色彩配置文件；该文件必须放在项目根目录，
-% 因为 xdvipdfmx 按当前工作目录解析 \special 中嵌入的 ICC 文件。
-\ifcauc@pdfa
-  \IfFileExists{sRGB_IEC61966-2-1_black_scaled.icc}{}{%
-    \ClassError{cauc_thesis}{%
-      PDF/A mode requires the ICC color profile
-      sRGB_IEC61966-2-1_black_scaled.icc%
-      \MessageBreak
-      Place it in the project root, or disable the pdfa option%
-    }{%
-      See the pdfx package documentation for details about the required ICC profile.%
-    }%
-  }%
-  \RequirePackage[a-2b,mathxmp]{pdfx}
-\fi
-
 % 研究生论文需要双语标题(bicaption)与符号说明(nomencl)，本科不需要
 \ifcauc@graduate
   \RequirePackage{bicaption}
-  % bi-second 仅用于第二语言的图题/表题，不重复写入插图目录/表格目录
-  \captionsetup[figure][bi-second]{name=Fig.,list=no}
-  \captionsetup[table][bi-second]{name=Tab.,list=no}
-  \captionsetup{labelsep=space}
-  \captionsetup[table]{labelsep=space}
+  % bi-second 仅用于第二语言的图题/表题，不重复写入插图目录/表格目录。
+  % 使用星号形式，避免文档未使用某类浮动体时 caption 宏包报告 "Unused \captionsetup"。
+  \captionsetup*[figure][bi-second]{name=Fig.,list=no}
+  \captionsetup*[table][bi-second]{name=Tab.,list=no}
+  \captionsetup*{labelsep=space}
+  \captionsetup*[table]{labelsep=space}
   % 符号说明的目录条目由 \printnomenclature 包装自行写入；
   % 禁用 nomencl 的 tocbasic 集成，避免与 caption/bicaption 的版本冲突。
   \RequirePackage[notocbasic]{nomencl}

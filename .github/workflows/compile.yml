@@ -28,6 +28,9 @@ jobs:
             texlive-fonts-recommended \
             latexmk
 
+      - name: Check indentation and line endings
+        run: bash scripts/check_indent.sh
+
       - name: Compile examples and main template
         run: |
           set -e

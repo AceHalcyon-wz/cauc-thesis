@@ -48,7 +48,7 @@
             \begin{center}
                 \setlength{\baselineskip}{0pt}\bfseries\fakeli \zihao{0}%
                 \ifcauc@proposal
-                  本科毕业设计（论文）开题报告%
+                  \ifcauc@design 本科毕业设计开题报告\else 本科毕业设计（论文）开题报告\fi
                 \else
                   \ifcauc@design
                     本科毕业设计%
@@ -274,9 +274,9 @@
         \end{tabularx}
     \end{center}
     \vspace{16pt}
-    \begin{table*}[htbp]
+    % 封面上的表格不使用浮动体，避免浮动体排队导致答辩委员会信息表错页。
+    \begin{center}
         \renewcommand{\arraystretch}{1.7}
-        \centering
         \zihao{-4}
         \begin{tabular}{|p{3.76cm}<{\centering}|p{2.68cm}<{\centering}
             |p{2cm}<{\centering}|p{5.5cm}<{\centering}|}
@@ -297,7 +297,7 @@
             & & & \\
             \hline
         \end{tabular}
-    \end{table*}
+    \end{center}
     \vspace{8pt}
     \begin{center}
         \zihao{4}

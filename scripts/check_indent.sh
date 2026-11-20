@@ -32,21 +32,23 @@ for f in "${files[@]}"; do
 
   issues=()
 
-  if grep -Pq '\t' "$f"; then
+  if grep -q $'\t' "$f"; then
     issues+=("hasTab")
   fi
 
-  if grep -Pq '\s+$' "$f"; then
+  # [[:space:]]$ 同时覆盖行尾空格、制表符与 CR；
+  # 使用 POSIX 字符类以兼容 macOS/BSD grep。
+  if grep -q '[[:space:]]$' "$f"; then
     issues+=("trailingWhitespace")
   fi
 
-  if [[ -s "$f" ]] && [[ "$(tail -c 1 "$f" | xxd -p)" != "0a" ]]; then
+  if [[ -s "$f" ]] && [[ "$(tail -c 1 "$f" | od -An -tx1 | tr -d ' \n')" != "0a" ]]; then
     issues+=("missingFinalNewline")
   fi
 
-  crlf_count=$(grep -cP '\r\n' "$f" || true)
-  lf_count=$(grep -cP '(?<!\r)\n' "$f" || true)
-  if [[ $crlf_count -gt 0 ]] && [[ $lf_count -gt 0 ]]; then
+  total_lines=$(wc -l < "$f" | tr -d ' ')
+  crlf_lines=$(grep -c $'\r$' "$f" || true)
+  if [[ $crlf_lines -gt 0 ]] && [[ $crlf_lines -lt $total_lines ]]; then
     issues+=("mixedLineEndings")
   fi
 

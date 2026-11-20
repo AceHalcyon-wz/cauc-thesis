@@ -88,26 +88,27 @@
     \fi
 }
 
-\newcommand{\keywordszh}[1]{
-    % 原始模板规范：本科用\newline\newline，研究生用\newline；\leavevmode确保在垂直模式下也可用
+\newcommand{\keywordszh}[1]{%
+    % 原始模板规范：本科空一行，研究生仅换行。
+    % 用 \par + 垂直间距代替 \newline，避免产生 Underfull \hbox 警告。
     \ifcauc@bachelor
-        \leavevmode\newline\leavevmode\newline\indent{\bfseries\zihao{-4} 关键词：}\zihao{-4}\songti #1
+        \par\vspace{\baselineskip}%
     \else
-        \leavevmode\newline
-        \noindent{\bfseries\zihao{-4} 关键词：}\zihao{-4}\songti #1
+        \par
     \fi
-    \cauc@check@keywords{#1}
+    \noindent{\bfseries\zihao{-4} 关键词：}\zihao{-4}\songti #1%
+    \cauc@check@keywords{#1}%
 }
 
-\newcommand{\keywordsen}[1]{
-    % 原始模板规范：本科用\newline\newline，研究生用\newline；博士英文关键词不使用\songti（默认Times New Roman）
+\newcommand{\keywordsen}[1]{%
+    % 博士英文关键词不使用 \songti（保持默认 Times New Roman）
     \ifcauc@bachelor
-        \leavevmode\newline\leavevmode\newline\indent{\bfseries\zihao{-4} Key Words: }\zihao{-4}\songti #1
+        \par\vspace{\baselineskip}%
     \else
-        \leavevmode\newline
-        \noindent{\bfseries\zihao{-4} Key words: }\zihao{-4}%
-        \ifcauc@doctor\else\songti\fi #1
+        \par
     \fi
+    \noindent{\bfseries\zihao{-4} Key words: }\zihao{-4}%
+    \ifcauc@doctor\else\songti\fi #1%
 }
 
 \newenvironment{acknowledgment}{
@@ -426,6 +427,7 @@
     \typeout{Master-Academic: \ifcauc@masteracademic true\else false\fi}%
     \typeout{Master-Professional: \ifcauc@masterprofessional true\else false\fi}%
     \typeout{Period: \ifcauc@proposal proposal\else final\fi}%
+    \typeout{Bachelor Type: \ifcauc@design design\else thesis\fi}%
     \typeout{Student Name: \cauc@StudentName}%
     \typeout{Title: \cauc@Title}%
     \typeout{Local Fonts: \ifcauc@localfonts@available true\else false\fi}%
@@ -433,9 +435,10 @@
     \typeout{Draft Mode: \ifcauc@draft true\else false\fi}%
     \typeout{Line Numbers: \ifcauc@lineno true\else false\fi}%
     \typeout{Blind Review: \ifcauc@blind true\else false\fi}%
-    \typeout{PDF/A: \ifcauc@pdfa true\else false\fi}%
     \typeout{Two-side: \ifcauc@twoside true\else false\fi}%
     \typeout{Open Right: \ifcauc@openright true\else false\fi}%
+    \typeout{Header on Plain: \ifcauc@headeronplain true\else false\fi}%
+    \typeout{Contents/Figures/Tables: \ifcauc@listcontents true\else false\fi/\ifcauc@listfigures true\else false\fi/\ifcauc@listtables true\else false\fi}%
     \typeout{Engine: \ifxetex XeLaTeX\else\ifluatex LuaLaTeX\else pdfLaTeX\fi\fi}%
     \typeout{Font Config: \ifcauc@localfonts@available local (fonts/ directory)\else system fonts\fi}%
     \typeout{Math Font: \ifx\cauc@mathfont\@empty cm\else\cauc@mathfont\fi}%

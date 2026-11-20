@@ -17,7 +17,11 @@
   \ifx\cauc@headertext\@empty
     \ifcauc@bachelor
       \ifcauc@proposal
-        \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计（论文）开题报告}%
+        \ifcauc@design
+          \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计开题报告}%
+        \else
+          \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计（论文）开题报告}%
+        \fi
       \else
         \ifcauc@design
           \def\cauc@header@text{\zihao{5}中国民航大学本科毕业设计}%
@@ -53,6 +57,7 @@
   \fi
   \cauc@setheader
   \chead{\cauc@header@text}%
+  \cauc@setcaptions
 }
 \rhead{~}
 \lhead{~}
@@ -111,15 +116,20 @@
   \renewcommand{\headrulewidth}{0.5pt}
 \fi
 
-\ifx\cauc@captionlabelsep\@empty
-  \captionsetup[figure]{font={normalsize,rm},name={图},labelsep=quad}
-  \captionsetup[subfigure]{font={normalsize,rm},name={图},labelsep=quad}
-  \captionsetup[table]{labelsep=space}
-\else
-  \captionsetup[figure]{font={normalsize,rm},name={图},labelsep=\cauc@captionlabelsep}
-  \captionsetup[subfigure]{font={normalsize,rm},name={图},labelsep=\cauc@captionlabelsep}
-  \captionsetup[table]{labelsep=\cauc@captionlabelsep}
-\fi
+% 图表标题格式在 \AtBeginDocument 中应用，使导言区
+% \caucsetup{captionlabelsep=...} 也能生效。
+\newcommand{\cauc@setcaptions}{%
+  % 使用星号形式，避免文档未使用某类浮动体时 caption 宏包报告 "Unused \captionsetup"。
+  \ifx\cauc@captionlabelsep\@empty
+    \captionsetup*[figure]{font={normalsize,rm},name={图},labelsep=quad}
+    \captionsetup*[subfigure]{font={normalsize,rm},name={图},labelsep=quad}
+    \captionsetup*[table]{labelsep=space}
+  \else
+    \captionsetup*[figure]{font={normalsize,rm},name={图},labelsep=\cauc@captionlabelsep}
+    \captionsetup*[subfigure]{font={normalsize,rm},name={图},labelsep=\cauc@captionlabelsep}
+    \captionsetup*[table]{labelsep=\cauc@captionlabelsep}
+  \fi
+}
 
 \setlist[1]{itemindent=2em}
 
