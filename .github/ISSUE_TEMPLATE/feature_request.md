@@ -1,20 +1,24 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: 功能建议
+about: 提出新功能或改进建议
 title: ''
-labels: ''
+labels: enhancement
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**使用场景**
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+说明该建议对应的学位类型、章节或排版需求。
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**期望方案**
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+描述你希望模板提供的行为、选项或命令。
+
+**备选方案**
+
+描述你考虑过的其他实现方式或临时绕过方法。
+
+**补充信息**
+
+可附相关规范条款、参考模板、截图或示例代码。

@@ -66,7 +66,7 @@ latexmk -xelatex cauc_thesis
 
 目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。原始模板中研究生 tocdepth 在 commands.tex 中设为 4，覆盖 contents.tex 中的初始值 2。
 
-页码格式：研究生前置页面（封面、摘要等）使用罗马数字页码（I, II, ...），正文从阿拉伯数字 1 开始编号，与原始模板规范一致。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），内部仍使用罗马数字编号以避免 PDF 页面锚点重名，正文从阿拉伯数字 1 开始编号。正文字号：所有学位类型正文均为小四号（12pt），与原始模板规范一致。
+页码格式：封面不显示页码，也不生成 PDF 页面锚点；封面结束后前置部分从罗马数字 I 重新编号，研究生摘要为第 I 页，目录、插图目录、表格目录和符号说明依次编号。正文从阿拉伯数字 1 开始编号。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），内部仍使用罗马数字编号以避免 PDF 页面锚点重名。正文字号：所有学位类型正文均为小四号（12pt），与原始模板规范一致。
 
 ### 示例
 
@@ -115,7 +115,7 @@ latexmk -xelatex cauc_thesis
 
 ### 布尔选项
 
-以下选项可通过 `\caucsetup{选项=true/false}` 或 `\documentclass[选项]{cauc_thesis}` 设置：
+以下选项可通过 `\caucsetup{选项=true/false}` 设置；其中 `declaration`、`draft`、`blind`、`pdfa`、`twoside`、`openright`、`headeronplain`、`lineno` 也可直接写在 `\documentclass` 选项中。`blankpage`、`listcontents`、`listfigures`、`listtables` 仅在 `\caucsetup` 中可用；`\documentclass` 中可使用 `nocontents`、`nofigures`、`notables` 关闭对应目录。
 
 | 选项 | 默认值 | 说明 |
 |------|--------|------|
@@ -125,11 +125,11 @@ latexmk -xelatex cauc_thesis
 | `pdfa` | `false` | 生成 PDF/A 兼容文档 |
 | `twoside` | `false` | 双面打印模式 |
 | `openright` | `false` | 章节从奇数页开始 |
-| `blankpage` | `false` | 双面排版时空白页是否显示页眉页脚 |
+| `blankpage` | `false` | 双面排版时空白页是否显示页眉页脚（仅 `\caucsetup`） |
 | `headeronplain` | `true` | 章节起始页是否显示页眉（默认 true 与原始模板一致） |
-| `listcontents` | `true` | 是否生成目录 |
-| `listfigures` | `true` | 是否生成插图目录 |
-| `listtables` | `true` | 是否生成表格目录 |
+| `listcontents` | `true` | 是否生成目录（仅 `\caucsetup`） |
+| `listfigures` | `true` | 是否生成插图目录（仅 `\caucsetup`） |
+| `listtables` | `true` | 是否生成表格目录（仅 `\caucsetup`） |
 | `lineno` | `false` | 启用行号 |
 
 > **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 或 `cauc_thesis.cfg` 中；在 `\documentclass` 之后的导言区用 `\caucsetup` 设置不会生效。`draft`、`lineno`、`linespacing`、`Type`、`period` 等可以在导言区设置。
@@ -153,22 +153,22 @@ latexmk -xelatex cauc_thesis
 | 字段 | 说明 | 适用学位 |
 |------|------|----------|
 | `StudentName` | 学生姓名 | 全部 |
-| `StudentNameEng` | 学生姓名（英文） | 研究生 |
+| `StudentNameEng` | 学生姓名（英文） | 研究生（本科设置时忽略并警告） |
 | `StudentID` | 学号 | 全部 |
 | `Title` | 中文论文标题 | 全部 |
-| `TitleEng` | 英文论文标题 | 全部 |
+| `TitleEng` | 英文论文标题 | 本科（选填，第二封面）、研究生（必填） |
 | `AdvisorName` | 指导教师 | 全部 |
-| `AdvisorNameEng` | 指导教师（英文） | 研究生 |
+| `AdvisorNameEng` | 指导教师（英文） | 研究生（本科设置时忽略并警告） |
 | `AdvisorNameEngSecond` | 第二指导教师（英文） | 学术学位硕士 |
 | `AdvisorNameOut` | 校外指导教师 | 专业学位硕士 |
 | `AdvisorNameEngOut` | 校外指导教师（英文） | 专业学位硕士、博士 |
 | `Major` | 专业 | 全部 |
 | `Department` | 学院 | 全部 |
 | `DepartmentEng` | 学院（英文） | 研究生 |
-| `Keywords` | 中文关键词（分号分隔） | 全部 |
-| `KeywordsEng` | 英文关键词（分号分隔） | 全部 |
-| `SubmitYear` | 提交年份 | 全部（默认当前年） |
-| `SubmitMonth` | 提交月份 | 全部（默认当前月） |
+| `Keywords` | 中文关键词（分号分隔，仅写入 PDF 元数据） | 全部（选填） |
+| `KeywordsEng` | 英文关键词（分号分隔，仅写入 PDF 元数据） | 全部（选填） |
+| `SubmitYear` | 提交年份 | 全部（留空自动取当前年） |
+| `SubmitMonth` | 提交月份 | 全部（留空自动取当前月） |
 | `SubmitDay` | 提交日期 | 研究生 |
 | `DefenseYear` | 答辩年份 | 研究生 |
 | `DefenseMonth` | 答辩月份 | 研究生 |
@@ -284,11 +284,11 @@ English abstract content
 ### 引用方式
 
 ```latex
-\cite{key}                        % 不上浮引用
-\textsuperscript{\cite{key}}      % 上浮引用
+\cite{key}       % 本科：上标引用；研究生：内联编号
+\upcite{key}     % 本科：等价于 \cite；研究生：单层上标引用
 ```
 
-> **注意**：`\upcite` 命令在所有学位类型下均输出双重上标引用 `\textsuperscript{\textsuperscript{\cite{key}}}`，与原始模板规范一致。
+> **注意**：本科模式使用 natbib 的 `super` 模式，`\cite` 本身即上标，因此 `\upcite` 与 `\cite` 等价。研究生模式 `\cite` 为内联编号，`\upcite` 输出 `\textsuperscript{\cite{key}}`。两种方式的实际字号一致，避免双重上标导致字号过小。
 
 > **注意**：使用 `\bibliography{reference}` 时，"参考文献"会自动出现在目录中，无需手动添加 `\addcontentsline`。手动添加会导致目录中出现重复条目。
 
@@ -301,6 +301,13 @@ English abstract content
 ```
 
 模板会自动把“符号说明”加入目录。`nomenclature` 条目需在正文中定义，编译时由 latexmk 自动调用 makeindex。
+
+可选参数的首字母用于分组：`A` 组显示为“缩略语”，其余（含省略可选参数的默认组）显示为“符号”。
+
+```latex
+\nomenclature[A]{CNN}{卷积神经网络}
+\nomenclature[S]{$\alpha$}{学习率}
+```
 
 ## PDF/A 输出
 
@@ -327,6 +334,14 @@ make clean        # 清理辅助文件
 make distclean    # 删除 build/ 目录
 make lint         # 代码检查
 make wordcount    # 字数统计
+make check        # 编译四种学位示例与主模板，任一失败返回非零
+```
+
+也可直接运行全量检查脚本：
+
+```bash
+bash scripts/check.sh                                       # Linux / macOS / Git Bash
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1   # Windows
 ```
 
 > 编译产物统一输出到 `build/` 目录（由 `.latexmkrc` 配置）。若直接使用 `xelatex` 而非 `latexmk`，编译产物将输出到项目根目录。

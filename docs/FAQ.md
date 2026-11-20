@@ -2,7 +2,7 @@
 
 ## 编译相关
 
-### Q1: 编译报错 "Neither XeLaTeX nor LuaLaTeX detected"
+### Q1: 编译报错 "This template requires XeLaTeX (recommended) or LuaLaTeX"
 
 **A:** 本模板要求使用 XeLaTeX（推荐）或 LuaLaTeX 引擎编译。请确认：
 
@@ -161,9 +161,11 @@ latexmk -xelatex cauc_thesis
 2. 删除或清空 `fonts/` 目录，模板会自动回退到系统字体。
 
 `localfonts` 选项支持三种值：
-- `auto`（默认）：自动检测 `fonts/` 目录是否存在字体文件
-- `true`：强制使用本地字体（缺失时报错）
+- `auto`（默认）：自动检测 `fonts/` 目录；中文字体或 Times 字体不完整时整体回退至系统字体
+- `true`：强制使用本地字体；任一必需字体缺失时直接报错，不会静默回退
 - `false`：强制使用系统字体（跳过本地字体检测）
+
+必需字体为 `simsun.ttf`、`simhei.ttf`、`kaiti.ttf`、`lisu.ttf`、`times.ttf`、`timesbd.ttf`、`timesi.ttf`、`timesbi.ttf`；`simfang.ttf` 为可选项，缺失时等宽/仿宋字体回退至宋体。
 
 ### Q15: 如何仅启用行号而不添加草稿水印
 
@@ -262,3 +264,7 @@ sudo pacman -S noto-fonts-cjk wqy-microhei
 ### Q23: 在导言区用 \caucsetup 设置 twoside/openright/pdfa 不生效
 
 **A:** 这些是加载期选项，必须在 `\documentclass` 中设置，或写入 `cauc_thesis.cfg`（模板在加载文档类与宏包之前读取该文件）。在 `\documentclass` 之后的导言区再设置时，文档类/宏包已经加载完成，无法改变已生效的选项。
+
+### Q24: 为什么前置部分的页码从 I 开始，封面没有页码
+
+**A:** 模板在封面环境中关闭页码输出和 PDF 页面锚点，封面结束后前置部分从罗马数字 I 重新编号，因此摘要为第 I 页，目录、插图目录、表格目录和符号说明依次编号。这样可以避免封面页码与重置后的页码产生重复的 PDF destination，同时符合“封面不编号、摘要从 I 开始”的常规排版要求。

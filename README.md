@@ -1,8 +1,8 @@
 # CAUC Thesis
 
-[![Compile](https://github.com/dengjon/cauc-thesis/actions/workflows/compile.yml/badge.svg)](https://github.com/dengjon/cauc-thesis/actions/workflows/compile.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Compile](https://github.com/AceHalcyon-wz/cauc-thesis/actions/workflows/compile.yml/badge.svg)](https://github.com/AceHalcyon-wz/cauc-thesis/actions/workflows/compile.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-中国民航大学学位论文 LaTeX 模板，一份 `.cls` 覆盖本科、学术学位硕士、专业学位硕士、博士四种学位类型。
+中国民航大学学位论文 LaTeX 模板，一份 `.cls` 覆盖本科、学术学位硕士、专业学位硕士、博士四种学位类型。模板在 [dengjon/cauc-thesis](https://github.com/dengjon/cauc-thesis) 及学校各学位原始模板基础上整理统一，遵循 MIT License。
 
 ## 简介
 
@@ -158,7 +158,7 @@ body/
 2. 在正文中使用 `\cite{key}` 引用
 3. 编译时需完整执行 `xelatex → bibtex → xelatex → xelatex`（latexmk 自动处理）
 
-> **`\upcite` 引用格式**：所有学位类型下 `\upcite{key}` 均输出双重上标引用 `\textsuperscript{\textsuperscript{\cite{key}}}`，与原始模板规范一致。
+> **引用格式**：本科模式使用 natbib 的 `super` 模式，`\cite{key}` 本身即为上标引用，`\upcite{key}` 与 `\cite{key}` 等价；研究生模式 `\cite{key}` 为内联编号，`\upcite{key}` 输出单层上标引用 `\textsuperscript{\cite{key}}`。两种方式的实际字号一致，避免双重上标导致字号过小。
 
 使用 `\bibliography{reference}` 时，"参考文献"会自动出现在目录中，无需手动添加 `\addcontentsline`。手动添加会导致目录中出现重复条目。
 
@@ -185,7 +185,7 @@ body/
 \end{thesistable}
 ```
 
-> 图题位于图下方，表题位于表上方，符合学位论文排版规范。研究生模式下自动生成中英文双语图题/表题。
+> 图题位于图下方，表题位于表上方，符合学位论文排版规范。研究生模式下 `thesisfigure`、`thesistable` 和 `thesislongtable` 自动生成中英文双语图题/表题；直接使用 `\caption` 的浮动体仍需手动调用 `\bicaption`。英文图题/表题不会重复写入插图目录和表格目录。
 
 > 各环境的完整参数说明和用法示例请参阅 [使用指南](docs/usage.md)。
 
@@ -196,7 +196,7 @@ body/
 | 环境/命令 | 说明 |
 |-----------|------|
 | `theorem`/`lemma`/`corollary` 等 | 定理类环境，编号与章节关联 |
-| `algorithm`（algorithm2e） | 算法排版，支持 `\KwIn`/`\KwOut`/`\If`/`\For` 等命令 |
+| `algorithm`（algorithm2e） | 算法排版，支持 `\KwIn`/`\KwOut`/`\If`/`\For` 等命令（仅研究生） |
 | `sidewaystable`/`sidewaysfigure` | 横排图表，内容以横向页面显示 |
 | `lstlisting`（listings） | 代码排版，支持中文注释（`(*@中文@*)` 转义） |
 | `\appendix` | 附录模式，章节编号自动切换为大写字母 |
@@ -247,7 +247,7 @@ body/
 
 ### 双面打印
 
-添加 `twoside` 选项启用双面打印模式，页面布局切换为双面排版，页码在奇数页右侧、偶数页左侧，页眉内容相应调整：
+添加 `twoside` 选项启用双面打印模式，页面布局切换为双面排版，页眉与页码按双面版心居中排列：
 
 ```tex
 \documentclass[degree=master-academic, twoside, ...]{cauc_thesis}
@@ -302,7 +302,7 @@ body/
 封面信息区域的宽度可通过 `\caucsetup` 调整，适配不同长度的姓名、专业等信息：
 
 ```tex
-\caucsetup{coverinfowidth=260pt}   % 调整信息表格宽度（默认 240pt）
+\caucsetup{coverinfowidth=260pt}   % 调整信息表格宽度（本科默认 240pt，研究生默认 300pt）
 \caucsetup{coverlabelwidth=12em}    % 调整标签下划线宽度（默认 11em）
 ```
 
@@ -360,7 +360,7 @@ body/
 
 ```bash
 bash scripts/word_count.sh
-bash scripts/word_count.sh doctor.tex
+bash scripts/word_count.sh examples/doctor.tex
 ```
 
 也可通过 Makefile 调用：
@@ -368,6 +368,8 @@ bash scripts/word_count.sh doctor.tex
 ```bash
 make wordcount
 ```
+
+> `texcount` 由 TeX Live 直接提供；MiKTeX 用户需安装 `texcount` 包，并确保 Perl 解释器可用，否则 `texcount.exe` 无法启动。
 
 ### 用户配置命令
 
@@ -381,9 +383,9 @@ make wordcount
 
 > **加载期选项**：`degree`、`localfonts`、`mathfont`、`pdfa`、`twoside`、`openright` 会影响文档类或宏包加载，必须写在 `\documentclass` 选项或 `cauc_thesis.cfg` 中（配置文件在文档类与宏包加载前读取）。在 `\documentclass` 之后的导言区用 `\caucsetup` 设置这些键不会生效；`draft`、`lineno`、`linespacing`、`Type`、`period` 等则可以在导言区设置。
 
-> **行距与间距说明**：所有学位类型正文行距均为 1.389（baselineskip=20pt），摘要行距均为 1.389（baselineskip=20pt），与原始模板规范一致。摘要标题与正文间距：本科由 `\begin{center}` 排版标题后手动添加 21pt 间距，研究生由 `\chapter*` 的 afterskip=30pt 自动提供。关键词与摘要正文间距：本科使用 `\newline\newline`，研究生使用 `\newline`，与原始模板规范一致。摘要标题字体：中文摘要标题使用黑体（\heiti），英文摘要标题使用粗体（\textbf），与原始模板规范一致。英文关键词字体：本科和硕士使用宋体（\songti），博士使用默认 Times New Roman，与原始模板规范一致。页码格式：研究生前置页面使用罗马数字页码（I, II, ...），正文从阿拉伯数字 1 开始；本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），正文从阿拉伯数字 1 开始。正文字号：所有学位类型正文均为小四号（12pt）。目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。
+> **行距与间距说明**：所有学位类型正文行距均为 1.389（baselineskip=20pt），摘要行距均为 1.389（baselineskip=20pt），与原始模板规范一致。摘要标题与正文间距：本科由 `\begin{center}` 排版标题后手动添加 21pt 间距，研究生由 `\chapter*` 的 afterskip=30pt 自动提供。关键词与摘要正文间距：本科使用 `\newline\newline`，研究生使用 `\newline`，与原始模板规范一致。摘要标题字体：中文摘要标题使用黑体（\heiti），英文摘要标题使用粗体（\textbf），与原始模板规范一致。英文关键词字体：本科和硕士使用宋体（\songti），博士使用默认 Times New Roman，与原始模板规范一致。页码格式：封面不显示页码，也不生成 PDF 页面锚点；封面结束后前置部分从罗马数字 I 重新编号，因此研究生摘要为第 I 页，目录、插图目录、表格目录和符号说明依次编号。正文从阿拉伯数字 1 开始。本科前置页面不显示页码（与原始模板规范一致，原始模板本科前置页面使用 `\pagestyle{empty}`），但内部仍使用罗马数字编号以避免 PDF 页面锚点重名。正文字号：所有学位类型正文均为小四号（12pt）。目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。
 
-> **字体管理说明**：模板使用 `fontset=none` 选项加载 ctex，由模板自行管理所有 CJK 字体定义，避免与 ctex 默认字体集冲突产生编译警告。宋体斜体自动映射为楷体，避免 "Font shape undefined" 警告。研究生四级标题（`\subsubsubsection`）采用换行标题格式（标题独占一行，正文另起一行），与原始模板规范一致。
+> **字体管理说明**：模板使用 `fontset=none` 选项加载 ctex，由模板自行管理所有 CJK 字体定义，避免与 ctex 默认字体集冲突产生编译警告。宋体斜体自动映射为楷体，避免 "Font shape undefined" 警告。`localfonts=true` 要求 `fonts/` 中的中文与 Times 字体完整，缺失时直接报错而不会静默回退；`localfonts=auto` 才会在字体不完整时回退至系统字体。研究生四级标题（`\subsubsubsection`）采用换行标题格式（标题独占一行，正文另起一行），与原始模板规范一致。
 
 > 完整的配置键列表及说明请参阅 [使用指南](docs/usage.md)。
 
@@ -402,7 +404,9 @@ make wordcount
 | `make lintindent` | 缩进与行尾检查 |
 | `make wordcount` | 统计正文字数 |
 | `make view` | 编译并打开 PDF |
-| `make check` | 编译所有学位类型示例和主模板并检查是否成功 |
+| `make check` | 编译所有学位类型示例和主模板，任一失败返回非零 |
+
+> Windows 默认不提供 `make`。未安装 make 时可直接运行 `scripts/check.ps1`（编译检查）、`scripts/check_indent.ps1`（缩进检查）或 `scripts/word_count.sh`（需 bash）。
 
 ### PDF 关键词
 
@@ -440,7 +444,9 @@ cauc-thesis/
 ├── scripts/                     工具脚本
 │   ├── word_count.sh            字数统计脚本
 │   ├── check_indent.sh          缩进检查脚本（bash）
-│   └── check_indent.ps1         缩进检查脚本（Windows PowerShell）
+│   ├── check_indent.ps1         缩进检查脚本（Windows PowerShell）
+│   ├── check.sh                 全量编译检查脚本（bash）
+│   └── check.ps1                全量编译检查脚本（Windows PowerShell）
 ├── settings/                    配置模块
 │   ├── packages.tex             宏包导入
 │   ├── fonts.tex                字体配置与字体命令重定义
@@ -466,7 +472,7 @@ cauc-thesis/
 
 **编译报错"字体未找到"**
 
-模板优先从 `fonts/` 目录加载本地字体文件。若该目录缺失或字体文件不完整，模板会自动回退至系统字体（SimSun、SimHei、KaiTi 等）并发出编译警告。如需使用本地字体，请将字体文件放入 `fonts/` 目录。
+模板优先从 `fonts/` 目录加载本地字体文件。`localfonts=auto`（默认）在字体不完整时会回退至系统字体（SimSun、SimHei、KaiTi 等）并发出编译警告；`localfonts=true` 则要求字体完整，缺失时直接报错而不会静默回退。如需使用本地字体，请将字体文件放入 `fonts/` 目录。
 
 > Windows 系统通常已预装所需字体，回退机制可正常工作。Linux/macOS 会优先使用 Noto CJK，其次使用 TeX Live 自带的 Fandol 字体（`texlive-lang-chinese`）。
 
