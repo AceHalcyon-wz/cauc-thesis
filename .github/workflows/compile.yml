@@ -10,22 +10,6 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: bachelor
-            file: examples/bachelor.tex
-          - name: master-academic
-            file: examples/master-academic.tex
-          - name: master-professional
-            file: examples/master-professional.tex
-          - name: doctor
-            file: examples/doctor.tex
-          - name: main
-            file: cauc_thesis.tex
-
-    name: Compile ${{ matrix.name }}
 
     steps:
       - uses: actions/checkout@v4
@@ -43,24 +27,33 @@ jobs:
             texlive-fonts-recommended \
             latexmk
 
-      - name: Prepare test file
+      - name: Compile examples and main template
         run: |
-          cp "${{ matrix.file }}" test_compile.tex
-
-      - name: Compile with latexmk
-        run: |
-          latexmk -xelatex test_compile.tex
+          set -e
+          for f in \
+            examples/bachelor.tex \
+            examples/master-academic.tex \
+            examples/master-professional.tex \
+            examples/doctor.tex \
+            cauc_thesis.tex; do
+            echo "::group::Compiling ${f}"
+            latexmk -xelatex "${f}"
+            echo "::endgroup::"
+          done
 
       - name: Check PDF size
         run: |
-          pdf_size=$(stat -c%s build/test_compile.pdf 2>/dev/null)
           max_size=5242880
-          if [ "$pdf_size" -gt "$max_size" ]; then
-            echo "::warning::PDF size exceeds 5MB ($(( pdf_size / 1024 / 1024 ))MB)"
-          fi
+          for pdf in build/*.pdf; do
+            pdf_size=$(stat -c%s "$pdf")
+            echo "${pdf}: $(( pdf_size / 1024 )) KB"
+            if [ "$pdf_size" -gt "$max_size" ]; then
+              echo "::warning::PDF size exceeds 5MB: ${pdf}"
+            fi
+          done
 
-      - name: Upload PDF
+      - name: Upload PDFs
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.name }}
-          path: build/test_compile.pdf
+          name: thesis-pdfs
+          path: build/*.pdf
