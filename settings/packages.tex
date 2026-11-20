@@ -177,7 +177,9 @@
   \captionsetup[table][bi-second]{name=Tab.,list=no}
   \captionsetup{labelsep=space}
   \captionsetup[table]{labelsep=space}
-  \RequirePackage{nomencl}
+  % 符号说明的目录条目由 \printnomenclature 包装自行写入；
+  % 禁用 nomencl 的 tocbasic 集成，避免与 caption/bicaption 的版本冲突。
+  \RequirePackage[notocbasic]{nomencl}
   \RequirePackage{pifont}
 \fi
 
