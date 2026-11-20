@@ -84,11 +84,13 @@ jobs:
             latexmk
 
       - name: Prepare test file
+        env:
+          EXTRA_OPTIONS: ${{ matrix.extra_options }}
         run: |
           cp examples/${{ matrix.degree }}.tex test_compile.tex
-          # 将 extra_options 注入 \documentclass 行，使 CI 真正测试各选项变体
-          if [ -n "${{ matrix.extra_options }}" ]; then
-            sed -i "s/\\]/,${{ matrix.extra_options }}]/" test_compile.tex
+          # 将 extra_options 插入 \documentclass[ 之后，避免误匹配文档中的其他 ]
+          if [ -n "$EXTRA_OPTIONS" ]; then
+            EXTRA="$EXTRA_OPTIONS" perl -0pi -e 's/\\documentclass\[/\\documentclass[$ENV{EXTRA},/' test_compile.tex
           fi
 
       - name: Compile with latexmk
