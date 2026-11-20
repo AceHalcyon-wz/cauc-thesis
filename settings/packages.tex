@@ -169,16 +169,16 @@
   \RequirePackage[a-2b,mathxmp]{pdfx}
 \fi
 
-% 研究生论文需要双语标题(bicaption)、符号说明(nomencl)和术语表(glossaries)，本科不需要
+% 研究生论文需要双语标题(bicaption)与符号说明(nomencl)，本科不需要
 \ifcauc@graduate
   \RequirePackage{bicaption}
-  \captionsetup[figure][bi-second]{name=Fig.}
-  \captionsetup[table][bi-second]{name=Tab.}
+  % bi-second 仅用于第二语言的图题/表题，不重复写入插图目录/表格目录
+  \captionsetup[figure][bi-second]{name=Fig.,list=no}
+  \captionsetup[table][bi-second]{name=Tab.,list=no}
   \captionsetup{labelsep=space}
   \captionsetup[table]{labelsep=space}
   \RequirePackage{nomencl}
   \RequirePackage{pifont}
-  \RequirePackage[toc,acronym,nonumberlist]{glossaries}
 \fi
 
 

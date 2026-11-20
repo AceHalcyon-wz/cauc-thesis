@@ -1,8 +1,14 @@
 % settings/commands.tex - 自定义命令与环境
 % 负责定义摘要环境、关键词命令、图表环境、定理环境、引用命令等自定义功能
 
-% 原始模板规范：所有学位类型引用均为双重上标格式
-\newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
+% 引用格式：本科使用 natbib 的 super 模式，\cite 本身即为上标；
+% 研究生 \cite 为内联编号，\upcite 提供单层上标引用。
+% 两种方式的可读字号一致，避免双重上标导致的过小字号。
+\ifcauc@bachelor
+    \newcommand{\upcite}[1]{\cite{#1}}
+\else
+    \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
+\fi
 
 \newcommand{\underlineFixlen}[2][3.5cm]{\underline{\makebox[#1][c]{#2}}}
 
@@ -16,9 +22,8 @@
     \fi
 }
 
-\newcount\cauc@abstract@lines
-
 \newenvironment{abstract-zh}{
+    \clearpage
     \setlength{\cauc@saved@headsep}{\headsep}
     \ifcauc@bachelor
         \begin{center}
@@ -36,21 +41,14 @@
         \vspace{21pt}%
     \fi
     \zihao{-4}\songti
-    \cauc@abstract@lines=0%
-    \everypar{\advance\cauc@abstract@lines by \prevgraf}%
     \begin{spacing}{\cauc@abstractspacing}
 }{%
     \end{spacing}%
-    \advance\cauc@abstract@lines by \prevgraf
-    % 中文摘要阈值10行（约300字），依据学位论文规范最低字数要求
-    \ifnum\cauc@abstract@lines<10
-        \cauc@warning{Chinese abstract appears too short (approximately \the\cauc@abstract@lines\space lines, expected at least 300 characters / 10 lines)}%
-    \fi
-    \everypar{}%
     \setlength{\headsep}{\cauc@saved@headsep}%
 }
 
 \newenvironment{abstract-en}{
+    \clearpage
     \setlength{\cauc@saved@headsep}{\headsep}
     \ifcauc@bachelor
         \begin{center}
@@ -69,17 +67,9 @@
         \vspace{21pt}%
     \fi
     \zihao{-4}
-    \cauc@abstract@lines=0%
-    \everypar{\advance\cauc@abstract@lines by \prevgraf}%
     \begin{spacing}{\cauc@abstractspacing}
 }{%
     \end{spacing}%
-    \advance\cauc@abstract@lines by \prevgraf
-    % 英文摘要阈值6行（约100词），依据学位论文规范最低字数要求
-    \ifnum\cauc@abstract@lines<6
-        \cauc@warning{English abstract appears too short (approximately \the\cauc@abstract@lines\space lines, expected at least 100 words / 6 lines)}%
-    \fi
-    \everypar{}%
     \setlength{\headsep}{\cauc@saved@headsep}%
 }
 
@@ -146,6 +136,8 @@
         \expandafter\ifx\cauc@temp X\cauc@tabularxtrue\fi
     }%
 }
+% 本科快捷三线表；研究生请使用 thesistable 以获得中英文双语表题
+\ifcauc@bachelor
 \NewDocumentCommand{\threelinetable}{m m m m m}{
     \begin{table}[!ht]
         \centering
@@ -168,6 +160,7 @@
         \fi
     \end{table}
 }
+\fi
 
 \RequirePackage{amsthm}
 
@@ -211,10 +204,12 @@
 \setlength{\nomlabelwidth}{2.5cm}
 \setlength{\nomitemsep}{0pt}
 
+% nomencl 以可选参数的首字母作为分组码；A 组为缩略语，其余（含默认组）为符号。
+% 使用 \ifstrequal 而非 \ifx#1A，避免空分组时 \ifx 比较错位。
 \renewcommand{\nomgroup}[1]{%
-  \ifx#1A\item[\textbf{\heiti 缩略语}]%
-  \else\item[\textbf{\heiti 符号}]%
-  \fi
+  \ifstrequal{#1}{A}
+    {\item[\textbf{\heiti 缩略语}]}
+    {\item[\textbf{\heiti 符号}]}%
 }
 
 \renewcommand{\nomlabel}[1]{\textsf{#1}\hfill}
@@ -245,7 +240,7 @@
         #5 \\
         \midrule
     \endfirsthead
-        \bicaption{#1}{#2}（续）\\
+        \bicaption{#1（续）}{#2 (continued)}\\
         \toprule
         #5 \\
         \midrule
@@ -270,7 +265,7 @@
 \providecommand{\printnomenclature}{%
     \ClassWarning{cauc_thesis}{printnomenclature is only available in graduate mode}%
 }
-\bibpunct{[}{]}{,}{n}{,}{,}
+% 本科保持 natbib 的 super 模式（\cite 即上标），不调用 \bibpunct 覆盖引用模式
 \fi
 
 \NewDocumentEnvironment{thesistable}{m m m m m o o}{%
@@ -463,11 +458,47 @@
     \makefrontmatter
 }
 
-\@ifundefined{addbibresource}{%
-    \let\cauc@orig@bibliography\bibliography
-    \renewcommand{\bibliography}[1]{%
-        \cauc@orig@bibliography{#1}%
-        \addcontentsline{toc}{chapter}{参考文献}%
-    }%
-}{%
-}
+% 按学位类型设置参考文献样式，并在输出参考文献时自动写入目录条目。
+% 样式选择延迟到 \bibliography 执行时，避免未使用文献的文档在 .aux 中
+% 写入 \bibstyle 而触发 BibTeX。
+\let\cauc@orig@bibliography\bibliography
+\newcommand{\cauc@bibliographystyle}{%
+    \ifcauc@bachelor
+        \IfFileExists{gbt7714-2005-numerical.bst}{%
+            \bibliographystyle{gbt7714-2005-numerical}%
+        }{%
+            \ClassWarning{cauc_thesis}{%
+                Bibliography style file 'gbt7714-2005-numerical.bst' not found.%
+                \MessageBreak
+                Falling back to 'plain' style.%
+                \MessageBreak
+                Install: tlmgr install gbt7714%
+            }%
+            \bibliographystyle{plain}%
+        }%
+    \else
+        \IfFileExists{gbt7714-numerical.bst}{%
+            \bibliographystyle{gbt7714-numerical}%
+        }{%
+            \ClassWarning{cauc_thesis}{%
+                Bibliography style file 'gbt7714-numerical.bst' not found.%
+                \MessageBreak
+                Falling back to 'plain' style.%
+                \MessageBreak
+                Install: tlmgr install gbt7714%
+            }%
+            \bibliographystyle{plain}%
+        }%
+    \fi
+}%
+% 在 thebibliography 开始时写入目录条目，确保多页参考文献的页码指向首页
+\let\cauc@orig@thebibliography\thebibliography
+\renewcommand{\thebibliography}[1]{%
+    \cauc@orig@thebibliography{#1}%
+    \phantomsection
+    \addcontentsline{toc}{chapter}{参考文献}%
+}%
+\renewcommand{\bibliography}[1]{%
+    \cauc@bibliographystyle
+    \cauc@orig@bibliography{#1}%
+}%

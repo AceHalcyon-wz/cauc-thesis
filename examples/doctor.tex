@@ -55,10 +55,10 @@
 
 \chapter{绪论}\label{ch:intro}
 
-\nomenclature{$\alpha$}{学习率}
-\nomenclature{$\beta$}{动量参数}
-\nomenclature{CNN}{卷积神经网络}
-\nomenclature{LSTM}{长短期记忆网络}
+\nomenclature[S]{$\alpha$}{学习率}
+\nomenclature[S]{$\beta$}{动量参数}
+\nomenclature[A]{CNN}{卷积神经网络}
+\nomenclature[A]{LSTM}{长短期记忆网络}
 
 \section{研究背景}
 
@@ -74,13 +74,28 @@
 
 \section{研究现状}
 
-如\cref{ch:intro}所述，本研究的核心问题在于如何提升模型泛化能力。近年来，深度学习方法在该领域取得了显著进展（引用示例：\verb|\upcite{he2016deep,zhang2020deep}|）。
+如\cref{ch:intro}所述，本研究的核心问题在于如何提升模型泛化能力。近年来，深度学习方法在该领域取得了显著进展。
 
 \begin{thesisfigure}{研究发展趋势}{Development trends of related research}{fig:trend}
     \includegraphics[width=\linewidth]{figures/fig2a}
 \end{thesisfigure}
 
 \cref{fig:trend}展示了近年来相关研究的发展趋势。
+
+\section{子图排版示例}
+
+\begin{thesisfigure}{子图排版示例}{Example of subfigure layout}{fig:subfig}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\linewidth]{figures/fig21a}
+        \caption{子图一}
+    \end{subfigure}\hfill
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\linewidth]{figures/fig21b}
+        \caption{子图二}
+    \end{subfigure}
+\end{thesisfigure}
+
+\cref{fig:subfig}展示了使用 \texttt{subcaption} 宏包的子图排版效果。
 
 \chapter{研究方法}\label{ch:method}
 
@@ -162,7 +177,7 @@ $A[i] \leftarrow p$\;
 \section{横排图表示例}
 
 \begin{sidewaystable}[!ht]
-\caption{多模型多指标综合对比}\label{tab:wide}
+\bicaption{多模型多指标综合对比}{Comprehensive comparison of multiple models and metrics}\label{tab:wide}
 \begin{tabularx}{\textwidth}{Xcccccc}
 \toprule
 模型 & 精度 & 召回率 & F1值 & AUC & 训练时间(s) & 参数量(M) \\

@@ -80,19 +80,17 @@
 
 \newcommand{\cauc@bachelor@secondcover}{%
     \newpage
+    \thispagestyle{empty}%
     \setlength{\headsep}{3.1cm}
     \begin{center}
         \fakeli
         \fontsize{36pt}{47pt}\selectfont
         中国民航大学\\
-        \ifcauc@proposal
-          本科毕业设计（论文）开题报告%
+        % 第二封面保持两行标题；开题报告字样仅出现在第一封面和页眉
+        \ifcauc@design
+          本科毕业设计%
         \else
-          \ifcauc@design
-            本科毕业设计%
-          \else
-            本科毕业设计（论文）%
-          \fi
+          本科毕业设计（论文）%
         \fi
     \end{center}
     \vspace{1.6cm}
@@ -133,6 +131,7 @@
 % 声明页需要更宽的左右边距(3.8cm)以适应签名栏排版，与正文边距不同
 \newcommand{\cauc@bachelor@declaration}{%
     \newpage
+    \thispagestyle{empty}%
     \newgeometry{left=3.8cm,right=3.8cm,top=4.85cm,bottom=4.85cm}
     \setlength{\headsep}{0.9cm}
     \begin{center}
@@ -144,8 +143,8 @@
     \songti \zihao{5}
     \setlength{\baselineskip}{26pt}
     本人声明所呈交的毕业设计（论文）是本人在指导教师指导下进行的研究工作及取得的成果，除了文中特别加以标注和致谢的地方外，论文中不包含其他人已经发表或撰写过的研究成果，也不包含为获得中国民航大学或其他教育机构的学位或证书而使用过的材料。与我一同工作的同志对本研究所做的任何贡献均已在论文中作了明确的说明并表示了谢意。
-    \vspace{1.8em}
-    \qquad\quad\qquad\qquad\qquad\qquad 毕业生签名：\underline{\qquad\qquad\qquad} 日\quad 期：\underline{\qquad\qquad\qquad}
+    \par\vspace{1.8em}
+    \noindent\qquad\quad\qquad\qquad\qquad\qquad 毕业生签名：\underline{\qquad\qquad\qquad} 日\quad 期：\underline{\qquad\qquad\qquad}
     \vspace{3.8em}
     \begin{center}
         \heiti
@@ -159,7 +158,7 @@
     \zihao{5}
     \setlength{\baselineskip}{28pt}
     中国民航大学有权保留本人所送交毕业设计（论文）的复印件和电子文档，可以采用影印、缩印或其他复制手段保存论文。本人电子文档的内容和纸质论文的内容相一致。除在保密期内的保密论文外，允许论文被查阅和借阅，可以公布（包括刊登）论文的全部或部分内容。论文的公布（包括刊登）授权中国民航大学教务处办理。
-    \vspace{1.8em}
+    \par\vspace{1.8em}
     \noindent 毕业生签名：\underline{\qquad\qquad\qquad}指导教师签名：\underline{\qquad\qquad\qquad}日\quad 期：\underline{\qquad\qquad\qquad}
     }
     \clearpage
@@ -167,7 +166,6 @@
 }
 
 \newcommand{\cauc@graduate@firstcover}{%
-    \pagestyle{empty}
     \setlength{\headsep}{1.224cm}
     {
               \begin{center}
@@ -244,10 +242,11 @@
 % 研究生封面包含答辩委员会信息表和分类号/UDC号，本科封面仅含基本信息
 \newcommand{\cauc@graduate@secondcover}{%
     \newpage
+    \thispagestyle{empty}%
     \zihao{-4}
     \setlength{\baselineskip}{24pt}
-    \noindent 分类号：\quad \underline{\cauc@blindfill{\CLCNumber}} \qquad 密\quad 级：\underline{公开}
-    \noindent UDC\ \ \ \,：\quad \underline{\cauc@blindfill{\UDCNumber}} \quad 学\quad 号：\underline{\cauc@blindfill{\StudentID}}
+    \noindent 分类号：\quad \underline{\cauc@blindfill{\CLCNumber}} \qquad 密\quad 级：\underline{公开}\par
+    \noindent UDC\ \ \ \,：\quad \underline{\cauc@blindfill{\UDCNumber}} \quad 学\quad 号：\underline{\cauc@blindfill{\StudentID}}\par
     \vspace{14pt}
     \begin{center}
         \zihao{2}\heiti \Title
@@ -302,7 +301,7 @@
     \vspace{8pt}
     \begin{center}
         \zihao{4}
-        中国民航大学\Department\\
+        中国民航大学\cauc@blindfill{\Department}\\
         \vspace{10pt}
         \DefenseYear 年\DefenseMonth 月\DefenseDay 日
     \end{center}
@@ -310,6 +309,7 @@
 
 \newcommand{\cauc@graduate@encover}{%
     \newpage
+    \thispagestyle{empty}%
     \begin{center}
         \vspace*{1.8em}
         \zihao{-1}{\bfseries\TitleEng}\\
@@ -359,6 +359,7 @@
 % 研究生声明页同样需要宽边距以适应签名栏，内容与本科略有不同（授权范围更大）
 \newcommand{\cauc@graduate@declaration}{%
     \newpage
+    \thispagestyle{empty}%
     \newgeometry{left=3.8cm,right=3.8cm,top=4.85cm,bottom=4.85cm}
     \setlength{\headsep}{0.9cm}
     \begin{center}
@@ -370,8 +371,8 @@
     \songti \zihao{5}
     \setlength{\baselineskip}{26pt}
     本人声明所呈交的学位论文是我个人在导师指导下进行的研究工作及取得的研究成果。尽我所知，除了文中特别加以标注和致谢的地方外，论文中不包含其他人已经发表或撰写过的研究成果，也不包含为获得中国民航大学或其它教育机构的学位或证书而使用过的材料。与我一同工作的同志对本研究所做的任何贡献均已在论文中作了明确的说明并表示了谢意。
-    \vspace{1.8em}
-    \qquad\quad\qquad\qquad\qquad\qquad 研究生签名：\underline{\qquad\qquad\qquad} 日\quad 期：\underline{\qquad\qquad\qquad}
+    \par\vspace{1.8em}
+    \noindent\qquad\quad\qquad\qquad\qquad\qquad 研究生签名：\underline{\qquad\qquad\qquad} 日\quad 期：\underline{\qquad\qquad\qquad}
     \vspace{3.8em}
     \begin{center}
         \heiti
@@ -385,7 +386,7 @@
     \zihao{5}
     \setlength{\baselineskip}{28pt}
     中国民航大学、中国科学技术信息研究所、国家图书馆有权保留本人所送交学位论文的复印件和电子文档，可以采用影印、缩印或其他复制手段保存论文。本人电子文档的内容和纸质论文的内容相一致。除在保密期内的保密论文外，允许论文被查阅和借阅，可以公布（包括刊登）论文的全部或部分内容。论文的公布（包括刊登）授权中国民航大学研究生院办理。
-    \vspace{1.8em}
+    \par\vspace{1.8em}
     \noindent 研究生签名：\underline{\qquad\qquad\qquad}导师签名：\underline{\qquad\qquad\qquad}日\quad 期：\underline{\qquad\qquad\qquad}
     }
     \clearpage
@@ -407,4 +408,3 @@
 \fi
 \end{cauc@coverpage}
 \restoregeometry
-\thispagestyle{empty}

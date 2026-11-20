@@ -41,8 +41,8 @@
 \DeclareStringOption[cm]{mathfont}
 \DeclareStringOption{Keywords}
 \DeclareStringOption{KeywordsEng}
-\DeclareStringOption[thesis]{Type}[thesis]
-\DeclareStringOption[final]{period}[final]
+\DeclareStringOption[thesis]{Type}
+\DeclareStringOption[final]{period}
 
 \DeclareBoolOption[false]{lineno}
 \DeclareBoolOption[false]{pdfa}
@@ -68,6 +68,12 @@
 \DeclareVoidOption{notables}{\cauc@listtablesfalse}
 
 \ProcessKeyvalOptions*
+
+% 阻断文档类选项向宏包的全局泄漏：模板的 draft 选项不应触发
+% hyperref/graphicx 的 draft 模式（否则会关闭超链接、PDF 元数据并替换图片）。
+% 显式传给 ctexrep 的 twoside/openright 由后续 \PassOptionsToClass 重新加入。
+\let\@unusedoptionlist\@empty
+\let\@classoptionslist\@empty
 
 \ifx\cauc@SubmitYear\@empty
   \edef\cauc@SubmitYear{\the\year}%
@@ -300,13 +306,21 @@
 \input{settings/contents}
 \input{settings/commands}
 
-% 封面页环境：不重置页码，避免封面页码与摘要/正文页码锚点重复。
-% report 的 titlepage 环境会把页码重置为 1，导致 PDF 书签和链接锚点冲突。
+% 封面页环境：封面不显示页码，也不生成 PDF 页面锚点；
+% 封面结束后页码从罗马数字 I 重新开始，使摘要成为前置部分第 I 页。
+% 关闭封面页锚点可避免与重置后的页码产生重复 destination。
 \newenvironment{cauc@coverpage}{%
     \clearpage
+    \pagenumbering{gobble}%
+    \hypersetup{pageanchor=false}%
     \thispagestyle{empty}%
 }{%
     \clearpage
+    \pagenumbering{Roman}%
+    \hypersetup{pageanchor=true}%
+    % 封面各页会修改 headsep 与字号，这里恢复正文默认值
+    \setlength{\headsep}{0.624cm}%
+    \zihao{-4}%
 }
 
 \newcommand{\makecover}{%

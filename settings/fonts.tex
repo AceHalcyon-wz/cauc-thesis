@@ -7,6 +7,10 @@
 
 \newif\ifcauc@localfonts@available
 \cauc@localfonts@availabletrue
+\newif\ifcauc@localfonts@forced
+\cauc@localfonts@forcedfalse
+\newif\ifcauc@localfonts@disabled
+\cauc@localfonts@disabledfalse
 
 \def\cauc@localfonts@detect{%
   \IfFileExists{fonts/simsun.ttf}{}{\cauc@localfonts@availablefalse}%
@@ -24,22 +28,13 @@
   \else
     \def\cauc@@temp{true}%
     \ifx\cauc@localfonts\cauc@@temp
+      \cauc@localfonts@forcedtrue
       \cauc@localfonts@detect
-      \ifcauc@localfonts@available\else
-        \ClassError{cauc_thesis}{%
-          localfonts=true but font files not found in fonts/ directory.%
-          \MessageBreak
-          Please ensure fonts/simsun.ttf, fonts/simhei.ttf, fonts/kaiti.ttf, fonts/lisu.ttf exist.%
-          \MessageBreak
-          Falling back to system fonts.%
-        }{%
-          Place the required font files in the fonts/ directory, or set localfonts=false to use system fonts.%
-        }%
-      \fi
     \else
       \def\cauc@@temp{false}%
       \ifx\cauc@localfonts\cauc@@temp
         \cauc@localfonts@availablefalse
+        \cauc@localfonts@disabledtrue
       \else
         \cauc@warning{Unknown localfonts value '\cauc@localfonts', expected: auto, true, false. Using auto.}%
         \cauc@localfonts@detect
@@ -53,6 +48,21 @@
   \IfFileExists{fonts/timesbd.ttf}{}{\cauc@localfonts@availablefalse}
   \IfFileExists{fonts/timesi.ttf}{}{\cauc@localfonts@availablefalse}
   \IfFileExists{fonts/timesbi.ttf}{}{\cauc@localfonts@availablefalse}
+\fi
+
+% localfonts=true 时不允许静默回退：缺少任一必需字体即报错
+\ifcauc@localfonts@forced
+  \ifcauc@localfonts@available\else
+    \ClassError{cauc_thesis}{%
+      localfonts=true but required font files are missing in fonts/ directory.%
+      \MessageBreak
+      Required: simsun.ttf, simhei.ttf, kaiti.ttf, lisu.ttf,%
+      \MessageBreak
+      times.ttf, timesbd.ttf, timesi.ttf, timesbi.ttf.%
+    }{%
+      Place the required font files in fonts/ or set localfonts=false to use system fonts.%
+    }%
+  \fi
 \fi
 
 \ifcauc@localfonts@available
@@ -83,7 +93,11 @@
   \setmainfont{times.ttf}[Path=fonts/, BoldFont=timesbd.ttf, ItalicFont=timesi.ttf, BoldItalicFont=timesbi.ttf]
 \else
   % 优先加载本地fonts/目录字体以确保跨平台一致性，不存在时回退到系统字体
-  \cauc@warning{Local font files not found in fonts/ directory. Falling back to system fonts.}
+  \ifcauc@localfonts@disabled
+    \ClassInfo{cauc_thesis}{Using system fonts because localfonts=false.}%
+  \else
+    \cauc@warning{Local font files not found in fonts/ directory. Falling back to system fonts.}%
+  \fi
 
   % 拉丁字体回退：Windows/macOS 优先 Times New Roman，Linux 使用 TeX Gyre Termes
   \newcommand{\cauc@set@latin@fallback}{%
