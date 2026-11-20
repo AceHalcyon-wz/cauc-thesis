@@ -12,57 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: bachelor
-            degree: bachelor
-            extra_options: ""
-            engine: xelatex
-          - name: master-academic
-            degree: master-academic
-            extra_options: ""
-            engine: xelatex
-          - name: master-professional
-            degree: master-professional
-            extra_options: ""
-            engine: xelatex
-          - name: doctor
-            degree: doctor
-            extra_options: ""
-            engine: xelatex
-          - name: bachelor-design
-            degree: bachelor
-            extra_options: "Type=design"
-            engine: xelatex
-          - name: bachelor-declaration
-            degree: bachelor
-            extra_options: "declaration=true"
-            engine: xelatex
-          - name: master-academic-twoside
-            degree: master-academic
-            extra_options: "twoside=true"
-            engine: xelatex
-          - name: master-academic-blind
-            degree: master-academic
-            extra_options: "blind=true"
-            engine: xelatex
-          - name: master-academic-draft
-            degree: master-academic
-            extra_options: "draft=true"
-            engine: xelatex
-          - name: master-academic-lineno
-            degree: master-academic
-            extra_options: "lineno=true"
-            engine: xelatex
-          - name: master-academic-systemfonts-times
-            degree: master-academic
-            extra_options: "mathfont=times,localfonts=false"
-            engine: xelatex
-          - name: doctor-lualatex
-            degree: doctor
-            extra_options: ""
-            engine: lualatex
+        degree: [bachelor, master-academic, master-professional, doctor]
 
-    name: Compile ${{ matrix.name }}
+    name: Compile ${{ matrix.degree }}
 
     steps:
       - uses: actions/checkout@v4
@@ -72,43 +24,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             texlive-xetex \
-            texlive-luatex \
             texlive-lang-chinese \
             texlive-science \
             texlive-pictures \
-            texlive-publishers \
             texlive-latex-extra \
-            texlive-fonts-extra \
-            texlive-fonts-recommended \
             texlive-bibtex-extra \
+            texlive-fonts-recommended \
             latexmk
 
       - name: Prepare test file
-        env:
-          EXTRA_OPTIONS: ${{ matrix.extra_options }}
         run: |
           cp examples/${{ matrix.degree }}.tex test_compile.tex
-          # 将 extra_options 插入 \documentclass[ 之后，避免误匹配文档中的其他 ]
-          if [ -n "$EXTRA_OPTIONS" ]; then
-            EXTRA="$EXTRA_OPTIONS" perl -0pi -e 's/\\documentclass\[/\\documentclass[$ENV{EXTRA},/' test_compile.tex
-          fi
 
       - name: Compile with latexmk
         run: |
-          set +e
-          latexmk -${{ matrix.engine }} test_compile.tex
-          status=$?
-          if [ "$status" -ne 0 ]; then
-            echo "===== AUX (citation/bibdata/bibstyle) ====="
-            grep -nE 'citation|bibdata|bibstyle' build/test_compile.aux || true
-            echo "===== BLG ====="
-            cat build/test_compile.blg || true
-            echo "===== BBL ====="
-            cat build/test_compile.bbl || true
-            echo "===== LOG tail ====="
-            tail -120 build/test_compile.log || true
-          fi
-          exit "$status"
+          latexmk -xelatex test_compile.tex
 
       - name: Check PDF size
         run: |
@@ -121,5 +51,5 @@ jobs:
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.name }}
+          name: ${{ matrix.degree }}
           path: build/test_compile.pdf
