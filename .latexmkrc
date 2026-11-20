@@ -11,7 +11,8 @@ if ($lualatex) {
 }
 
 $xelatex = 'xelatex -synctex=1 -file-line-error -interaction=nonstopmode';
-$bibtex = 'bibtex';
+# bibtex8 容量更大，且能正确处理 UTF-8 参考文献数据库中的中文字段。
+$bibtex = 'bibtex8 -8 -W %O %B';
 $pdf_mode = 5;
 
 $clean_ext = 'aux log out toc lof lot bbl blg fls fdb_latexmk synctex.gz nlo nls ilg idx ind thm bcf run.xml xmpdata xmp xmpi glo ist acn acr alg loa fgs';
