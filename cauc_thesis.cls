@@ -12,7 +12,7 @@
     prefix=cauc@
 }
 
-\DeclareStringOption[bachelor]{degree}
+\DeclareStringOption{degree}
 \DeclareStringOption{StudentName}
 \DeclareStringOption{StudentNameEng}
 \DeclareStringOption{StudentID}
@@ -82,16 +82,14 @@
   \edef\cauc@SubmitMonth{\the\month}%
 \fi
 
-\ifx\cauc@degree\@empty
-  \cauc@warning{degree option not set, defaulting to bachelor}
-\fi
-
 \RequirePackage{pgfkeys}
 
 % 封面尺寸：需在读取 cauc_thesis.cfg 前定义，供 coverinfowidth/coverlabelwidth 使用
 \newlength{\cauc@cover@infowidth}
 \newlength{\cauc@cover@infowidth@second}
-\newlength{\cauc@cover@labelwidth}
+% 下划线宽度保存为长度表达式而非长度寄存器，使 11em 在封面 3 号字环境下求值，
+% 与原始模板 \underlineFixlen[11em] 的语义一致。
+\newcommand{\cauc@cover@labelwidth}{11em}
 \newif\ifcauc@cover@infowidth@set
 \newif\ifcauc@cover@labelwidth@set
 
@@ -181,7 +179,7 @@
         coverlogo/.store in=\cauc@coverlogo,
         coverimage/.store in=\cauc@coverimage,
         coverinfowidth/.code={\setlength{\cauc@cover@infowidth}{##1}\cauc@cover@infowidth@settrue},
-        coverlabelwidth/.code={\setlength{\cauc@cover@labelwidth}{##1}\cauc@cover@labelwidth@settrue},
+        coverlabelwidth/.code={\def\cauc@cover@labelwidth{##1}\cauc@cover@labelwidth@settrue},
         openright/.is if=cauc@openright,
         headeronplain/.is if=cauc@headeronplain,
         blankpage/.is if=cauc@blankpagestandard,
@@ -209,6 +207,12 @@
 \IfFileExists{cauc_thesis.cfg}{\input{cauc_thesis.cfg}}{%
   \ClassInfo{cauc_thesis}{No cauc_thesis.cfg found. Please copy cauc_thesis.cfg.example to cauc_thesis.cfg and fill in your personal information.}%
 }
+
+% degree 也可能在 cauc_thesis.cfg 中设置，因此默认值检查放在读取配置之后。
+\ifx\cauc@degree\@empty
+  \cauc@warning{degree option not set, defaulting to bachelor}
+  \def\cauc@degree{bachelor}%
+\fi
 
 \def\cauc@parse@degree{%
   \ifdefstring{\cauc@degree}{bachelor}{%
@@ -294,9 +298,14 @@
 \newcommand{\mainmatter}{%
     % 先结束前置部分当前页，再切换页码与页面样式；
     % 否则在未生成目录（或目录被禁用）时，最后一页摘要会被改成正文页码和 fancy 页眉。
-    % 使用 \clearpage 而不是 \cleardoublepage：openright 下的空白页由
-    % 随后第一个 \chapter 的 \cleardoublepage 处理，避免 openany 时多插一页。
-    \clearpage
+    % openright 下必须按前置部分的罗马页码先补齐到奇数页，再重置阿拉伯页码；
+    % 若只使用 \clearpage，重置后页码变为 1（奇数），随后 \chapter 的
+    % \cleardoublepage 不会插入空白页，首章可能落在偶数物理页。
+    \ifcauc@openright
+        \cleardoublepage
+    \else
+        \clearpage
+    \fi
     \pagenumbering{arabic}%
     \zihao{-4}%
     \pagestyle{fancy}%
@@ -321,7 +330,13 @@
     \hypersetup{pageanchor=false}%
     \thispagestyle{empty}%
 }{%
-    \clearpage
+    % openright 下前置部分也应从奇数页开始；若封面页数为奇数，
+    % 需先补一张空白页再重置罗马页码。
+    \ifcauc@openright
+        \cleardoublepage
+    \else
+        \clearpage
+    \fi
     \pagenumbering{Roman}%
     \hypersetup{pageanchor=true}%
     % 封面各页会修改 headsep 与字号，这里恢复正文默认值
@@ -366,7 +381,7 @@
     \@tfor\cauc@field:={StudentName}{StudentID}{Title}{Major}{Department}{AdvisorName}{SubmitYear}{SubmitMonth}\do{%
       \expandafter\cauc@validate@field\expandafter{\cauc@field}{bachelor}%
     }%
-    \@tfor\cauc@field:={StudentNameEng}{AdvisorNameEng}{AdvisorNameOut}\do{%
+    \@tfor\cauc@field:={StudentNameEng}{AdvisorNameEng}{AdvisorNameEngSecond}{AdvisorNameOut}{AdvisorNameEngOut}\do{%
       \expandafter\cauc@warn@unused\expandafter{\cauc@field}{degree=bachelor}%
     }%
   \fi
@@ -385,6 +400,7 @@
 
   \ifcauc@doctor
     \cauc@validate@field{AdvisorNameEngOut}{doctor}%
+    \cauc@warn@unused{AdvisorNameOut}{degree=doctor}%
     \cauc@warn@unused{AdvisorNameEngSecond}{degree=doctor}%
   \fi
 

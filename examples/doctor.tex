@@ -48,10 +48,8 @@
 
 \makefrontmatter
 \printnomenclature
-\clearpage
 
 \mainmatter
-\pagestyle{fancy}
 
 \chapter{绪论}\label{ch:intro}
 
@@ -176,6 +174,10 @@ $A[i] \leftarrow p$\;
 
 \section{横排图表示例}
 
+横排表适用于列数较多、需要旋转排版的数据对比场景。
+
+表~\ref{tab:wide}汇总了三种模型在精度、召回率、F1 值和 AUC 等指标上的表现。可以看出，Model B 在精度和 AUC 上取得最优结果，但训练时间与参数量也最高；Model C 的推理成本最低，适合部署在资源受限场景。实际选型需在性能与开销之间权衡。
+
 \begin{sidewaystable}[!ht]
 \bicaption{多模型多指标综合对比}{Comprehensive comparison of multiple models and metrics}\label{tab:wide}
 \begin{tabularx}{\textwidth}{Xcccccc}
@@ -190,6 +192,10 @@ Model C & 0.91 & 0.88 & 0.89 & 0.93 & 90 & 15.8 \\
 \end{sidewaystable}
 
 \section{横排图示例}
+
+横排图适用于宽幅示意图或需要旋转查看的流程图。
+
+图~\ref{fig:pipeline}展示了多尺度特征提取流程。输入图像首先经过不同尺度的卷积核，分别提取局部细节与全局语义信息，再通过特征融合模块将多尺度特征拼接。该结构在不显著增加参数量的前提下扩大了感受野，为后续分类与检测任务提供更丰富的特征表示。
 
 \begin{sidewaysfigure}[!ht]
     \centering

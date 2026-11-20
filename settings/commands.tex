@@ -163,22 +163,34 @@
 }
 \fi
 
-\RequirePackage{amsthm}
-
-\theoremstyle{plain}
+% 中文定理样式：正文宋体、标题加粗，标题与正文之间用空格分隔，不使用西文句点
+\newtheoremstyle{caucplain}%
+    {0.5\baselineskip}% 上间距
+    {0.5\baselineskip}% 下间距
+    {\normalfont}% 正文字体
+    {}% 缩进
+    {\bfseries}% 标题字体
+    {}% 标题标点
+    {0.5em}% 标题后间距
+    {#1~#2#3}% 标题格式
+\theoremstyle{caucplain}
 % 各定理类环境使用独立计数器，确保 cleveref 正确识别“定理/引理/推论”等名称
 \newtheorem{theorem}{定理}[chapter]
 \newtheorem{lemma}{引理}[chapter]
 \newtheorem{corollary}{推论}[chapter]
 \newtheorem{proposition}{命题}[chapter]
-
-\theoremstyle{definition}
 \newtheorem{definition}{定义}[chapter]
 \newtheorem{example}{例}[chapter]
-
-\theoremstyle{remark}
 \newtheorem{remark}{注}[chapter]
+
 \renewcommand{\proofname}{证明}
+% 重定义证明环境：中文标题加粗，标题后留空，不使用西文句点
+\renewenvironment{proof}[1][\proofname]{\par
+    \pushQED{\qed}%
+    \normalfont \topsep6\p@\@plus6\p@\relax
+    \trivlist
+    \item[\hskip\labelsep\bfseries #1\quad]\ignorespaces
+}{\popQED\endtrivlist\@endpefalse}
 
 \counterwithin{figure}{chapter}
 \counterwithin{table}{chapter}
@@ -229,7 +241,13 @@
 
 % 原始模板规范：研究生四级标题使用\paragraph+换行，标题独占一行，正文另起一行
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
-\setcounter{secnumdepth}{4}
+% 本科保持 report 默认编号深度（subsection 编号，subsubsection 不编号）；
+% 研究生使用 4 级编号以支持带编号的 paragraph/四级标题。
+\ifcauc@bachelor
+  \setcounter{secnumdepth}{2}
+\else
+  \setcounter{secnumdepth}{4}
+\fi
 
 \renewcommand\thefootnote{\zihao{-5}\ding{\numexpr171+\value{footnote}}}
 
@@ -256,9 +274,11 @@
 }{%
     \end{longtable}
     \IfNoValueF{#6}{%
-        \linespread{1.0}\setlength{\parindent}{2em}
-        \par\smallskip
-        #6
+        \if\relax\detokenize{#6}\relax\else
+            \zihao{5}\linespread{1.0}\setlength{\parindent}{2em}
+            \par\smallskip
+            #6
+        \fi
     }
     \vspace{-10pt}
 }
@@ -303,9 +323,11 @@
         \end{center}
         \vspace{-5pt}
         \IfNoValueF{#6}{%
-            \linespread{1.0}\setlength{\parindent}{2em}
-            \par\smallskip
-            #6
+            \if\relax\detokenize{#6}\relax\else
+                \zihao{5}\linespread{1.0}\setlength{\parindent}{2em}
+                \par\smallskip
+                #6
+            \fi
         }
         \vspace{-10pt}
     \end{table}
@@ -327,9 +349,11 @@
         \label{#3}
         \vspace{-5pt}
         \IfNoValueF{#5}{%
-            \linespread{1.0}\setlength{\parindent}{2em}
-            \par\smallskip
-            #5
+            \if\relax\detokenize{#5}\relax\else
+                \zihao{5}\linespread{1.0}\setlength{\parindent}{2em}
+                \par\smallskip
+                #5
+            \fi
         }
         \vspace{-10pt}
     \end{figure}
@@ -352,17 +376,17 @@
 \creflabelformat{paragraph}{#2第#1段#3}
 \crefname{appendix}{附录}{附录}
 \ifcauc@graduate
-\crefname{algocf}{算法}{算法}
+\crefname{algocf}{算法~}{算法~}
 \fi
 \crefname{subfigure}{子图}{子图}
 \crefname{subtable}{子表}{子表}
-\crefname{theorem}{定理}{定理}
-\crefname{lemma}{引理}{引理}
-\crefname{corollary}{推论}{推论}
-\crefname{proposition}{命题}{命题}
-\crefname{definition}{定义}{定义}
-\crefname{example}{例}{例}
-\crefname{remark}{注}{注}
+\crefname{theorem}{定理~}{定理~}
+\crefname{lemma}{引理~}{引理~}
+\crefname{corollary}{推论~}{推论~}
+\crefname{proposition}{命题~}{命题~}
+\crefname{definition}{定义~}{定义~}
+\crefname{example}{例~}{例~}
+\crefname{remark}{注~}{注~}
 
 \Crefname{figure}{图}{图}
 \Crefname{table}{表}{表}
@@ -374,17 +398,17 @@
 \Crefname{paragraph}{}{}
 \Crefname{appendix}{附录}{附录}
 \ifcauc@graduate
-\Crefname{algocf}{算法}{算法}
+\Crefname{algocf}{算法~}{算法~}
 \fi
 \Crefname{subfigure}{子图}{子图}
 \Crefname{subtable}{子表}{子表}
-\Crefname{theorem}{定理}{定理}
-\Crefname{lemma}{引理}{引理}
-\Crefname{corollary}{推论}{推论}
-\Crefname{proposition}{命题}{命题}
-\Crefname{definition}{定义}{定义}
-\Crefname{example}{例}{例}
-\Crefname{remark}{注}{注}
+\Crefname{theorem}{定理~}{定理~}
+\Crefname{lemma}{引理~}{引理~}
+\Crefname{corollary}{推论~}{推论~}
+\Crefname{proposition}{命题~}{命题~}
+\Crefname{definition}{定义~}{定义~}
+\Crefname{example}{例~}{例~}
+\Crefname{remark}{注~}{注~}
 
 \ifcauc@graduate
 \crefname{nomenclature}{符号说明}{符号说明}

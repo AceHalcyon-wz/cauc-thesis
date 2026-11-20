@@ -8,7 +8,7 @@
 - XeLaTeX 引擎（推荐）或 LuaLaTeX
 - 推荐编辑器：VS Code + LaTeX Workshop 插件
 
-> PDF/A 输出建议使用 LuaLaTeX；XeLaTeX + `pdfx` 的 ICC 嵌入支持有限，详见后文“PDF/A 输出”。
+> PDF/A 输出建议使用 LuaLaTeX；XeLaTeX + `pdfx` 的 ICC 嵌入支持有限，详见后文“PDF/A 输出”。模板以 XeLaTeX 为主要支持路径，LuaLaTeX 下会输出提示性警告。
 
 ### 最小编译流程
 
@@ -30,7 +30,7 @@ latexmk -xelatex cauc_thesis
 \documentclass[选项1=值1,选项2=值2]{cauc_thesis}
 ```
 
-### 必选选项
+### 学位类型（默认 bachelor）
 
 | 选项 | 可选值 | 说明 |
 |------|--------|------|
@@ -38,6 +38,8 @@ latexmk -xelatex cauc_thesis
 | | `master-academic` | 学术学位硕士 |
 | | `master-professional` | 专业学位硕士 |
 | | `doctor` | 博士学位 |
+
+> 未设置 `degree` 时模板会给出警告并使用 `bachelor`；建议始终显式指定。
 
 ### 可选选项
 
@@ -69,7 +71,7 @@ latexmk -xelatex cauc_thesis
 
 字体管理：模板使用 `fontset=none` 选项加载 ctex，由模板自行管理所有 CJK 字体定义（包括主字体、无衬线字体、等宽字体），避免与 ctex 默认字体集冲突产生 "Redefining CJKfamily" 编译警告。
 
-研究生四级标题：`\subsubsubsection` 采用换行标题格式（标题独占一行，正文另起一行），与原始模板规范一致。本科未定义 subsubsection 格式，使用 ctex 默认值。
+研究生四级标题：`\subsubsubsection` 采用换行标题格式（标题独占一行，正文另起一行），与原始模板规范一致。本科未定义 `\subsubsubsection` 命令；`\subsubsection` 及以下层级按 ctex 默认编号深度处理，不参与编号。
 
 目录深度：本科 tocdepth=2（目录显示到 subsection），研究生 tocdepth=4（目录显示到 paragraph），与原始模板规范一致。原始模板中研究生 tocdepth 在 commands.tex 中设为 4，覆盖 contents.tex 中的初始值 2。
 
@@ -360,7 +362,7 @@ def binary_search(arr, target):
 \end{lstlisting}
 ```
 
-> 图题位于图下方，表题位于表上方。研究生模式下 `thesisfigure`、`thesistable`、`thesislongtable` 自动生成中英文双语标题；直接使用 `\caption` 的浮动体需手动调用 `\bicaption`。英文标题不会重复写入插图目录和表格目录。
+> 图题位于图下方，表题位于表上方。研究生模式下 `thesisfigure`、`thesistable`、`thesislongtable` 自动生成中英文双语标题；直接使用 `\caption` 的浮动体需手动调用 `\bicaption`。英文标题不会重复写入插图目录和表格目录。表注/图注使用五号字（10.5pt）。
 
 ## 便捷命令
 

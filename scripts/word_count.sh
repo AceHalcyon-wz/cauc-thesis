@@ -42,7 +42,16 @@ if [ "$FILE_SIZE" != "unknown" ]; then
 fi
 echo ""
 
-texcount -v0 -ch -sum "$MAIN_TEX" 2>/dev/null
+TEXCOUNT_OUTPUT=$(texcount -v0 -ch -sum "$MAIN_TEX" 2>&1)
+TEXCOUNT_STATUS=$?
+if [ "$TEXCOUNT_STATUS" -ne 0 ]; then
+    echo "错误：texcount 运行失败（退出码 $TEXCOUNT_STATUS）"
+    echo "$TEXCOUNT_OUTPUT"
+    echo ""
+    echo "Windows 用户请确认已安装 Perl 解释器；MiKTeX 的 texcount.exe 依赖 Perl 运行。"
+    exit 1
+fi
+echo "$TEXCOUNT_OUTPUT"
 
 echo ""
 echo "=== 汇总 ==="

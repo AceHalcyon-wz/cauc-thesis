@@ -15,6 +15,8 @@
 | `master-professional` | 专业学位硕士 |
 | `doctor` | 博士学位 |
 
+> 未设置 `degree` 时模板会给出警告并使用 `bachelor`，建议始终显式指定。
+
 ## 快速开始
 
 ### 环境要求
@@ -35,6 +37,8 @@ latexmk -xelatex cauc_thesis.tex
 ```bash
 latexmk -lualatex cauc_thesis.tex
 ```
+
+> 模板以 XeLaTeX 为主要支持路径；LuaLaTeX 下会给出提示性警告，主要用于 PDF/A 等需要 Lua 侧 XMP 元数据的场景。
 
 手动编译需执行完整流程（统一输出到 `build/`）：
 
@@ -102,7 +106,7 @@ xelatex -output-directory=build cauc_thesis.tex
 
 > **重要**：LaTeX 会在处理文档类选项时删除其中的空格，因此 ` = ` 两侧不要加空格，否则英文姓名、英文学院名等值中的空格也会被删除。含空格的值应写成 `StudentNameEng={San Zhang}`（`=` 两侧无空格）；也可以改用 `\caucsetup`（pgfkeys 会保留值中的空格）。
 
-如需调整下划线宽度，可在 `settings/cover.tex` 中修改对应的 `tabularx` 或 `\underlineFixlen` 环境。
+如需调整下划线宽度，推荐在导言区使用 `\caucsetup{coverlabelwidth=...}`；也可在 `settings/cover.tex` 中修改 `\cauc@cover@labelwidth`。
 
 也可在导言区通过 `\caucsetup` 设置个人信息：
 
@@ -318,15 +322,15 @@ body/
 
 ### 本科论文/设计切换
 
-本科模式通过 `Type` 选项切换论文和设计类型，影响封面标题文字：
+本科模式通过 `Type` 选项切换论文和设计类型，影响封面、第二封面、声明页及页眉中的名称：
 
 ```tex
 \documentclass[degree=bachelor, Type=thesis, ...]{cauc_thesis}
 \documentclass[degree=bachelor, Type=design, ...]{cauc_thesis}
 ```
 
-- `Type=thesis`（默认）：封面显示"本科毕业设计（论文）"
-- `Type=design`：封面显示"本科毕业设计"
+- `Type=thesis`（默认）：显示“本科毕业设计（论文）”
+- `Type=design`：显示“本科毕业设计”
 
 ### 封面尺寸调整
 

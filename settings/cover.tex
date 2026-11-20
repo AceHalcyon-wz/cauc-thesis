@@ -14,7 +14,9 @@
   \setlength{\cauc@cover@logo@vspace}{-12mm}
   \setlength{\cauc@cover@title@vspace}{-3.8mm}
   \setlength{\cauc@cover@info@vspace}{8ex}
-  \setlength{\cauc@cover@date@vspace}{1em}
+  % 原始模板在 3 号字（16pt）环境下使用 1em，此处按 16pt 固定，避免长度寄存器
+  % 在封面前导区按默认 10pt 求值导致日期行间距偏小。
+  \setlength{\cauc@cover@date@vspace}{16pt}
 \else
   \setlength{\cauc@cover@logo@vspace}{-10pt}
   \setlength{\cauc@cover@title@vspace}{-4.2mm}
@@ -34,7 +36,7 @@
   \setlength{\cauc@cover@infowidth@second}{240pt}
 \fi
 \ifcauc@cover@labelwidth@set\else
-  \setlength{\cauc@cover@labelwidth}{11em}
+  \renewcommand{\cauc@cover@labelwidth}{11em}
 \fi
 
 \newcommand{\cauc@bachelor@firstcover}{%
@@ -74,7 +76,7 @@
         {\bfseries 指导教师：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\AdvisorName}}\\
         {\bfseries 学\hspace{2em}院：}\underlineFixlen[\cauc@cover@labelwidth]{\cauc@blindfill{\Department}}\\
         \vspace{\cauc@cover@date@vspace}
-        \qquad \zihao{4}{\zhdigits{\SubmitYear} 年 \zhdigits{\SubmitMonth} 月}
+        \qquad \zihao{4}{\zhdigits{\SubmitYear} 年 \zhnumber{\SubmitMonth} 月}
     \end{center}
 }
 
@@ -137,7 +139,7 @@
     \begin{center}
         \heiti
         \zihao{3}
-        中国民航大学本科毕业设计（论文）独创性声明
+        中国民航大学\ifcauc@design 本科毕业设计\else 本科毕业设计（论文）\fi 独创性声明
     \end{center}
     \vspace{1.8em}
     \songti \zihao{5}
@@ -150,7 +152,7 @@
         \heiti
         \zihao{3}
         \setlength{\baselineskip}{26pt}
-        中国民航大学本科毕业设计（论文）使用授权声明
+        中国民航大学\ifcauc@design 本科毕业设计\else 本科毕业设计（论文）\fi 使用授权声明
     \end{center}
     \vspace{1.8em}
     {

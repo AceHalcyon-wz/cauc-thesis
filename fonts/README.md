@@ -7,9 +7,9 @@
 | 文件名 | 字体名称 | 用途 |
 |--------|---------|------|
 | simsun.ttf | 宋体 | 正文默认字体 |
-| simhei.ttf | 黑体 | 标题、页眉 |
-| kaiti.ttf | 楷体 | 摘要关键词标签 |
-| lisu.ttf | 隶书 | 封面标题 |
+| simhei.ttf | 黑体 | 标题、页眉、摘要标题 |
+| kaiti.ttf | 楷体 | 正文斜体（宋体斜体替代） |
+| lisu.ttf | 隶书 | 封面装饰标题 |
 | times.ttf | Times New Roman | 英文正文 |
 | timesbd.ttf | Times New Roman Bold | 英文粗体 |
 | timesi.ttf | Times New Roman Italic | 英文斜体 |
