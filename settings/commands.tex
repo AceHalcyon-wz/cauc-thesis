@@ -240,13 +240,13 @@
 }
 
 % 原始模板规范：研究生四级标题使用\paragraph+换行，标题独占一行，正文另起一行
+% 本科保持 report 默认编号深度（subsection 编号，subsubsection 不编号），
+% 且不提供 \subsubsubsection 命令。
+\ifcauc@graduate
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
-% 本科保持 report 默认编号深度（subsection 编号，subsubsection 不编号）；
-% 研究生使用 4 级编号以支持带编号的 paragraph/四级标题。
-\ifcauc@bachelor
-  \setcounter{secnumdepth}{2}
+\setcounter{secnumdepth}{4}
 \else
-  \setcounter{secnumdepth}{4}
+\setcounter{secnumdepth}{2}
 \fi
 
 \renewcommand\thefootnote{\zihao{-5}\ding{\numexpr171+\value{footnote}}}
