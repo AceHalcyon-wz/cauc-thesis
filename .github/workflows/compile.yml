@@ -5,6 +5,7 @@ on:
     branches: ['**']
   pull_request:
     branches: [master, main]
+  workflow_dispatch:
 
 jobs:
   compile:
@@ -12,9 +13,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        degree: [bachelor, master-academic, master-professional, doctor]
+        include:
+          - name: bachelor
+            file: examples/bachelor.tex
+          - name: master-academic
+            file: examples/master-academic.tex
+          - name: master-professional
+            file: examples/master-professional.tex
+          - name: doctor
+            file: examples/doctor.tex
+          - name: main
+            file: cauc_thesis.tex
 
-    name: Compile ${{ matrix.degree }}
+    name: Compile ${{ matrix.name }}
 
     steps:
       - uses: actions/checkout@v4
@@ -34,7 +45,7 @@ jobs:
 
       - name: Prepare test file
         run: |
-          cp examples/${{ matrix.degree }}.tex test_compile.tex
+          cp "${{ matrix.file }}" test_compile.tex
 
       - name: Compile with latexmk
         run: |
@@ -51,5 +62,5 @@ jobs:
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.degree }}
+          name: ${{ matrix.name }}
           path: build/test_compile.pdf

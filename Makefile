@@ -51,24 +51,11 @@ else
 endif
 
 check:
-	@echo "===== Compiling all degree types ====="
-	@echo "--- Compiling bachelor ---"
-	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/bachelor.tex && echo "  bachelor: OK" || echo "  bachelor: FAILED"
-	@echo "--- Compiling master-academic ---"
-	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/master-academic.tex && echo "  master-academic: OK" || echo "  master-academic: FAILED"
-	@echo "--- Compiling master-professional ---"
-	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/master-professional.tex && echo "  master-professional: OK" || echo "  master-professional: FAILED"
-	@echo "--- Compiling doctor ---"
-	@latexmk -xelatex -interaction=batchmode -outdir=build/check examples/doctor.tex && echo "  doctor: OK" || echo "  doctor: FAILED"
-	@echo "--- Compiling main template ---"
-	@latexmk -xelatex -interaction=batchmode -outdir=build/check $(MAIN).tex && echo "  main: OK" || echo "  main: FAILED"
-	@echo "--- Cleaning up ---"
 ifeq ($(OS),Windows_NT)
-	@if exist build\check rmdir /S /Q build\check
+	@powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1
 else
-	@rm -rf build/check
+	@bash scripts/check.sh
 endif
-	@echo "===== Check complete ====="
 
 view: all
 ifeq ($(OS),Windows_NT)
